@@ -24,20 +24,40 @@ class S21Array {
 
   using value_type = T;
   using reference = T&;
-  using consr_reference = const T&;
+  using const_reference = const T&;
   using iterator = T*;
   using size_type = std::size_t;
 
-  S21Array() {}
+  S21Array() = default;
 
   S21Array(std::initializer_list<value_type> const &items) {
-    //    size_type i = 0;
-    //    for (auto it : items) arr_[i++] = it;
     std::copy(items.begin(),items.end(), arr_);
   }
+  S21Array(const S21Array &other){}
+  S21Array(S21Array &&other) noexcept {}
+
+  ~S21Array() = default;
+
+//  S21Array<value_type> &operator=(S21Array<value_type> &&other) {}
 
   size_type size() {return size_;}
+  bool empty() {return size_ == 0;}
+  size_type max_size() {return size_;}
+
+  void swap(S21Array& other) {
+    std::swap(arr_, other.arr_);
+    std::swap(size_, other.size_);
+  }
+  void fill(const_reference value) {
+//    std::fill();
+      if (size_ > 0) {
+        for (auto i = 0; i < size_; ++i) arr_[i] = value;
+      }
+  }
+
+
   reference operator[](size_type pos) {return arr_[pos];}
+  reference at(size_type pos) {return (pos >= size_) ? throw "out_of_range": arr_[pos];}
 
  private:
   size_type size_ = N;
