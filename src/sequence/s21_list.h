@@ -80,12 +80,10 @@ class S21List : SequenceContainer<T> {
     std::cout << "size = " << size_ << std::endl;
     std::cout << this_node_.value_ << std::endl;
   }
-
-
 };
 //
-//template <typename T>
-//void S21List<T>::push_back(const_reference value) {
+// template <typename T>
+// void S21List<T>::push_back(const_reference value) {
 //  if (size_ == 0) {
 //    head_ = new Node{};
 //    head_->value_ = value;
