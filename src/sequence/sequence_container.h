@@ -91,8 +91,8 @@ class SequenceContainer {
   }
 
  protected:
-  size_type size_;
-  T *arr_;
+  size_type size_{};
+  T *arr_{};
 };
 
 // template <class value_type>

@@ -26,6 +26,18 @@ class S21List : SequenceContainer<T> {
   using SequenceContainer<T>::arr_;
   using SequenceContainer<T>::size_;
 
+ private:
+  struct Node {
+    value_type value_{};
+    //    Node() : next_(nullptr), prev_(nullptr) {}
+    Node* next_{};
+    Node* prev_{};
+  };
+  Node this_node_{};
+  Node* head_{};
+  Node* tail_{};
+
+ public:
   // Constructors and destructor
   S21List() {}
   S21List(size_type n) {}
@@ -63,8 +75,30 @@ class S21List : SequenceContainer<T> {
   void unique();
   void sort();
 
- private:
+  // Support func
+  void print() {
+    std::cout << "size = " << size_ << std::endl;
+    std::cout << this_node_.value_ << std::endl;
+  }
+
+
 };
+//
+//template <typename T>
+//void S21List<T>::push_back(const_reference value) {
+//  if (size_ == 0) {
+//    head_ = new Node{};
+//    head_->value_ = value;
+//    tail_ = head_;
+//  } else {
+//    Node* temp = new Node;
+//    temp->next_ = head_->next_;
+//    temp->prev_ = head_;
+//    head_->next_ = temp;
+//    tail_->prev_ = temp;
+//    ++size_;
+//  }
+//}
 
 }  // namespace s21
 
