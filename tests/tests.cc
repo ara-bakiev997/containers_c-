@@ -1,40 +1,25 @@
 #include <gtest/gtest.h>
 
 // #include <utility>
-#include <list>
+#include <array>
 
-#include "../src/sequence/s21_list.h"
+#include "../src/sequence/s21_array.h"
 
 using namespace s21;
 
-class S21Vector_test : public ::testing::Test {
+class S21Array_test : public ::testing::Test {
  protected:
   void SetUp() override {}
-  S21List<int> list_empty;
-  S21List<int> list_1_ = {1, 2, 3, 4, 5};
-  S21List<int> list_2_ = S21List<int>(10);
-  std::list<int> test_empty;
-  std::list<int> test = {1, 2, 3, 4, 5};
-  std::list<int> test2 = {5, 4, 3, 2, 1};
+  S21Array<int, 0> array_empty;
+  S21Array<int, 5> array_1_ = {1, 2, 3, 4, 5};
+//  S21Array<int, 5> array_2_ = S21Array<int, 5>;
+  std::array<int, 0> test_empty;
+  std::array<int, 5> test = {1, 2, 3, 4, 5};
+  std::array<int, 5> test2 = {5, 4, 3, 2, 1};
 };
 
-TEST_F(S21Vector_test, experiment_orig) {
-  for (auto i : test) {
-    std::cout << i << ' ';
-  }
-  std::cout << std::endl;
-
-  std::cout << "size = " << test.size() << std::endl;
-
-  for (auto i : test2) {
-    std::cout << i << ' ';
-  }
-  std::cout << std::endl;
-  test2.sort();
-  for (auto i : test2) {
-    std::cout << i << ' ';
-  }
-  std::cout << std::endl;
+TEST_F(S21Array_test, test_constructor_il) {
+  for (auto i = 0; i < array_1_.size(); ++i) std::cout << array_1_[i] << " ";
 
 
 
