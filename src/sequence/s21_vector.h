@@ -47,7 +47,9 @@ class S21Vector : public SequenceContainer<T> {
   }
 
   // destructor
-  ~S21Vector() { delete[] arr_; }
+  ~S21Vector() {
+    if (arr_) delete[] arr_;
+  }
 
   // Assignment operator
   S21Vector &operator=(const S21Vector &v);

@@ -15,7 +15,7 @@
 
 namespace s21 {
 template <typename T>
-class S21List : protected SequenceContainer<T> {
+class S21List : private SequenceContainer<T> {
  public:
   using value_type = typename SequenceContainer<T>::value_type;
   using reference = typename SequenceContainer<T>::reference;
@@ -29,20 +29,23 @@ class S21List : protected SequenceContainer<T> {
  private:
   struct Node {
     value_type value_{};
-    //    Node() : next_(nullptr), prev_(nullptr) {}
+    Node() : next_(nullptr), prev_(nullptr) {
+//      this = reinterpret_cast<Node>((new int8_t));
+    }
     Node* next_{};
     Node* prev_{};
   };
   //  Node this_node_{};
   Node* head_{};
   Node* tail_{};
+  Node fake_{};
 
  public:
   // Constructors and destructor
   S21List() {}
   S21List(size_type n);
   S21List(std::initializer_list<value_type> const& items);
-  S21List(const S21List& l) {}
+  S21List(const S21List& l);
   S21List(S21List&& l) {}
   ~S21List() {}
   S21List& operator=(S21List&& l) {}
@@ -52,8 +55,8 @@ class S21List : protected SequenceContainer<T> {
   const_reference back();
 
   // List Iterators
-  //  iterator begin();
-  //  iterator end();
+  //  iterator begin() override;
+  //  iterator end() override;
 
   // List Capacity
   bool empty() { return (size_ ? false : true); }
@@ -100,9 +103,25 @@ S21List<value_type>::S21List(const std::initializer_list<value_type>& items) {
     push_back(*it);
   }
 }
+template <typename T>
+S21List<T>::S21List(const S21List<T>& l) {
+  //  for (auto i = 0; i < l.size_; ++i) {
+  //    push_back(l.)
+  //Нужен константный итератор
+
+  //  }
+}
+// typename S21List<value_type>::S21List(const S21List<value_type>& l) {
+//
+// }
 
 //_____LIST_ELEMENT_ACCESS_____
 //_____LIST_ITERATORS_____
+// template <typename T>
+// typename S21List<T>::iterator S21List<T>::begin() {
+//
+//}
+
 //_____LIST_ELEMENT_ACCESS_____
 //_____LIST_CAPACITY_____
 
@@ -124,7 +143,7 @@ void S21List<T>::push_back(const_reference value) {
 template <typename value_type>
 typename S21List<value_type>::Node* S21List<value_type>::NewNode(
     value_type value) {
-  Node* temp = new Node{};
+  Node* temp = new Node();
   if (!temp) throw std::bad_alloc();
   temp->next_ = temp->prev_ = nullptr;
   temp->value_ = value;
