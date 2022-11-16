@@ -21,9 +21,9 @@ class S21Array_test : public ::testing::Test {
 
 TEST_F(S21Array_test, test_constructor_il) {
   array_1_.fill(5.5);
-  array_empty.fill(5);
-  test_empty.fill(5);
-  for (auto i = 0; i < array_1_.size(); ++i) std::cout << array_1_[i] << " ";
+//  array_empty.fill(5);
+//  test_empty.fill(5);
+  for (auto i = 0; i <= array_empty.size(); ++i) std::cout << array_empty[i] << " ";
   std::cout<<"\n";
 //  for (auto i = 0; i <= test_empty.size(); ++i) std::cout << test_empty[i] << " ";
 //    for (auto i = 0; i <= test_empty.size(); ++i) std::cout << test_empty.at(i) << " ";

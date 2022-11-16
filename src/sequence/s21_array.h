@@ -28,7 +28,8 @@ class S21Array {
   using iterator = T*;
   using size_type = std::size_t;
 
-  S21Array() = default;
+  S21Array()= default;
+
 
   S21Array(std::initializer_list<value_type> const &items) {
     std::copy(items.begin(),items.end(), arr_);

@@ -14,7 +14,7 @@ FetchContent_MakeAvailable(googletest)
 
 #add_executable(Google_Tests_run test_sequence.cc)
 
-add_executable(Google_Tests_run tests.cc ../src/sequence/s21_array.cc ../src/sequence/s21_array.h)
+add_executable(Google_Tests_run tests_array.cc ../src/sequence/s21_array.cc ../src/sequence/s21_array.h)
 
 
 #target_link_libraries(Google_Tests_run for_testing pair)
