@@ -33,14 +33,18 @@ class S21List : SequenceContainer<T> {
     Node* next_{};
     Node* prev_{};
   };
-  Node this_node_{};
+//  Node this_node_{};
   Node* head_{};
   Node* tail_{};
 
  public:
   // Constructors and destructor
   S21List() {}
-  S21List(size_type n) {}
+  S21List(size_type n) {
+    for (auto i = 0; i < n; ++i) {
+      push_back(0);
+    }
+  }
   S21List(std::initializer_list<value_type> const& items) {}
   S21List(const S21List& l) {}
   S21List(S21List&& l) {}
@@ -78,25 +82,33 @@ class S21List : SequenceContainer<T> {
   // Support func
   void print() {
     std::cout << "size = " << size_ << std::endl;
-    std::cout << this_node_.value_ << std::endl;
+    for (auto i = 0; i < size_; ++i) {
+      std::cout << head_->value_ << ' ';
+      head_ = head_->next_;
+    }
+  }
+
+  Node* NewNode(value_type value) {
+    Node* temp = new Node{};
+    if (!temp) throw std::bad_alloc();
+    temp->next_ = nullptr;
+    temp->prev_ = nullptr;
+    return temp;
   }
 };
-//
-// template <typename T>
-// void S21List<T>::push_back(const_reference value) {
-//  if (size_ == 0) {
-//    head_ = new Node{};
-//    head_->value_ = value;
-//    tail_ = head_;
-//  } else {
-//    Node* temp = new Node;
-//    temp->next_ = head_->next_;
-//    temp->prev_ = head_;
-//    head_->next_ = temp;
-//    tail_->prev_ = temp;
-//    ++size_;
-//  }
-//}
+
+ template <typename T>
+ void S21List<T>::push_back(const_reference value) {
+   Node* temp = NewNode(value);
+   if (head_) {
+     tail_->next_ = temp;
+     temp->prev_ = tail_;
+     tail_ = temp;
+   } else {
+     head_ = tail_ = temp;
+   }
+   ++size_;
+}
 
 }  // namespace s21
 
