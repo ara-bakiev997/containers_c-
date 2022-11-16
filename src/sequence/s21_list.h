@@ -15,7 +15,7 @@
 
 namespace s21 {
 template <typename T>
-class S21List : SequenceContainer<T> {
+class S21List : protected SequenceContainer<T> {
  public:
   using value_type = typename SequenceContainer<T>::value_type;
   using reference = typename SequenceContainer<T>::reference;
@@ -33,19 +33,15 @@ class S21List : SequenceContainer<T> {
     Node* next_{};
     Node* prev_{};
   };
-//  Node this_node_{};
+  //  Node this_node_{};
   Node* head_{};
   Node* tail_{};
 
  public:
   // Constructors and destructor
   S21List() {}
-  S21List(size_type n) {
-    for (auto i = 0; i < n; ++i) {
-      push_back(0);
-    }
-  }
-  S21List(std::initializer_list<value_type> const& items) {}
+  S21List(size_type n);
+  S21List(std::initializer_list<value_type> const& items);
   S21List(const S21List& l) {}
   S21List(S21List&& l) {}
   ~S21List() {}
@@ -60,8 +56,8 @@ class S21List : SequenceContainer<T> {
   //  iterator end();
 
   // List Capacity
-  bool empty();
-  size_type size();
+  bool empty() { return (size_ ? false : true); }
+  size_type size() { return size_; }
   size_type max_size();
 
   // List Modifiers
@@ -87,27 +83,52 @@ class S21List : SequenceContainer<T> {
       head_ = head_->next_;
     }
   }
-
-  Node* NewNode(value_type value) {
-    Node* temp = new Node{};
-    if (!temp) throw std::bad_alloc();
-    temp->next_ = nullptr;
-    temp->prev_ = nullptr;
-    return temp;
-  }
+  Node* NewNode(value_type value);
 };
 
- template <typename T>
- void S21List<T>::push_back(const_reference value) {
-   Node* temp = NewNode(value);
-   if (head_) {
-     tail_->next_ = temp;
-     temp->prev_ = tail_;
-     tail_ = temp;
-   } else {
-     head_ = tail_ = temp;
-   }
-   ++size_;
+//_____CONSTRUCTORS_AND_DESTRUCTOR_____
+template <typename value_type>
+S21List<value_type>::S21List(size_type n) {
+  for (auto i = 0; i < n; ++i) {
+    push_back(0);
+  }
+}
+
+template <typename value_type>
+S21List<value_type>::S21List(const std::initializer_list<value_type>& items) {
+  for (auto it = items.begin(); it != items.end(); ++it) {
+    push_back(*it);
+  }
+}
+
+//_____LIST_ELEMENT_ACCESS_____
+//_____LIST_ITERATORS_____
+//_____LIST_ELEMENT_ACCESS_____
+//_____LIST_CAPACITY_____
+
+//_____LIST_MODIFIERS_____
+template <typename T>
+void S21List<T>::push_back(const_reference value) {
+  Node* temp = NewNode(value);
+  if (head_) {
+    tail_->next_ = temp;
+    temp->prev_ = tail_;
+    tail_ = temp;
+  } else {
+    head_ = tail_ = temp;
+  }
+  ++size_;
+}
+
+//_____SUPPORT_FUNC_____
+template <typename value_type>
+typename S21List<value_type>::Node* S21List<value_type>::NewNode(
+    value_type value) {
+  Node* temp = new Node{};
+  if (!temp) throw std::bad_alloc();
+  temp->next_ = temp->prev_ = nullptr;
+  temp->value_ = value;
+  return temp;
 }
 
 }  // namespace s21

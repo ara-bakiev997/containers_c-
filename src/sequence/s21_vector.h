@@ -19,14 +19,6 @@ namespace s21 {
 template <class T>
 class S21Vector : public SequenceContainer<T> {
  public:
-  // Vector Member type
-  //  using value_type = T;
-  //  using reference = T &;
-  //  using const_reference = const T &;
-  //  using iterator = typename SequenceContainer<value_type>::Iterator;
-  //  using const_iterator = const T *;
-  //  using size_type = size_t;
-
   using value_type = typename SequenceContainer<T>::value_type;
   using reference = typename SequenceContainer<T>::reference;
   using const_reference = typename SequenceContainer<T>::const_reference;
