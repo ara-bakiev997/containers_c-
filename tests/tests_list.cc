@@ -22,8 +22,16 @@ class S21List_test : public ::testing::Test {
 };
 
 TEST_F(S21List_test, constructors) {
-  std::list<int> test3{1, 2};
-  auto it = test3.begin();
+  auto it = list_2_.begin();
+  std::cout << *it << std::endl;
+  std::cout << *(++it) << std::endl;
+  std::cout << *(++it) << std::endl;
+
+
+
+
+//  std::list<int> test3{1, 2};
+//  auto it = test3.begin();
 //  std::cout << test3.front() << ' ';
 //  Используй фэйковую ноду
 //  std::cout << &(*(it)) << " " << (*(it)) << '\n';

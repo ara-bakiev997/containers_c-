@@ -30,7 +30,7 @@ class S21List : private SequenceContainer<T> {
   struct Node {
     value_type value_{};
     Node() : next_(nullptr), prev_(nullptr) {
-//      this = reinterpret_cast<Node>((new int8_t));
+      //      this = reinterpret_cast<Node>((new int8_t));
     }
     Node* next_{};
     Node* prev_{};
@@ -55,8 +55,15 @@ class S21List : private SequenceContainer<T> {
   const_reference back();
 
   // List Iterators
-  //  iterator begin() override;
-  //  iterator end() override;
+  iterator begin() override;
+  //      iterator temp(head_);
+  //      return temp;
+  //    }
+  iterator end() override;
+  //    iterator temp(&tail_->value_);
+  ////    iterator temp(tail_);
+  //    return temp;
+  //  }
 
   // List Capacity
   bool empty() { return (size_ ? false : true); }
@@ -107,7 +114,7 @@ template <typename T>
 S21List<T>::S21List(const S21List<T>& l) {
   //  for (auto i = 0; i < l.size_; ++i) {
   //    push_back(l.)
-  //Нужен константный итератор
+  // Нужен константный итератор
 
   //  }
 }
@@ -117,10 +124,19 @@ S21List<T>::S21List(const S21List<T>& l) {
 
 //_____LIST_ELEMENT_ACCESS_____
 //_____LIST_ITERATORS_____
-// template <typename T>
-// typename S21List<T>::iterator S21List<T>::begin() {
-//
-//}
+template <typename value_type>
+typename S21List<value_type>::iterator S21List<value_type>::begin() {
+  iterator temp(&head_->value_);
+  ////    iterator temp(tail_);
+  return temp;
+}
+
+template <typename value_type>
+typename S21List<value_type>::iterator S21List<value_type>::end() {
+  iterator temp(&tail_->value_);
+  ////    iterator temp(tail_);
+  return temp;
+}
 
 //_____LIST_ELEMENT_ACCESS_____
 //_____LIST_CAPACITY_____
