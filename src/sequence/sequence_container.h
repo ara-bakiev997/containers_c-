@@ -20,9 +20,10 @@ class SequenceContainer {
   using const_iterator = const Iterator;
   using size_type = size_t;
 
-//  SequenceContainer() : size_(5), arr_(new value_type[size_]{1, 2, 3, 4, 5}) {}
-  SequenceContainer()= default;
-//  ~SequenceContainer(){}
+  //  SequenceContainer() : size_(5), arr_(new value_type[size_]{1, 2, 3, 4, 5})
+  //  {}
+  SequenceContainer() = default;
+  //  ~SequenceContainer(){}
 
   class Iterator {
    public:
@@ -70,11 +71,17 @@ class SequenceContainer {
 
     ptrdiff_t operator-(Iterator &value) { return this->data_ - value.data_; }
 
-    ptrdiff_t operator-(const Iterator &value) { return this->data_ - value.data_; }
+    ptrdiff_t operator-(const Iterator &value) {
+      return this->data_ - value.data_;
+    }
 
-    bool operator==(const Iterator &other) { return this->data_ == other.data_; }
+    bool operator==(const Iterator &other) {
+      return this->data_ == other.data_;
+    }
 
-    bool operator!=(const Iterator &other) { return this->data_ != other.data_; }
+    bool operator!=(const Iterator &other) {
+      return this->data_ != other.data_;
+    }
 
    protected:
     T *data_{};
@@ -91,8 +98,8 @@ class SequenceContainer {
   }
 
  protected:
-  size_type size_;
-  T *arr_;
+  size_type size_{};
+  T *arr_{};
 };
 
 // template <class value_type>
@@ -111,3 +118,4 @@ class SequenceContainer {
 }  // namespace s21
 
 #endif  // S21_CONTAINERS_SRC_SEQUENCE_CONTAINER_H_
+
