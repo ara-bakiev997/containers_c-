@@ -28,7 +28,13 @@ class S21Array: public S21Vector<T> {
   using const_reference = typename SequenceContainer<T>::const_reference;
   using iterator = typename SequenceContainer<T>::Iterator;
   using size_type = typename SequenceContainer<T>::size_type;
+  using pointer = value_type*;
+//  using iterator = pointer;
+  using const_pointer = const value_type*;
 
+  /**
+ * Constructors
+ */
   S21Array(): size_(N){}
 
 
@@ -46,9 +52,17 @@ class S21Array: public S21Vector<T> {
 
   ~S21Array() = default;
 
-//  S21Array<value_type> &operator=(S21Array<value_type> &&other) {}
+  S21Array &operator=(S21Array &&other) noexcept {
+    swap(other);
+    return *this;
+    }
 
-  size_type size() {return size_;}
+    /**
+     * Member functions
+     * @return
+     */
+
+  size_type size() noexcept {return size_;}
   bool empty() {return size_ == 0;}
   size_type max_size() {return size_;}
 
@@ -57,15 +71,33 @@ class S21Array: public S21Vector<T> {
     std::swap(size_, other.size_);
   }
   void fill(const_reference value) {
-//    std::fill();
+//    std::fill(arr_[0], arr_[size_-1], value);
       if (size_) {
         for (auto i = 0; i < size_; ++i) arr_[i] = value;
       }
   }
 
+  const_reference front() {return arr_[0];}
+  const_reference back() {return arr_[size_-1];}
+  pointer data() noexcept {return arr_;}
+  const_pointer data() const noexcept {return arr_;}
+
+//  iterator begin(){return arr_;}
+  iterator begin() noexcept override {
+    iterator tmp(arr_);
+    return tmp;
+  }
+
+  iterator end() noexcept override {
+    iterator tmp(arr_ + size_);
+    return tmp;
+  }
+
 
   reference operator[](size_type pos) {return arr_[pos];}
-  reference at(size_type pos) {return (pos >= size_) ? throw "out_of_range": arr_[pos];}
+  reference at(size_type pos) {return (pos >= size_) ? throw std::out_of_range("out_of_range") : arr_[pos];}
+  const reference operator[](size_type pos) const {return arr_[pos];}
+  const reference at(size_type pos) const {return (pos >= size_) ? throw std::out_of_range("out_of_range") : arr_[pos];}
 
  private:
   size_type size_{};
