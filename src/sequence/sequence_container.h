@@ -23,6 +23,7 @@ class SequenceContainer {
   //  SequenceContainer() : size_(5), arr_(new value_type[size_]{1, 2, 3, 4, 5})
   //  {}
   SequenceContainer() = default;
+
   //  ~SequenceContainer(){}
 
   class Iterator {

@@ -19,7 +19,7 @@
 namespace s21 {
 
 template <class T, size_t N>
-class S21Array: public S21Vector<T> {
+class S21Array: public SequenceContainer<T> {
 
  public:
 
@@ -31,6 +31,8 @@ class S21Array: public S21Vector<T> {
   using pointer = value_type*;
 //  using iterator = pointer;
   using const_pointer = const value_type*;
+//    using SequenceContainer<T>::arr_;
+//    using SequenceContainer<T>::size_;
 
   /**
  * Constructors
@@ -93,11 +95,10 @@ class S21Array: public S21Vector<T> {
     return tmp;
   }
 
-
   reference operator[](size_type pos) {return arr_[pos];}
-  reference at(size_type pos) {return (pos >= size_) ? throw std::out_of_range("out_of_range") : arr_[pos];}
+  reference at(size_type pos) {return (pos < size_) ?  arr_[pos] : throw std::out_of_range("out_of_range");}
   const reference operator[](size_type pos) const {return arr_[pos];}
-  const reference at(size_type pos) const {return (pos >= size_) ? throw std::out_of_range("out_of_range") : arr_[pos];}
+  const reference at(size_type pos) const {return (pos < size_) ? arr_[pos] : throw std::out_of_range("out_of_range");}
 
  private:
   size_type size_{};
