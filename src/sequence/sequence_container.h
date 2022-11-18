@@ -118,3 +118,4 @@ class SequenceContainer {
 }  // namespace s21
 
 #endif  // S21_CONTAINERS_SRC_SEQUENCE_CONTAINER_H_
+
