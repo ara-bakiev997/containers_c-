@@ -180,3 +180,5 @@ fabric.properties
 tests/lib
 
 build
+cmake-build-debug
+.idea
