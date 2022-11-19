@@ -204,11 +204,11 @@ void S21List<T, Alloc>::push_back(const_reference value) {
   ++size_;
 }
 
- template <typename T, typename Alloc> void S21List<T, Alloc>::pop_back() {
-   Node<T> *temp = tail_;
-   tail_ = tail_->prev_;
-   DelNode(temp);
- }
+template <typename T, typename Alloc> void S21List<T, Alloc>::pop_back() {
+  Node<T> *temp = tail_;
+  tail_ = tail_->prev_;
+  DelNode(temp);
+}
 
 //_____SUPPORT_FUNC_____
 // template <typename value_type, typename Alloc>
