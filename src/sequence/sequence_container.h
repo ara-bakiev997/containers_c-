@@ -42,12 +42,12 @@ class SequenceContainer {
       temp.data_ += size;
       return temp;
     }
-    Iterator operator++() {
+    const Iterator operator++() {
       ++data_;
       return *this;
     }
 
-    Iterator operator++(int) {
+    const Iterator operator++(int) {
       Iterator temp(*this);
       this->data_++;
       return temp;
@@ -64,7 +64,7 @@ class SequenceContainer {
       return temp;
     }
 
-    Iterator operator-(size_type value) {
+    Iterator operator-(const size_type value) {
       data_ -= value;
       return *this;
     }
@@ -118,3 +118,4 @@ class SequenceContainer {
 }  // namespace s21
 
 #endif  // S21_CONTAINERS_SRC_SEQUENCE_CONTAINER_H_
+
