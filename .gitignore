@@ -182,3 +182,5 @@ tests/lib
 build
 cmake-build-debug
 .idea
+.clang-format
+
