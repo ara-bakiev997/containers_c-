@@ -14,7 +14,7 @@
 #include "sequence_container.h"
 
 namespace s21 {
-template <typename T> struct Node {
+template <typename T> struct Node final {
   T value_{};
   Node *next_{};
   Node *prev_{};
@@ -39,8 +39,9 @@ public:
 private:
   Node<T> *head_{};
   Node<T> *tail_{};
-  Alloc alloc_{};
+  NodeAlloc alloc_{};
 
+  // Iterators for list
   class ConstIterator {
   public:
     ConstIterator() = default;
@@ -82,7 +83,7 @@ public:
   S21List(const S21List &l);
   S21List(S21List &&l) {}
   ~S21List() {
-    for (auto i = 0; i < size_; ++i) {
+    for (auto i = size_; i > 0; --i) {
       Node<value_type> *temp = head_;
       head_ = head_->next_;
       DelNode(temp);
@@ -120,27 +121,22 @@ public:
   void print() {
     std::cout << "size = " << size_ << std::endl;
     Node<value_type> *temp = head_;
-    for (auto i = 0; i < size_; ++i) {
+    for (auto i = size_; i > 0; --i) {
       std::cout << temp->value_ << ' ';
       temp = temp->next_;
     }
     std::cout << std::endl;
   }
   Node<value_type> *NewNode(const_reference value) {
-    Node<value_type> *new_node =
-        reinterpret_cast<Node<value_type> *>(alloc_.allocate(1));
+    //    Node<value_type> *new_node = new Node<value_type>(value);
+    Node<value_type> *new_node = alloc_.allocate(1);
     alloc_.construct(new_node, value);
-    //    std::cout << sizeof(Node<int>) << std::endl;
-
     return new_node;
   }
   void DelNode(Node<value_type> *node) {
-    //    delete[] node;
-    alloc_.destroy(reinterpret_cast<int *>(node));
-    alloc_.deallocate(reinterpret_cast<int *>(node), 1);
+    alloc_.destroy(node);
+    alloc_.deallocate(node, 1);
   }
-
-  //  void DelNode(Node* node);
 };
 
 //_____CONSTRUCTORS_AND_DESTRUCTOR_____
@@ -208,6 +204,7 @@ template <typename T, typename Alloc> void S21List<T, Alloc>::pop_back() {
   Node<T> *temp = tail_;
   tail_ = tail_->prev_;
   DelNode(temp);
+  --size_;
 }
 
 //_____SUPPORT_FUNC_____

@@ -33,6 +33,9 @@ TEST_F(S21List_test, constructors) {
   list_2_.push_back(7);
   list_2_.print();
   list_2_.pop_back();
+  list_2_.pop_back();
+  list_2_.pop_back();
+  list_2_.pop_back();
   list_2_.print();
 
   //  auto it = list_2_.begin();
