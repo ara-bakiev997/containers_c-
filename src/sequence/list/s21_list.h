@@ -54,11 +54,14 @@ class S21List : public SequenceContainer<T> {
   };
 
   class Iterator : public ConstIterator {
+   public:
     Iterator() {}
     Iterator(Node<value_type> *pt) : node_(pt) {}
-    Iterator(Iterator &other) : node_(other.node_) {}
+    Iterator(const Iterator &other) : node_(other.node_) {}
+    Iterator &operator++();
+    Iterator &operator--();
     reference operator*() { return node_->value_; }
-    Iterator &operator=(Iterator &other);
+    Iterator &operator=(const Iterator &other);
 
    protected:
     Node<value_type> *node_{};
@@ -73,11 +76,12 @@ class S21List : public SequenceContainer<T> {
   S21List &operator=(S21List &&l) {}
 
   // List Element access
-  const_reference front() {return head_->value_;}
-  const_reference back() {return tail_->value_;}
+  const_reference front() { return head_->value_; }
+  const_reference back() { return tail_->value_; }
 
   // List Iterators
-//    iterator begin() override;
+//  iterator begin();
+//  const_iterator begin() const;
   //  Iterator begin() override;
   //  ConstIterator end() const;
   //  Iterator end() override;
@@ -103,14 +107,15 @@ class S21List : public SequenceContainer<T> {
   void sort();
 
   // Support func
-  Node<T> *NewNode(const_reference value);
-  void DelNode(Node<value_type> *node);
   void print();
 
  private:
   Node<T> *head_{};
   Node<T> *tail_{};
   NodeAlloc alloc_{};
+  // Support func
+  Node<T> *NewNode(const_reference value);
+  void DelNode(Node<value_type> *node);
 };
 
 }  // namespace s21

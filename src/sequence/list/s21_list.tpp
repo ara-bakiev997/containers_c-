@@ -20,14 +20,13 @@ S21List<value_type, Alloc>::S21List(
   }
 }
 
-// template <typename T, typename Alloc>
-// S21List<T, Alloc>::S21List(const S21List<T, Alloc> &l) {
-//   ConstIterator it = l.begin();
-//   for (auto i = l.size_; i > 0; --i) {
-//     push_back(*it);
-//     ++it;
-//   }
-// }
+template <typename T, typename Alloc>
+S21List<T, Alloc>::S21List(const S21List<T, Alloc> &l) {
+  //   ConstIterator it = l.begin();
+  for (auto i = l.begin(); i != l.end(); ++i) {
+    push_back(*i);
+  }
+}
 
 template <typename value_type, typename Alloc>
 S21List<value_type, Alloc>::~S21List() {
@@ -40,6 +39,20 @@ S21List<value_type, Alloc>::~S21List() {
 
 //_____LIST_ELEMENT_ACCESS_____
 //_____LIST_ITERATORS_____
+//template <typename value_type, typename Alloc>
+//typename S21List<value_type, Alloc>::iterator
+//S21List<value_type, Alloc>::begin() {
+//  iterator temp(head_);
+//  return temp;
+//}
+
+//template <typename value_type, typename Alloc>
+//typename S21List<value_type, Alloc>::const_iterator
+//S21List<value_type, Alloc>::begin() const {
+//  const_iterator temp(head_);
+//  return temp;
+//}
+
 // template <typename value_type, typename Alloc>
 // typename S21List<value_type, Alloc>::iterator
 // S21List<value_type, Alloc>::begin() {
@@ -171,7 +184,21 @@ S21List<value_type, Alloc>::ConstIterator::operator--() {
 //_____Iterator_____
 template <typename value_type, typename Alloc>
 typename S21List<value_type, Alloc>::Iterator &
-S21List<value_type, Alloc>::Iterator::operator=(Iterator &other) {
+S21List<value_type, Alloc>::Iterator::operator++() {
+  node_ = node_->next_;
+  return *this;
+}
+
+template <typename value_type, typename Alloc>
+typename S21List<value_type, Alloc>::Iterator &
+S21List<value_type, Alloc>::Iterator::operator--() {
+  node_ = node_->prev_;
+  return *this;
+}
+
+template <typename value_type, typename Alloc>
+typename S21List<value_type, Alloc>::Iterator &
+S21List<value_type, Alloc>::Iterator::operator=(const Iterator &other) {
   node_ = other.node_;
   return *this;
 }
