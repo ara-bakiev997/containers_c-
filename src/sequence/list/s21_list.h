@@ -26,13 +26,9 @@ struct Node {
 template <typename T, typename Alloc = std::allocator<T>>
 class S21List : public SequenceContainer<T> {
  public:
-  class ConstIterator;
-  class Iterator;
   using value_type = typename SequenceContainer<T>::value_type;
   using reference = typename SequenceContainer<T>::reference;
   using const_reference = typename SequenceContainer<T>::const_reference;
-  using iterator = S21List<T, Alloc>::Iterator;
-  using const_iterator = const S21List<T, Alloc>::ConstIterator;
   using size_type = typename SequenceContainer<T>::size_type;
   using SequenceContainer<T>::arr_;
   using SequenceContainer<T>::size_;
@@ -48,26 +44,36 @@ class S21List : public SequenceContainer<T> {
     ConstIterator &operator++();
     ConstIterator &operator--();
     const_reference operator*() const { return node_->value_; }
+    bool operator!=(const ConstIterator &other) const {
+      return node_ != other.node_;
+    }
+    bool operator==(const ConstIterator &other) const {
+      return node_ == other.node_;
+    }
 
    protected:
-    const Node<value_type> *node_{};
+    Node<value_type> *node_{};
   };
 
   class Iterator : public ConstIterator {
    public:
     Iterator() {}
-    Iterator(Node<value_type> *pt) : node_(pt) {}
-    Iterator(const Iterator &other) : node_(other.node_) {}
+    Iterator(Node<value_type> *pt) { this->node_ = pt; }
+
+    Iterator(const Iterator &other) { this->node_ = other.node_; }
     Iterator &operator++();
     Iterator &operator--();
-    reference operator*() { return node_->value_; }
+    reference operator*() { return this->node_->value_; }
     Iterator &operator=(const Iterator &other);
-
-   protected:
-    Node<value_type> *node_{};
   };
+  using iterator = Iterator;
+  using const_iterator = ConstIterator;
   // Constructors and destructor
-  S21List() {}
+  S21List() {
+    fake_ = alloc_.allocate(1);
+    fake_->prev_ = head_;
+    fake_->next_ = tail_;
+  }
   S21List(size_type n);
   S21List(std::initializer_list<value_type> const &items);
   S21List(const S21List &l);
@@ -80,11 +86,8 @@ class S21List : public SequenceContainer<T> {
   const_reference back() { return tail_->value_; }
 
   // List Iterators
-//  iterator begin();
-//  const_iterator begin() const;
-  //  Iterator begin() override;
-  //  ConstIterator end() const;
-  //  Iterator end() override;
+  iterator begin() const;
+  iterator end() const;
 
   // List Capacity
   bool empty() { return (size_ ? false : true); }
@@ -112,6 +115,7 @@ class S21List : public SequenceContainer<T> {
  private:
   Node<T> *head_{};
   Node<T> *tail_{};
+  Node<T> *fake_{};
   NodeAlloc alloc_{};
   // Support func
   Node<T> *NewNode(const_reference value);
