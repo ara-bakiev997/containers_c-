@@ -47,7 +47,7 @@ class S21Vector : public SequenceContainer<T> {
   }
 
   // destructor
-  ~S21Vector() { delete[] arr_; }
+  ~S21Vector()= default;// { delete[] arr_; }
 
   // Assignment operator
   S21Vector &operator=(const S21Vector &v);
@@ -82,7 +82,9 @@ class S21Vector : public SequenceContainer<T> {
   void clear();  // clears the contents
   iterator insert(iterator pos, const_reference value);
   void erase(iterator pos);               // erases element at pos
+protected:
   void push_back(const_reference value);  // adds an element to the end
+public:
   void pop_back();                        // removes the last element
   void swap(S21Vector &other);            // swaps the contents
 

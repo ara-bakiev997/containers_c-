@@ -24,7 +24,7 @@ class SequenceContainer {
   //  {}
   SequenceContainer() = default;
 
-  //  ~SequenceContainer(){}
+  //  ~SequenceContainer(){ }
 
   class Iterator {
    public:
@@ -88,15 +88,17 @@ class SequenceContainer {
     T *data_{};
   };
 
-  virtual iterator begin() {
-    iterator temp(this->arr_);
-    return temp;
-  }
+    virtual iterator begin() = 0;
+//  virtual iterator begin() {
+//    iterator temp(this->arr_);
+//    return temp;
+//  }
 
-  virtual iterator end() {
-    iterator temp(this->arr_ + size_);
-    return temp;
-  }
+    virtual iterator end() =0;
+//  virtual iterator end() {
+//    iterator temp(this->arr_ + size_);
+//    return temp;
+//  }
 
  protected:
   size_type size_{};

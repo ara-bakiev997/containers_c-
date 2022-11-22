@@ -30,6 +30,8 @@ TEST_F(S21Array_test, test_constructor_def) {
 }
 
 TEST_F(S21Array_test, test_constructor_il) {
+    S21Array<int, 3> array_4 = {1, 2, 3, 4, 5};
+//    std::array<int, 4> test_4 = {1, 2, 3, 4, 5};
   EXPECT_EQ(array.size(), test.size());
   for (auto i = 0; i < array.size(); ++i)
     EXPECT_EQ(array.at(i), test.at(i));
@@ -52,7 +54,7 @@ TEST_F(S21Array_test, test_constructor_move) {
   std::cout<<"test_constructor_move = ok"<<"\n";
 }
 
-// fix me: test2- copy?
+
 TEST_F(S21Array_test, test_op_move) {
   S21Array<int, 5> arr= {1, 2, 3, 4, 5};
   array_2 = std::move(arr);
@@ -147,6 +149,11 @@ TEST_F(S21Array_test, test_at) {
     EXPECT_ANY_THROW(test_empty.at(0));
     std::cout<<"test_at = ok"<<"\n";
 }
+
+//TEST_F(S21Array_test, test) {
+//    S21Array<int, 5> arr7= {1, 2, 3, 4, 5};
+//    std::cout<<"test = ok"<<arr7[5]<<"\n";
+//}
 
 
 int main(int argc, char *argv[]) {
