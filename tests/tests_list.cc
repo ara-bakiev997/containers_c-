@@ -15,13 +15,11 @@ class S21List_test : public ::testing::Test {
   S21List<int> list_1_ = S21List<int>(5);
   S21List<int> list_2_ = {1, 2, 3, 4, 5};
   S21List<std::string> list_string = {"a", "b", "c", "d"};
-  //  S21List<int> list_3_(S21List<int> list_2_);
 
   std::list<int> test_empty;
   std::list<int> test1 = std::list<int>(5);
   std::list<int> test2 = {1, 2, 3, 4, 5};
   std::list<std::string> test_string = {"a", "b", "c", "d"};
-  //  std::list<int> test3 =  std::list<int>(10);
 };
 
 TEST_F(S21List_test, constructors) {
@@ -29,27 +27,18 @@ TEST_F(S21List_test, constructors) {
   ASSERT_EQ(list_1_.size(), test1.size());
   ASSERT_EQ(list_2_.size(), test2.size());
   S21List<int> list_3_(list_2_);
-  list_3_.print();
-  list_2_.print();
-  //  auto it = test2.end();
-  //  *it = 6;
-  //  std::cout << *it << std::endl;
-  //  --it;
-  //  std::cout << *it << std::endl;
-  //  --it;
-  //  std::cout << *it << std::endl;
-  //  --it;
-  //  std::cout << *it << std::endl;
-  //  --it;
-  //  std::cout << *it << std::endl;
-  //  --it;
-  //  std::cout << *it << std::endl;
-  //  --it;
-  //  std::cout << *it << std::endl;
-  //  --it;
-  //  std::cout << *it << std::endl;
-
-  //  list_2_.print();
+  std::list<int> test3(test2);
+  auto it = list_3_.begin();
+  auto it_or = test3.begin();
+  ASSERT_EQ(*it, *it_or);
+  ++it, ++it_or;
+  ASSERT_EQ(*it, *it_or);
+  --it, --it_or;
+  ASSERT_EQ(*it, *it_or);
+  ++it, ++it_or;
+  ASSERT_EQ(*it, *it_or);
+  ++it, ++it_or;
+  ASSERT_EQ(*it, *it_or);
 }
 
 TEST_F(S21List_test, Access) {
@@ -62,23 +51,23 @@ TEST_F(S21List_test, Access) {
 TEST_F(S21List_test, Iterators) {
   auto it = list_string.begin();
   auto it_or = test_string.begin();
-//  ASSERT_EQ(*it, *it_or);
-//  ++it, ++it_or;
-//  ASSERT_EQ(*it, *it_or);
-//  --it, --it_or;
-//  ASSERT_EQ(*it, *it_or);
-  for (auto i = 0; i < list_string.size() + 1; ++i, ++it) {
-    std::cout << *it << ' ';
-  }
-
-
-
-
-
-  //  --it, --it_or;
-  //  --it, --it_or;
-  //  --it, --it_or;
-  //  ASSERT_EQ(*it, *it_or);
+  ASSERT_EQ(*it, *it_or);
+  ++it, ++it_or;
+  ASSERT_EQ(*it, *it_or);
+  --it, --it_or;
+  ASSERT_EQ(*it, *it_or);
+  ++it, ++it_or;
+  ASSERT_EQ(*it, *it_or);
+  ++it, ++it_or;
+  ASSERT_EQ(*it, *it_or);
+  it = list_string.end();
+  it_or = test_string.end();
+  --it, --it_or;
+  ASSERT_EQ(*it, *it_or);
+  --it, --it_or;
+  ASSERT_EQ(*it, *it_or);
+  --it, --it_or;
+  ASSERT_EQ(*it, *it_or);
 }
 
 TEST_F(S21List_test, Capacity) {

@@ -19,21 +19,21 @@ template <typename value_type, typename Alloc>
 S21List<value_type, Alloc>::S21List(
     const std::initializer_list<value_type> &items) {
   fake_ = alloc_.allocate(1);
-  fake_->prev_ = tail_;
-  fake_->next_ = head_;
   for (auto it = items.begin(); it != items.end(); ++it) {
     push_back(*it);
   }
+  fake_->prev_ = tail_;
+  fake_->next_ = head_;
 }
 
 template <typename T, typename Alloc>
 S21List<T, Alloc>::S21List(const S21List<T, Alloc> &l) {
   fake_ = alloc_.allocate(1);
-  fake_->prev_ = tail_;
-  fake_->next_ = head_;
   for (auto i = l.begin(); i != l.end(); ++i) {
     push_back(*i);
   }
+  fake_->prev_ = tail_;
+  fake_->next_ = head_;
 }
 
 template <typename value_type, typename Alloc>
@@ -43,7 +43,7 @@ S21List<value_type, Alloc>::~S21List() {
     head_ = head_->next_;
     DelNode(temp);
   }
-  DelNode(fake_);
+  alloc_.deallocate(fake_, 1); // отдельно удаляем память под fake ноду
 }
 
 //_____LIST_ELEMENT_ACCESS_____

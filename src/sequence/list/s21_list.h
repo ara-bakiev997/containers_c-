@@ -41,8 +41,8 @@ class S21List : public SequenceContainer<T> {
     ConstIterator() {}
     ConstIterator(const Node<value_type> *pt) : node_(pt) {}
     ConstIterator(ConstIterator &other) : node_(other.node_) {}
-    ConstIterator &operator++();
-    ConstIterator &operator--();
+    virtual ConstIterator &operator++();
+    virtual ConstIterator &operator--();
     const_reference operator*() const { return node_->value_; }
     bool operator!=(const ConstIterator &other) const {
       return node_ != other.node_;
@@ -71,8 +71,8 @@ class S21List : public SequenceContainer<T> {
   // Constructors and destructor
   S21List() {
     fake_ = alloc_.allocate(1);
-    fake_->prev_ = head_;
-    fake_->next_ = tail_;
+    fake_->prev_ = tail_;
+    fake_->next_ = head_;
   }
   S21List(size_type n);
   S21List(std::initializer_list<value_type> const &items);
