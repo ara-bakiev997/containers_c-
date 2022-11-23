@@ -26,6 +26,7 @@ TEST_F(S21List_test, constructors) {
   ASSERT_EQ(list_empty.size(), test_empty.size());
   ASSERT_EQ(list_1_.size(), test1.size());
   ASSERT_EQ(list_2_.size(), test2.size());
+  // Copy
   S21List<int> list_3_(list_2_);
   std::list<int> test3(test2);
   auto it = list_3_.begin();
@@ -39,9 +40,22 @@ TEST_F(S21List_test, constructors) {
   ASSERT_EQ(*it, *it_or);
   ++it, ++it_or;
   ASSERT_EQ(*it, *it_or);
-
-
-
+  // Move
+  S21List<int> list_4_ = std::move(list_3_);
+  std::list<int> test4 = std::move(test3);
+  ASSERT_EQ(list_4_.size(), test4.size());
+  ASSERT_EQ(list_3_.size(), test3.size());
+  it = list_4_.begin();
+  it_or = test4.begin();
+  ASSERT_EQ(*it, *it_or);
+  ++it, ++it_or;
+  ASSERT_EQ(*it, *it_or);
+  --it, --it_or;
+  ASSERT_EQ(*it, *it_or);
+  ++it, ++it_or;
+  ASSERT_EQ(*it, *it_or);
+  ++it, ++it_or;
+  ASSERT_EQ(*it, *it_or);
 }
 
 TEST_F(S21List_test, Access) {
@@ -83,6 +97,28 @@ TEST_F(S21List_test, Capacity) {
   ASSERT_EQ(list_string.empty(), test_string.empty());
   ASSERT_EQ(list_string.size(), test_string.size());
 }
+
+TEST_F(S21List_test, ModifiersClear) {
+//  list_2_.clear();
+//  test2.clear();
+//  ASSERT_EQ(list_2_.empty(), test2.empty());
+//  list_2_.push_back(1);
+////  list_2_.push_back(5);
+//  test2.push_back(1);
+//  test2.push_back(5);
+//  ASSERT_EQ(list_2_.empty(), test2.empty());
+//  ASSERT_EQ(list_empty.size(), test_empty.size());
+}
+
+//TEST_F(S21List_test, ModifiersInsert) {
+//  std::list<int> test5 = {6, 5, 3, 3, 3, 4, 5};
+//  for (auto i : test5) std::cout << i << ' ';
+//  std::cout << '\n';
+//  test5.unique();
+//  for (auto i : test5) std::cout << i << ' ';
+//
+//
+//}
 
 TEST_F(S21List_test, ModifiersPush) {
   list_empty.push_front(10);

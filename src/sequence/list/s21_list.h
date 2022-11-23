@@ -81,15 +81,9 @@ class S21List : public SequenceContainer<T> {
   S21List(size_type n);
   S21List(std::initializer_list<value_type> const &items);
   S21List(const S21List &l);
-  S21List(S21List &&l) {
-    Node<T> *temp = head_;
-    for (auto it = l.begin(); it != l.end(); ++it) {
-      std::swap(temp, l.head_);
-      temp = temp->next_;
-    }
-  }
+  S21List(S21List &&l) noexcept { *this = std::move(l); }
   ~S21List();
-  S21List &operator=(S21List &&l) {}
+  S21List &operator=(S21List &&l) noexcept;
 
   // List Element access
   const_reference front() { return head_->value_; }

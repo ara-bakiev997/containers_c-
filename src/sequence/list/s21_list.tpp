@@ -36,12 +36,6 @@ S21List<T, Alloc>::S21List(const S21List<T, Alloc> &l) {
   fake_->next_ = head_;
 }
 
-//template <typename T, typename Alloc>
-//S21List<T, Alloc>::S21List(S21List<T, Alloc> &&l) {
-//
-//}
-
-
 template <typename value_type, typename Alloc>
 S21List<value_type, Alloc>::~S21List() {
   for (auto i = size_; i > 0; --i) {
@@ -50,6 +44,16 @@ S21List<value_type, Alloc>::~S21List() {
     DelNode(temp);
   }
   alloc_.deallocate(fake_, 1);  // отдельно удаляем память под fake ноду
+}
+
+template <typename T, typename Alloc>
+S21List<T, Alloc> &S21List<T, Alloc>::operator=(
+    S21List<T, Alloc> &&l) noexcept {
+  std::swap(fake_, l.fake_);
+  std::swap(head_, l.head_);
+  std::swap(tail_, l.tail_);
+  std::swap(size_, l.size_);
+  return *this;
 }
 
 //_____LIST_ELEMENT_ACCESS_____
@@ -79,6 +83,14 @@ typename S21List<value_type, Alloc>::Iterator S21List<value_type, Alloc>::end()
 //_____LIST_CAPACITY_____
 
 //_____LIST_MODIFIERS_____
+template <typename T, typename Alloc>
+void S21List<T, Alloc>::clear() {
+  for (auto i = size_; i > 0; --i) {
+    pop_back();
+  }
+}
+
+
 template <typename T, typename Alloc>
 void S21List<T, Alloc>::push_back(const_reference value) {
   Node<value_type> *temp = NewNode(value);
