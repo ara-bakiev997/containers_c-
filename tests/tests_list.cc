@@ -39,6 +39,9 @@ TEST_F(S21List_test, constructors) {
   ASSERT_EQ(*it, *it_or);
   ++it, ++it_or;
   ASSERT_EQ(*it, *it_or);
+
+
+
 }
 
 TEST_F(S21List_test, Access) {
@@ -56,9 +59,8 @@ TEST_F(S21List_test, Iterators) {
   ASSERT_EQ(*it, *it_or);
   --it, --it_or;
   ASSERT_EQ(*it, *it_or);
-  ++it, ++it_or;
-  ASSERT_EQ(*it, *it_or);
-  ++it, ++it_or;
+  ASSERT_EQ(*(it++), *(it_or++));
+  it++, ++it_or;
   ASSERT_EQ(*it, *it_or);
   it = list_string.end();
   it_or = test_string.end();
@@ -66,6 +68,7 @@ TEST_F(S21List_test, Iterators) {
   ASSERT_EQ(*it, *it_or);
   --it, --it_or;
   ASSERT_EQ(*it, *it_or);
+  ASSERT_EQ(*(it--), *(it_or--));
   --it, --it_or;
   ASSERT_EQ(*it, *it_or);
 }
