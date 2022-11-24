@@ -23,38 +23,31 @@ class S21Array: public S21Vector<T> {
 
  public:
 
-  using value_type = typename SequenceContainer<T>::value_type;
-  using reference = typename SequenceContainer<T>::reference;
-  using const_reference = typename SequenceContainer<T>::const_reference;
-  using iterator = typename SequenceContainer<T>::Iterator;
-  using size_type = typename SequenceContainer<T>::size_type;
+  using value_type = typename S21Vector<T>::value_type;
+  using reference = typename S21Vector<T>::reference;
+  using const_reference = typename S21Vector<T>::const_reference;
+  using size_type = typename S21Vector<T>::size_type;
   using pointer = value_type*;
-//  using iterator = pointer;
+  using iterator = pointer;
   using const_pointer = const value_type*;
 
   /**
  * Constructors
  */
-  S21Array(): size_(N){}
+  S21Array();
 
+  S21Array(std::initializer_list<value_type> const &items);
 
-  S21Array(std::initializer_list<value_type> const &items): size_(N) {
-    std::copy(items.begin(),items.end(), arr_);
-  }
+    S21Array(const S21Array &other);
 
-  S21Array(const S21Array &other): size_(N) {
-    std::memcpy(arr_, other.arr_, sizeof(value_type) *size_);
-  }
+    S21Array(S21Array &&other) noexcept;
 
-  S21Array(S21Array &&other) noexcept : size_(N) {
-    swap(other);
-  }
+    ~S21Array()=default;
 
-  ~S21Array() = default;
-
-  S21Array &operator=(S21Array &&other) noexcept {
-    swap(other);
-    return *this;
+    S21Array &operator=(S21Array &&other) noexcept {
+//    swap(other);
+        std::move(other.begin(), other.end(), this->arr_);
+        return *this;
     }
 
     /**
@@ -62,49 +55,66 @@ class S21Array: public S21Vector<T> {
      * @return
      */
 
-  size_type size() noexcept {return size_;}
-  bool empty() {return size_ == 0;}
-  size_type max_size() {return size_;}
+  size_type max_size() {return this->size_;}
 
-  void swap(S21Array& other) {
-    std::swap(arr_, other.arr_);
-    std::swap(size_, other.size_);
-  }
+//  void swap(S21Array& other) {
+////    std::swap(arr_, other.arr_);
+////    std::swap(size_, other.size_);
+//    std::swap(*this, other);
+//  }
   void fill(const_reference value) {
-//    std::fill(arr_[0], arr_[size_-1], value);
-      if (size_) {
-        for (auto i = 0; i < size_; ++i) arr_[i] = value;
+      if (this->size_) {
+        for (auto i = 0; i < this->size_; ++i) this->arr_[i] = value;
       }
   }
 
-  const_reference front() {return arr_[0];}
-  const_reference back() {return arr_[size_-1];}
-  pointer data() noexcept {return arr_;}
-  const_pointer data() const noexcept {return arr_;}
-
-//  iterator begin(){return arr_;}
-  iterator begin() noexcept override {
-    iterator tmp(arr_);
-    return tmp;
-  }
-
-  iterator end() noexcept override {
-    iterator tmp(arr_ + size_);
-    return tmp;
-  }
+//  const_pointer data() const noexcept {return this->arr_;}
+  iterator begin() const;
+  iterator end() const;
 
 
-  reference operator[](size_type pos) {return arr_[pos];}
-  reference at(size_type pos) {return (pos >= size_) ? throw std::out_of_range("out_of_range") : arr_[pos];}
-  const reference operator[](size_type pos) const {return arr_[pos];}
-  const reference at(size_type pos) const {return (pos >= size_) ? throw std::out_of_range("out_of_range") : arr_[pos];}
-
- private:
-  size_type size_{};
-  value_type arr_[N]{};
+private:
+  value_type arr_stat[N]{};
+    void push_back(const_reference value);
+    void pop_back();
 
 };
 
+template<class T, size_t N>
+   S21Array<T, N>::S21Array() {
+        this->size_ = N;
+        this->arr_ = arr_stat;
+    }
+
+ template<class value_type, size_t N>
+   S21Array<value_type, N>::S21Array(std::initializer_list<value_type> const &items) : S21Array() {
+     this->size_ < items.size() ? throw std::out_of_range("too few items") :
+     std::copy(items.begin(), items.end(), this->arr_);
+ }
+
+    template<class T, size_t N>
+    S21Array<T, N>::S21Array(const S21Array &other) : S21Array() {
+        std::memcpy(this->arr_, other.arr_, sizeof(value_type) * this->size_);
+    }
+
+    template<class T, size_t N>
+    S21Array<T, N>::S21Array(S21Array &&other) noexcept: S21Array() {
+        std::move(other.begin(), other.end(), this->arr_);
+    }
+
+
+template <class T, size_t N>
+typename S21Array<T, N>::iterator S21Array<T, N>::begin() const {
+    return this->arr_;
 }
+
+template <class T, size_t N>
+typename S21Array<T, N>::iterator S21Array<T, N>::end() const {
+    return this->arr_ + this->size_;
+}
+
+
+
+} // namespace 21
 
 #endif  // S21_CONTAINERS_SRC_SEQUENCE_S21_ARRAY_H_
