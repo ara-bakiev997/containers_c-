@@ -99,26 +99,35 @@ TEST_F(S21List_test, Capacity) {
 }
 
 TEST_F(S21List_test, ModifiersClear) {
-//  list_2_.clear();
-//  test2.clear();
-//  ASSERT_EQ(list_2_.empty(), test2.empty());
-//  list_2_.push_back(1);
-////  list_2_.push_back(5);
-//  test2.push_back(1);
-//  test2.push_back(5);
-//  ASSERT_EQ(list_2_.empty(), test2.empty());
-//  ASSERT_EQ(list_empty.size(), test_empty.size());
+  list_2_.clear();
+  test2.clear();
+  ASSERT_EQ(list_2_.empty(), test2.empty());
+  list_2_.push_front(1);
+  list_2_.push_back(5);
+  test2.push_front(1);
+  test2.push_back(5);
+  ASSERT_EQ(list_empty.size(), test_empty.size());
+  auto it = list_2_.begin();
+  auto it_or = test2.begin();
+  ASSERT_EQ(*it, *it_or);
+  ++it, ++it_or;
+  ASSERT_EQ(*it, *it_or);
 }
 
-//TEST_F(S21List_test, ModifiersInsert) {
-//  std::list<int> test5 = {6, 5, 3, 3, 3, 4, 5};
-//  for (auto i : test5) std::cout << i << ' ';
-//  std::cout << '\n';
-//  test5.unique();
-//  for (auto i : test5) std::cout << i << ' ';
-//
-//
-//}
+TEST_F(S21List_test, ModifiersInsert) {
+  S21List<int> test5 = {1, 2, 3, 4, 5};
+  for (auto i : test5) std::cout << i << ' ';
+  std::cout << '\n';
+  auto it = test5.end();
+//  ++it;
+  test5.insert(it, 6);
+  for (auto i : test5) std::cout << i << ' ';
+  it = test5.end();
+  std::cout << '\n';
+  test5.insert(it, 7);
+  for (auto i : test5) std::cout << i << ' ';
+
+}
 
 TEST_F(S21List_test, ModifiersPush) {
   list_empty.push_front(10);

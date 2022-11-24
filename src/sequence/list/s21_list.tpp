@@ -90,11 +90,30 @@ void S21List<T, Alloc>::clear() {
   }
 }
 
+template <typename T, typename Alloc>
+typename S21List<T, Alloc>::iterator S21List<T, Alloc>::insert(
+    S21List<T, Alloc>::iterator pos, S21List<T, Alloc>::const_reference value) {
+//  auto it = this->begin();
+  for (auto it = this->begin(); it != this->end(); ++it) {
+    if (it == pos) {
+      Node<value_type> *temp = NewNode(value);
+      Node<value_type> *pre = it.node_->prev_;
+      Node<value_type> *nex = it.node_;
+      it.node_ = temp;
+      pre->next_ = it.node_;
+      it.node_->prev_ = pre;
+      nex->prev_ = it.node_;
+      it.node_->next_ = nex;
+      break ;
+    }
+  }
+  ++size_;
+}
 
 template <typename T, typename Alloc>
 void S21List<T, Alloc>::push_back(const_reference value) {
   Node<value_type> *temp = NewNode(value);
-  if (head_) {
+  if (size_) {
     tail_->next_ = temp;
     temp->prev_ = tail_;
     tail_ = temp;
@@ -118,7 +137,7 @@ void S21List<T, Alloc>::pop_back() {
 template <typename T, typename Alloc>
 void S21List<T, Alloc>::push_front(const_reference value) {
   Node<value_type> *temp = NewNode(value);
-  if (head_) {
+  if (size_) {
     head_->prev_ = temp;
     temp->next_ = head_;
     head_ = temp;
