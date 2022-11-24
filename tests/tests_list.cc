@@ -40,7 +40,7 @@ TEST_F(S21List_test, constructors) {
   ASSERT_EQ(*it, *it_or);
   ++it, ++it_or;
   ASSERT_EQ(*it, *it_or);
-  // Move
+//  // Move
   S21List<int> list_4_ = std::move(list_3_);
   std::list<int> test4 = std::move(test3);
   ASSERT_EQ(list_4_.size(), test4.size());
@@ -115,17 +115,58 @@ TEST_F(S21List_test, ModifiersClear) {
 }
 
 TEST_F(S21List_test, ModifiersInsert) {
-  S21List<int> test5 = {1, 2, 3, 4, 5};
-  for (auto i : test5) std::cout << i << ' ';
+  auto it = list_string.begin();
+  auto it_or = test_string.begin();
+  auto ret = list_string.insert(it, "qwerty");
+  auto ret_or = test_string.insert(it_or, "qwerty");
+  ASSERT_EQ(*it, *it_or);
+  ASSERT_EQ(*ret, *ret_or);
+  ASSERT_EQ(*(++it), *(++it_or));
+  ASSERT_EQ(*(++ret), *(++ret_or));
+  it = list_string.end();
+  it_or = test_string.end();
+  ret = list_string.insert(it, "asdf");
+  ret_or = test_string.insert(it_or, "asdf");
+  ASSERT_EQ(*ret, *ret_or);
+  ASSERT_EQ(*(--ret), *(--ret_or));
+  // Empty list
+  auto it_em = list_empty.begin();
+  auto it_em_or = test_empty.begin();
+  auto ret_em = list_empty.insert(it_em, 1);
+  auto ret_em_or = test_empty.insert(it_em_or, 1);
+  ASSERT_EQ(*ret_em, *ret_em_or);
+  list_empty.insert(it_em, 10);
+  test_empty.insert(it_em_or, 10);
+  ASSERT_EQ(*(++it_em), *(++it_em_or));
+  // Another list
+
+}
+
+TEST_F(S21List_test, ModifiersErase) {
+  auto it = list_string.begin();
+  auto it_or = test_string.begin();
+//  list_string.erase(++it); // ?????????????
+  list_string.erase(it);
+  test_string.erase(it_or);
+  for(auto i : list_string) {
+	std::cout << i << ' ';
+  }
   std::cout << '\n';
-  auto it = test5.end();
-//  ++it;
-  test5.insert(it, 6);
-  for (auto i : test5) std::cout << i << ' ';
-  it = test5.end();
-  std::cout << '\n';
-  test5.insert(it, 7);
-  for (auto i : test5) std::cout << i << ' ';
+  for(auto i : test_string) {
+	std::cout << i << ' ';
+  }
+
+
+  // Empty list
+  auto it_em = list_empty.begin();
+  auto it_em_or = test_empty.begin();
+  auto ret_em = list_empty.insert(it_em, 1);
+  auto ret_em_or = test_empty.insert(it_em_or, 1);
+  ASSERT_EQ(*ret_em, *ret_em_or);
+  list_empty.insert(it_em, 10);
+  test_empty.insert(it_em_or, 10);
+  ASSERT_EQ(*(++it_em), *(++it_em_or));
+  // Another list
 
 }
 

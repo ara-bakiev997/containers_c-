@@ -14,16 +14,17 @@
 #include "../sequence_container.h"
 
 namespace s21 {
-template <typename T>
+template<typename T>
 struct Node {
   T value_{};
   Node *next_{};
   Node *prev_{};
   Node() : value_(), next_(nullptr), prev_(nullptr) {}
   Node(const T &value) : value_(value), next_(nullptr), prev_(nullptr) {}
+//  ~Node() { next_ = nullptr, prev_ = nullptr;}
 };
 
-template <typename T, typename Alloc = std::allocator<T>>
+template<typename T, typename Alloc = std::allocator<T>>
 class S21List : public SequenceContainer<T> {
  public:
   using value_type = typename SequenceContainer<T>::value_type;
@@ -33,61 +34,63 @@ class S21List : public SequenceContainer<T> {
   using SequenceContainer<T>::arr_;
   using SequenceContainer<T>::size_;
   using NodeAlloc = typename std::allocator_traits<
-      Alloc>::template rebind_alloc<Node<value_type>>;
+	  Alloc>::template rebind_alloc<Node<value_type>>;
 
   // Iterators for list
   class ConstIterator {
    public:
-    ConstIterator() {}
-    ConstIterator(const Node<value_type> *pt) : node_(pt) {}
-    ConstIterator(ConstIterator &other) : node_(other.node_) {}
-    virtual ConstIterator &operator++();
-    virtual ConstIterator operator++(int);
-    virtual ConstIterator &operator--();
-    virtual ConstIterator operator--(int);
-    const_reference operator*() const { return node_->value_; }
-    bool operator!=(const ConstIterator &other) const {
-      return node_ != other.node_;
-    }
-    bool operator==(const ConstIterator &other) const {
-      return node_ == other.node_;
-    }
+	ConstIterator() {}
+	ConstIterator(const Node<value_type> *pt) : node_(pt) {}
+	ConstIterator(ConstIterator &other) : node_(other.node_) {}
+	virtual ConstIterator &operator++();
+	virtual ConstIterator operator++(int);
+	virtual ConstIterator &operator--();
+	virtual ConstIterator operator--(int);
+	const_reference operator*() const { return node_->value_; }
+	bool operator!=(const ConstIterator &other) const {
+	  return node_ != other.node_;
+	}
+	bool operator==(const ConstIterator &other) const {
+	  return node_ == other.node_;
+	}
 
    protected:
-    Node<value_type> *node_{};
+	Node<value_type> *node_{};
   };
 
   class Iterator : public ConstIterator {
    public:
-    Iterator() {}
-    Iterator(Node<value_type> *pt) { this->node_ = pt; }
+	Iterator() {}
+	Iterator(Node<value_type> *pt) { this->node_ = pt; }
 
-    Iterator(const Iterator &other) { this->node_ = other.node_; }
-    //    Iterator &operator++();
-    //    Iterator operator++(int);
-    //    Iterator &operator--();
-    //    Iterator operator--(int);
-    reference operator*() { return this->node_->value_; }
-    Iterator &operator=(const Iterator &other);
+	Iterator(const Iterator &other) { this->node_ = other.node_; }
+	reference operator*() { return this->node_->value_; }
+	Iterator &operator=(const Iterator &other);
+	Node<value_type> *AccessNode() { return this->node_; }
   };
   using iterator = Iterator;
   using const_iterator = ConstIterator;
   // Constructors and destructor
   S21List() {
-    fake_ = alloc_.allocate(1);
-    fake_->prev_ = tail_;
-    fake_->next_ = head_;
+	fake_ = alloc_.allocate(1);
+	fake_->prev_ = fake_;
+	fake_->next_ = fake_;
   }
   S21List(size_type n);
   S21List(std::initializer_list<value_type> const &items);
   S21List(const S21List &l);
-  S21List(S21List &&l) noexcept { *this = std::move(l); }
+  S21List(S21List &&l) noexcept {
+	fake_ = alloc_.allocate(1);
+	fake_->prev_ = fake_;
+	fake_->next_ = fake_;
+	*this = std::move(l);
+  }
   ~S21List();
   S21List &operator=(S21List &&l) noexcept;
 
   // List Element access
-  const_reference front() { return head_->value_; }
-  const_reference back() { return tail_->value_; }
+  const_reference front() { return fake_->next_->value_; }
+  const_reference back() { return fake_->prev_->value_; }
 
   // List Iterators
   iterator begin() const;
@@ -117,8 +120,8 @@ class S21List : public SequenceContainer<T> {
   void print();
 
  private:
-  Node<T> *head_{};
-  Node<T> *tail_{};
+//  Node<T> *head_{};
+//  Node<T> *tail_{};
   Node<T> *fake_{};
   NodeAlloc alloc_{};
   // Support func
