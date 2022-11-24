@@ -9,8 +9,8 @@ namespace s21 {
 template <class T>
 class Container {
  public:
-  Container() {}
-  virtual ~Container() {}
+  Container() = default;
+  virtual ~Container() = default;
 };
 
 // Container::~Container() {}

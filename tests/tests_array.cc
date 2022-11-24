@@ -30,7 +30,7 @@ TEST_F(S21Array_test, test_constructor_def) {
 }
 
 TEST_F(S21Array_test, test_constructor_il) {
-    S21Array<int, 3> array_4 = {1, 2, 3, 4, 5};
+//    S21Array<int, 3> array_4 = {1, 2, 3, 4, 5};
 //    std::array<int, 4> test_4 = {1, 2, 3, 4, 5};
   EXPECT_EQ(array.size(), test.size());
   for (auto i = 0; i < array.size(); ++i)
