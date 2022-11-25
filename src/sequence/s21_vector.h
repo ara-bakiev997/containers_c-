@@ -318,9 +318,10 @@ template <class value_type> void S21Vector<value_type>::pop_back() {
 }
 
 template <class value_type> void S21Vector<value_type>::swap(S21Vector &other) {
-  std::swap(this->arr_, other.arr_);
-  std::swap(this->size_, other.size_);
-  std::swap(this->capacity_, other.capacity_);
+//  std::swap(this->arr_, other.arr_);
+//  std::swap(this->size_, other.size_);
+//  std::swap(this->capacity_, other.capacity_);
+    std::swap(*this, other);
 }
 template <class T>
 bool S21Vector<T>::operator==(const S21Vector<value_type> &other) {
