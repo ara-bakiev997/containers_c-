@@ -10,7 +10,7 @@ using namespace s21;
 class S21Vector_test : public ::testing::Test {
  protected:
   void SetUp() override {}
-  S21Vector<int> s_21_vector_empty;
+  S21Vector<int> vector_empty;
   S21Vector<int> vector_1_ = {1, 2, 3, 4, 5};
   S21Vector<int> vector_2_ = S21Vector<int>(10);
   std::vector<int> test_empty;
@@ -19,21 +19,24 @@ class S21Vector_test : public ::testing::Test {
 };
 
 TEST_F(S21Vector_test, _operatorCopy) {
-  s_21_vector_empty = vector_1_;
+  vector_empty = vector_1_;
   test = test2;
   EXPECT_EQ(test, test2);
-  EXPECT_TRUE(s_21_vector_empty == vector_1_);
+//  EXPECT_EQ(vector_empty, vector_1_);
+  for (auto i = 0; i < vector_empty.size(); ++i) {
+    EXPECT_EQ(vector_empty.at(i), vector_1_.at(i));
+  }
 }
 
 TEST_F(S21Vector_test, _operatorMove) {
-  s_21_vector_empty = std::move(vector_1_);
+  vector_empty = std::move(vector_1_);
 }
 
 TEST_F(S21Vector_test, at) {
   EXPECT_EQ(vector_1_.at(0), test.at(0));
   EXPECT_EQ(vector_1_.at(1), test.at(1));
   EXPECT_ANY_THROW(vector_1_.at(7));
-  EXPECT_ANY_THROW(s_21_vector_empty.at(0));
+  EXPECT_ANY_THROW(vector_empty.at(0));
 }
 
 TEST_F(S21Vector_test, brackets) {}
@@ -49,12 +52,12 @@ TEST_F(S21Vector_test, iterator_begin) { EXPECT_EQ((*vector_1_.begin()), 1); }
 TEST_F(S21Vector_test, iterator_end) { EXPECT_EQ(*(vector_1_.end() - 1), 5); }
 
 TEST_F(S21Vector_test, empty) {
-  EXPECT_TRUE(s_21_vector_empty.empty());
+  EXPECT_TRUE(vector_empty.empty());
   EXPECT_FALSE(vector_1_.empty());
 }
 
 TEST_F(S21Vector_test, size) {
-  EXPECT_EQ(s_21_vector_empty.size(), 0);
+  EXPECT_EQ(vector_empty.size(), 0);
   EXPECT_EQ(vector_1_.size(), 5);
 }
 
@@ -85,7 +88,7 @@ TEST_F(S21Vector_test, shrink_to_fit) {
 }
 
 TEST_F(S21Vector_test, push_back) {
-  s_21_vector_empty.push_back(0);
+  vector_empty.push_back(0);
   vector_1_.push_back(6);
   EXPECT_EQ(vector_1_.at(5), 6);
 }
@@ -137,6 +140,9 @@ TEST_F(S21Vector_test, erase) {
   vector_1_.erase(vector_1_.end() - 1);
   test.erase(test.end() - 1);
   EXPECT_EQ(vector_1_.at(vector_1_.size() - 1), test.at(test.size() - 1));
+  test_empty.erase(test_empty.end() - 1);
+  vector_empty.erase(vector_empty.end() - 1);
+  EXPECT_EQ(test_empty.size(), vector_empty.size());
 }
 
 TEST_F(S21Vector_test, popback) {
@@ -156,11 +162,11 @@ TEST_F(S21Vector_test, popback) {
 
 TEST_F(S21Vector_test, swap) {
   int *test_vector_1_ = vector_1_.data();
-  int *test_empty = s_21_vector_empty.data();
-  s_21_vector_empty.swap(vector_1_);
-  EXPECT_EQ(s_21_vector_empty.size(), 5);
-  EXPECT_EQ(s_21_vector_empty.capacity(), 5);
-  EXPECT_EQ(&(*s_21_vector_empty.begin()), test_vector_1_);
+  int *test_empty = vector_empty.data();
+  vector_empty.swap(vector_1_);
+  EXPECT_EQ(vector_empty.size(), 5);
+  EXPECT_EQ(vector_empty.capacity(), 5);
+  EXPECT_EQ(&(*vector_empty.begin()), test_vector_1_);
   EXPECT_EQ(vector_1_.size(), 0);
   EXPECT_EQ(vector_1_.capacity(), 0);
   EXPECT_EQ(&(*vector_1_.begin()), test_empty);

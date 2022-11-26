@@ -195,7 +195,7 @@ template <class T, typename Alloc> const T *S21Vector<T, Alloc>::data() const {
 //_____VECTOR_CAPACITY_____
 template <class value_type, typename Alloc>
 bool S21Vector<value_type, Alloc>::empty() {
-  return this->size_ == 0;
+  return !this->size_;
 }
 
 template <class value_type, typename Alloc>
@@ -245,7 +245,7 @@ void S21Vector<value_type, Alloc>::shrink_to_fit() noexcept {
     S21Vector<value_type, Alloc> temp(this->size_);
     std::move(this->arr_, this->arr_ + this->size_, temp.arr_);
     std::swap(this->arr_, temp.arr_);
-    capacity_ = std::move(temp.capacity_);
+    capacity_ = temp.capacity_;
   }
 }
 
@@ -288,14 +288,16 @@ S21Vector<value_type, Alloc>::insert(iterator pos, const_reference value) {
 
 template <class value_type, typename Alloc>
 void S21Vector<value_type, Alloc>::erase(S21Vector::iterator pos) {
-  auto *buff = alloc_.allocate(capacity_);
-  size_type pos_index = pos - this->begin();
-  std::copy(&(*this->begin()), &(*(this->begin() + pos_index)), buff);
-  std::copy(&(*(this->begin() + pos_index + 1)), &(*this->end()),
-            buff + pos_index);
-  std::swap(this->arr_, buff);
+  if (this->end() - 1 != pos) {
+    auto *buff = alloc_.allocate(capacity_);
+    size_type pos_index = pos - this->begin();
+    std::copy(&(*this->begin()), &(*(this->begin() + pos_index)), buff);
+    std::copy(&(*(this->begin() + pos_index + 1)), &(*this->end()),
+              buff + pos_index);
+    std::swap(this->arr_, buff);
+    alloc_.deallocate(buff, capacity_);
+  }
   --this->size_;
-  alloc_.deallocate(buff, capacity_);
 }
 
 template <class value_type, typename Alloc>
@@ -305,35 +307,8 @@ void S21Vector<value_type, Alloc>::pop_back() {
 
 template <class value_type, typename Alloc>
 void S21Vector<value_type, Alloc>::swap(S21Vector &other) {
-  std::swap(this->arr_, other.arr_);
-  std::swap(this->size_, other.size_);
-  std::swap(this->capacity_, other.capacity_);
-}
-template <class value_type, typename Alloc>
-bool S21Vector<value_type, Alloc>::operator==(
-    const S21Vector<value_type, Alloc> &other) {
-  bool equal;
-  bool skip = false;
-  if (this == &other) {
-    equal = true;
-    skip = true;
-  }
-  if (!skip) {
-    if (this->size_ != other.size_ || this->capacity_ != other.capacity_) {
-      equal = false;
-      skip = true;
-    }
-  }
-  if (!skip) {
-    equal = true;
-    for (int i = 0; i < this->size_; ++i) {
-      if ((this)->arr_[i] != other.arr_[i]) {
-        equal = false;
-        break;
-      }
-    }
-  }
-  return equal;
+
+  std::swap(*this, other);
 }
 
 } // namespace s21
