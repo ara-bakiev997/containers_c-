@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-// #include <utility>
 #include <array>
 
 #include "../src/sequence/s21_array.h"
@@ -19,9 +18,6 @@ class S21Array_test : public ::testing::Test {
   std::array<int, 5> test = {1, 2, 3, 4, 5};
   std::array<int, 5> test2 = {5, 4, 3, 2, 1};
   std::array<int, 5> test3 = test;
-
-
-
 };
 
 TEST_F(S21Array_test, test_constructor_def) {
@@ -30,8 +26,6 @@ TEST_F(S21Array_test, test_constructor_def) {
 }
 
 TEST_F(S21Array_test, test_constructor_il) {
-//    S21Array<int, 3> array_4 = {1, 2, 3, 4, 5};
-//    std::array<int, 4> test_4 = {1, 2, 3, 4, 5};
   EXPECT_EQ(array.size(), test.size());
   for (auto i = 0; i < array.size(); ++i)
     EXPECT_EQ(array.at(i), test.at(i));
@@ -149,11 +143,6 @@ TEST_F(S21Array_test, test_at) {
     EXPECT_ANY_THROW(test_empty.at(0));
     std::cout<<"test_at = ok"<<"\n";
 }
-
-//TEST_F(S21Array_test, test) {
-//    S21Array<int, 5> arr7= {1, 2, 3, 4, 5};
-//    std::cout<<"test = ok"<<arr7[5]<<"\n";
-//}
 
 
 int main(int argc, char *argv[]) {
