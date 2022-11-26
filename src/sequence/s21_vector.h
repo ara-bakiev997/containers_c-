@@ -15,7 +15,8 @@
 
 namespace s21 {
 
-template <class T> class S21Vector : public SequenceContainer<T> {
+template<typename T, typename Alloc = std::allocator<T>>
+class S21Vector : public SequenceContainer<T> {
 public:
   using value_type = typename SequenceContainer<T>::value_type;
   using reference = typename SequenceContainer<T>::reference;
@@ -30,7 +31,8 @@ public:
   explicit S21Vector(size_type n) {
     this->size_ = n;
     capacity_ = n;
-    this->arr_ = n ? new T[n] : nullptr;
+    this->arr_ = n ? alloc_.allocate(n) : nullptr;
+
   }
   S21Vector(std::initializer_list<value_type> const &items);
   S21Vector(const S21Vector &v) {
@@ -66,7 +68,7 @@ public:
 
   void swap(S21Vector &other); // swaps the contents
 
-  bool operator==(const S21Vector<value_type> &other);
+  bool operator==(const S21Vector<value_type, Alloc> &other);
 
 //protected:
   // Assignment operator
@@ -87,11 +89,12 @@ public:
 private:
   size_type capacity_;
   void reserve_more_capacity(size_t size);
+  Alloc alloc_;
 };
 
 //_____CONSTRUCTORS_____
-template <class value_type>
-S21Vector<value_type>::S21Vector(
+template <class value_type, typename Alloc>
+S21Vector<value_type, Alloc>::S21Vector(
     const std::initializer_list<value_type> &items) {
   this->arr_ = new value_type[items.size()];
   int i = 0;
@@ -105,8 +108,8 @@ S21Vector<value_type>::S21Vector(
 
 //_____ASSIGNMENT_OPERATORS_____
 // not ready
-template <class value_type>
-S21Vector<value_type> &S21Vector<value_type>::operator=(const S21Vector &v) {
+template <class value_type, typename Alloc>
+S21Vector<value_type, Alloc> &S21Vector<value_type, Alloc>::operator=(const S21Vector &v) {
   bool is_not_ready_to_return = true;
 
   if (this == &v) {
@@ -127,9 +130,9 @@ S21Vector<value_type> &S21Vector<value_type>::operator=(const S21Vector &v) {
 }
 
 // not ready
-template <class value_type>
-S21Vector<value_type> &
-S21Vector<value_type>::operator=(S21Vector &&v) noexcept {
+template <class value_type, typename Alloc>
+S21Vector<value_type, Alloc> &
+S21Vector<value_type, Alloc>::operator=(S21Vector &&v) noexcept {
   if (this != &v) {
     if (this->arr_ != v.arr_) {
       if (this->arr_ != nullptr) {
@@ -149,70 +152,58 @@ S21Vector<value_type>::operator=(S21Vector &&v) noexcept {
 
 //_____VECTOR_ELEMENT_ACCESS_____
 
-template <class value_type>
-typename S21Vector<value_type>::reference
-S21Vector<value_type>::at(S21Vector::size_type pos) {
+template <class value_type, typename Alloc>
+typename S21Vector<value_type, Alloc>::reference
+S21Vector<value_type, Alloc>::at(S21Vector::size_type pos) {
   return (pos < this->size_) ? this->arr_[pos]
                              : throw std::out_of_range("out_of_range");
 }
 
-template <class value_type>
-typename S21Vector<value_type>::const_reference
-S21Vector<value_type>::at(S21Vector::size_type pos) const {
+template <class value_type, typename Alloc>
+typename S21Vector<value_type, Alloc>::const_reference
+S21Vector<value_type, Alloc>::at(S21Vector::size_type pos) const {
   return (pos < this->size_) ? this->arr_[pos]
                              : throw std::out_of_range("out_of_range");
 }
 
-template <class value_type>
-typename S21Vector<value_type>::reference
-S21Vector<value_type>::operator[](S21Vector::size_type pos) {
+template <class value_type, typename Alloc>
+typename S21Vector<value_type, Alloc>::reference
+S21Vector<value_type, Alloc>::operator[](S21Vector::size_type pos) {
   return this->arr_[pos];
 }
 
-template <class value_type>
-typename S21Vector<value_type>::const_reference
-S21Vector<value_type>::operator[](S21Vector::size_type pos) const {
+template <class value_type, typename Alloc>
+typename S21Vector<value_type, Alloc>::const_reference
+S21Vector<value_type, Alloc>::operator[](S21Vector::size_type pos) const {
   return this->arr_[pos];
 }
 
-template <class value_type>
-typename S21Vector<value_type>::const_reference S21Vector<value_type>::front() {
+template <class value_type, typename Alloc>
+typename S21Vector<value_type, Alloc>::const_reference S21Vector<value_type, Alloc>::front() {
   return at(0);
 }
 
-template <class value_type>
-typename S21Vector<value_type>::const_reference S21Vector<value_type>::back() {
+template <class value_type, typename Alloc>
+typename S21Vector<value_type, Alloc>::const_reference S21Vector<value_type, Alloc>::back() {
   return at(this->size_ - 1);
 }
 
-template <class T> T *S21Vector<T>::data() { return this->arr_; }
-template <class T> const T *S21Vector<T>::data() const { return this->arr_; }
-
-//_____VECTOR_ITERATORS_____
-// template <class value_type>
-// typename SequenceContainer<value_type>::Iterator
-// S21Vector<value_type>::begin()  {
-//  return this->arr_;
-//}
-//
-// template <class value_type>
-// typename S21Vector<value_type>::iterator S21Vector<value_type>::end() {
-//  return this->arr_ + size_;
-//}
+template <class T, typename Alloc> T *S21Vector<T, Alloc>::data() { return this->arr_; }
+template <class T, typename Alloc> const T *S21Vector<T, Alloc>::data() const { return this->arr_; }
 
 //_____VECTOR_CAPACITY_____
-template <class value_type> bool S21Vector<value_type>::empty() {
+template <class value_type, typename Alloc> bool S21Vector<value_type, Alloc>::empty() {
   return this->size_ == 0;
 }
 
-template <class value_type>
-typename S21Vector<value_type>::size_type S21Vector<value_type>::size() {
+template <class value_type, typename Alloc>
+typename S21Vector<value_type, Alloc>::size_type S21Vector<value_type, Alloc>::size() {
   return this->size_;
 }
 
-template <class value_type>
-typename S21Vector<value_type>::size_type
-S21Vector<value_type>::max_size() const noexcept {
+template <class value_type, typename Alloc>
+typename S21Vector<value_type, Alloc>::size_type
+S21Vector<value_type, Alloc>::max_size() const noexcept {
   //  char bits = 63;
   //  if (sizeof(void *) == 4) {
   //    bits = 31;
@@ -221,8 +212,8 @@ S21Vector<value_type>::max_size() const noexcept {
   return SIZE_MAX / sizeof(value_type);
 }
 
-template <class value_type>
-void S21Vector<value_type>::reserve(S21Vector::size_type size) {
+template <class value_type, typename Alloc>
+void S21Vector<value_type, Alloc>::reserve(S21Vector::size_type size) {
   if (size > this->max_size())
     throw std::length_error("size > max_size");
 
@@ -239,16 +230,16 @@ void S21Vector<value_type>::reserve(S21Vector::size_type size) {
   }
 }
 
-template <class value_type>
-typename S21Vector<value_type>::size_type
-S21Vector<value_type>::capacity() const {
+template <class value_type, typename Alloc>
+typename S21Vector<value_type, Alloc>::size_type
+S21Vector<value_type, Alloc>::capacity() const {
   return capacity_;
 }
 
-template <class value_type>
-void S21Vector<value_type>::shrink_to_fit() noexcept {
+template <class value_type, typename Alloc>
+void S21Vector<value_type, Alloc>::shrink_to_fit() noexcept {
   if (this->size_ != capacity_) {
-    S21Vector<value_type> temp(this->size_);
+    S21Vector<value_type, Alloc> temp(this->size_);
     std::move(this->arr_, this->arr_ + this->size_, temp.arr_);
     std::swap(this->arr_, temp.arr_);
     capacity_ = std::move(temp.capacity_);
@@ -256,8 +247,8 @@ void S21Vector<value_type>::shrink_to_fit() noexcept {
 }
 
 //_____VECTOR_MODIFIERS_____
-template <class value_type>
-void S21Vector<value_type>::push_back(const_reference value) {
+template <class value_type, typename Alloc>
+void S21Vector<value_type, Alloc>::push_back(const_reference value) {
   if (this->size_ == capacity_) {
     auto size = (this->size_) ? this->size_ : 1;
     reserve_more_capacity(size * 2);
@@ -266,8 +257,8 @@ void S21Vector<value_type>::push_back(const_reference value) {
 }
 
 //_____SUPPORT_FUN_____
-template <typename value_type>
-void S21Vector<value_type>::reserve_more_capacity(size_t size) {
+template <class value_type, typename Alloc>
+void S21Vector<value_type, Alloc>::reserve_more_capacity(size_t size) {
   if (size > capacity_) {
     auto *buff = new value_type[size];
     for (size_t i = 0; i < this->size_; ++i)
@@ -278,13 +269,13 @@ void S21Vector<value_type>::reserve_more_capacity(size_t size) {
   }
 }
 
-template <class value_type> void S21Vector<value_type>::clear() {
+template <class value_type, typename Alloc> void S21Vector<value_type, Alloc>::clear() {
   this->size_ = 0;
 }
 
-template <class value_type>
-typename S21Vector<value_type>::iterator
-S21Vector<value_type>::insert(iterator pos, const_reference value) {
+template <class value_type, typename Alloc>
+typename S21Vector<value_type, Alloc>::iterator
+S21Vector<value_type, Alloc>::insert(iterator pos, const_reference value) {
   size_type new_capacity = capacity_;
   size_type pos_index = pos - this->begin();
   if (this->size_ + 1 >= capacity_) {
@@ -302,8 +293,8 @@ S21Vector<value_type>::insert(iterator pos, const_reference value) {
   return this->begin() + pos_index;
 }
 
-template <class value_type>
-void S21Vector<value_type>::erase(S21Vector::iterator pos) {
+template <class value_type, typename Alloc>
+void S21Vector<value_type, Alloc>::erase(S21Vector::iterator pos) {
   auto *buff = new value_type[capacity_];
   size_type pos_index = pos - this->begin();
   std::copy(&(*this->begin()), &(*(this->begin() + pos_index)), buff);
@@ -313,17 +304,17 @@ void S21Vector<value_type>::erase(S21Vector::iterator pos) {
   --this->size_;
 }
 
-template <class value_type> void S21Vector<value_type>::pop_back() {
+template <class value_type, typename Alloc> void S21Vector<value_type, Alloc>::pop_back() {
   --this->size_;
 }
 
-template <class value_type> void S21Vector<value_type>::swap(S21Vector &other) {
+template <class value_type, typename Alloc> void S21Vector<value_type, Alloc>::swap(S21Vector &other) {
   std::swap(this->arr_, other.arr_);
   std::swap(this->size_, other.size_);
   std::swap(this->capacity_, other.capacity_);
 }
-template <class T>
-bool S21Vector<T>::operator==(const S21Vector<value_type> &other) {
+template <class value_type, typename Alloc>
+bool S21Vector<value_type, Alloc>::operator==(const S21Vector<value_type, Alloc> &other) {
   bool equal;
   bool skip = false;
   if (this == &other) {
