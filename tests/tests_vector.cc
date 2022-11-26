@@ -20,9 +20,6 @@ class S21Vector_test : public ::testing::Test {
 
 TEST_F(S21Vector_test, _operatorCopy) {
   vector_empty = vector_1_;
-  test = test2;
-  EXPECT_EQ(test, test2);
-//  EXPECT_EQ(vector_empty, vector_1_);
   for (auto i = 0; i < vector_empty.size(); ++i) {
     EXPECT_EQ(vector_empty.at(i), vector_1_.at(i));
   }
