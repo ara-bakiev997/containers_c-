@@ -8,7 +8,7 @@ namespace s21 {
 template<typename value_type, typename Alloc>
 S21List<value_type, Alloc>::S21List(size_type n) {
   fake_ = alloc_.allocate(1);
-  for (auto i = 0; i < n; ++i) {
+  for (auto i = n; i > 0; --i) {
 	push_back(0);
   }
 }
@@ -32,7 +32,9 @@ S21List<T, Alloc>::S21List(const S21List<T, Alloc> &l) {
 
 template<typename value_type, typename Alloc>
 S21List<value_type, Alloc>::~S21List() {
-  for (auto i = size_; i > 0; --i) {
+  for (;;) {
+	auto it = this->begin();
+	if (it == this->end()) break;
 	pop_back();
   }
   alloc_.deallocate(fake_, 1);  // отдельно удаляем память под fake ноду
@@ -90,7 +92,7 @@ typename S21List<T, Alloc>::iterator S21List<T, Alloc>::insert(
   new_node->prev_ = prev_node;
   prev_node->next_ = new_node;
   shift_node->prev_ = new_node;
-  ++size_;
+  ++size_; // оригинал также работает, если пришел итератор от другого объекта он не добавляет его в лист, но size увеличивает(ХА-ХА-ХА)
   return iterator(new_node);
 }
 

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <utility>
 #include <valarray>
+#include <memory>
 
 #include "../sequence_container.h"
 
@@ -41,7 +42,7 @@ class S21List : public SequenceContainer<T> {
    public:
 	ConstIterator() {}
 	ConstIterator(const Node<value_type> *pt) : node_(pt) {}
-	ConstIterator(ConstIterator &other) : node_(other.node_) {}
+	ConstIterator(const ConstIterator &other) : node_(other.node_) {}
 	virtual ConstIterator &operator++();
 	virtual ConstIterator operator++(int);
 	virtual ConstIterator &operator--();
@@ -63,7 +64,7 @@ class S21List : public SequenceContainer<T> {
 	Iterator() {}
 	Iterator(Node<value_type> *pt) { this->node_ = pt; }
 
-	Iterator(const Iterator &other) { this->node_ = other.node_; }
+	Iterator(const Iterator &other) : ConstIterator(other) {}
 	reference operator*() { return this->node_->value_; }
 	Iterator &operator=(const Iterator &other);
 	Node<value_type> *AccessNode() { return this->node_; }
@@ -97,7 +98,7 @@ class S21List : public SequenceContainer<T> {
   iterator end() const;
 
   // List Capacity
-  bool empty() { return (size_ ? false : true); }
+  bool empty() { return !size_; }
   size_type size() { return size_; }
   size_type max_size();
 
@@ -125,8 +126,8 @@ class S21List : public SequenceContainer<T> {
   Node<T> *fake_{};
   NodeAlloc alloc_{};
   // Support func
-  Node<T> *NewNode(const_reference value);
-  void DelNode(Node<value_type> *node);
+  Node<T> *CreateNode(const_reference value);
+  void RemNode(Node<value_type> *node);
 };
 
 }  // namespace s21

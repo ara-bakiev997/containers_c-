@@ -23,95 +23,95 @@ class S21List_test : public ::testing::Test {
 };
 
 TEST_F(S21List_test, constructors) {
-  ASSERT_EQ(list_empty.size(), test_empty.size());
-  ASSERT_EQ(list_1_.size(), test1.size());
-  ASSERT_EQ(list_2_.size(), test2.size());
+  EXPECT_EQ(list_empty.size(), test_empty.size());
+  EXPECT_EQ(list_1_.size(), test1.size());
+  EXPECT_EQ(list_2_.size(), test2.size());
   // Copy
   S21List<int> list_3_(list_2_);
   std::list<int> test3(test2);
   auto it = list_3_.begin();
   auto it_or = test3.begin();
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   ++it, ++it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   --it, --it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   ++it, ++it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   ++it, ++it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
 //  // Move
   S21List<int> list_4_ = std::move(list_3_);
   std::list<int> test4 = std::move(test3);
-  ASSERT_EQ(list_4_.size(), test4.size());
-  ASSERT_EQ(list_3_.size(), test3.size());
+  EXPECT_EQ(list_4_.size(), test4.size());
+  EXPECT_EQ(list_3_.size(), test3.size());
   it = list_4_.begin();
   it_or = test4.begin();
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   ++it, ++it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   --it, --it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   ++it, ++it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   ++it, ++it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
 }
 
 TEST_F(S21List_test, Access) {
-  ASSERT_EQ(list_1_.front(), test1.front());
-  ASSERT_EQ(list_1_.back(), test1.back());
-  ASSERT_EQ(list_2_.front(), test2.front());
-  ASSERT_EQ(list_2_.back(), test2.back());
+  EXPECT_EQ(list_1_.front(), test1.front());
+  EXPECT_EQ(list_1_.back(), test1.back());
+  EXPECT_EQ(list_2_.front(), test2.front());
+  EXPECT_EQ(list_2_.back(), test2.back());
 }
 
 TEST_F(S21List_test, Iterators) {
   auto it = list_string.begin();
   auto it_or = test_string.begin();
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   ++it, ++it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   --it, --it_or;
-  ASSERT_EQ(*it, *it_or);
-  ASSERT_EQ(*(it++), *(it_or++));
+  EXPECT_EQ(*it, *it_or);
+  EXPECT_EQ(*(it++), *(it_or++));
   it++, ++it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   it = list_string.end();
   it_or = test_string.end();
   --it, --it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   --it, --it_or;
-  ASSERT_EQ(*it, *it_or);
-  ASSERT_EQ(*(it--), *(it_or--));
+  EXPECT_EQ(*it, *it_or);
+  EXPECT_EQ(*(it--), *(it_or--));
   --it, --it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
 }
 
 TEST_F(S21List_test, Capacity) {
-  ASSERT_EQ(list_empty.empty(), test_empty.empty());
-  ASSERT_EQ(list_1_.empty(), test1.empty());
-  ASSERT_EQ(list_2_.empty(), test2.empty());
-  ASSERT_EQ(list_empty.empty(), test_empty.empty());
-  ASSERT_EQ(list_1_.empty(), test1.empty());
-  ASSERT_EQ(list_2_.empty(), test2.empty());
-  ASSERT_EQ(list_string.empty(), test_string.empty());
-  ASSERT_EQ(list_string.size(), test_string.size());
+  EXPECT_EQ(list_empty.empty(), test_empty.empty());
+  EXPECT_EQ(list_1_.empty(), test1.empty());
+  EXPECT_EQ(list_2_.empty(), test2.empty());
+  EXPECT_EQ(list_empty.empty(), test_empty.empty());
+  EXPECT_EQ(list_1_.empty(), test1.empty());
+  EXPECT_EQ(list_2_.empty(), test2.empty());
+  EXPECT_EQ(list_string.empty(), test_string.empty());
+  EXPECT_EQ(list_string.size(), test_string.size());
 }
 
 TEST_F(S21List_test, ModifiersClear) {
   list_2_.clear();
   test2.clear();
-  ASSERT_EQ(list_2_.empty(), test2.empty());
+  EXPECT_EQ(list_2_.empty(), test2.empty());
   list_2_.push_front(1);
   list_2_.push_back(5);
   test2.push_front(1);
   test2.push_back(5);
-  ASSERT_EQ(list_empty.size(), test_empty.size());
+  EXPECT_EQ(list_empty.size(), test_empty.size());
   auto it = list_2_.begin();
   auto it_or = test2.begin();
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
   ++it, ++it_or;
-  ASSERT_EQ(*it, *it_or);
+  EXPECT_EQ(*it, *it_or);
 }
 
 TEST_F(S21List_test, ModifiersInsert) {
@@ -119,86 +119,83 @@ TEST_F(S21List_test, ModifiersInsert) {
   auto it_or = test_string.begin();
   auto ret = list_string.insert(it, "qwerty");
   auto ret_or = test_string.insert(it_or, "qwerty");
-  ASSERT_EQ(*it, *it_or);
-  ASSERT_EQ(*ret, *ret_or);
-  ASSERT_EQ(*(++it), *(++it_or));
-  ASSERT_EQ(*(++ret), *(++ret_or));
+  EXPECT_EQ(*it, *it_or);
+  EXPECT_EQ(*ret, *ret_or);
+  EXPECT_EQ(*(++it), *(++it_or));
+  EXPECT_EQ(*(++ret), *(++ret_or));
   it = list_string.end();
   it_or = test_string.end();
   ret = list_string.insert(it, "asdf");
   ret_or = test_string.insert(it_or, "asdf");
-  ASSERT_EQ(*ret, *ret_or);
-  ASSERT_EQ(*(--ret), *(--ret_or));
+  EXPECT_EQ(*ret, *ret_or);
+  EXPECT_EQ(*(--ret), *(--ret_or));
   // Empty list
   auto it_em = list_empty.begin();
   auto it_em_or = test_empty.begin();
   auto ret_em = list_empty.insert(it_em, 1);
   auto ret_em_or = test_empty.insert(it_em_or, 1);
-  ASSERT_EQ(*ret_em, *ret_em_or);
+  EXPECT_EQ(*ret_em, *ret_em_or);
   list_empty.insert(it_em, 10);
   test_empty.insert(it_em_or, 10);
-  ASSERT_EQ(*(++it_em), *(++it_em_or));
-  // Another list
+  EXPECT_EQ(*(++it_em), *(++it_em_or));
 
+  // Another object iterator
+  auto an = list_1_.begin();
+  auto an_or = test1.begin();
+  EXPECT_EQ(list_2_.size(), test2.size());
+  ret_em = list_2_.insert(an, 11);
+  ret_em_or = test2.insert(an_or, 11);
+  EXPECT_EQ(list_2_.size(), test2.size()); // ha-ha, orig ++size
+  EXPECT_EQ(*ret_em, *ret_em_or);
 }
 
 TEST_F(S21List_test, ModifiersErase) {
   auto it = list_string.begin();
   auto it_or = test_string.begin();
-//  list_string.erase(++it); // ?????????????
   list_string.erase(it);
   test_string.erase(it_or);
-  for(auto i : list_string) {
-	std::cout << i << ' ';
-  }
-  std::cout << '\n';
-  for(auto i : test_string) {
-	std::cout << i << ' ';
-  }
-
-
-  // Empty list
-  auto it_em = list_empty.begin();
-  auto it_em_or = test_empty.begin();
-  auto ret_em = list_empty.insert(it_em, 1);
-  auto ret_em_or = test_empty.insert(it_em_or, 1);
-  ASSERT_EQ(*ret_em, *ret_em_or);
-  list_empty.insert(it_em, 10);
-  test_empty.insert(it_em_or, 10);
-  ASSERT_EQ(*(++it_em), *(++it_em_or));
+  EXPECT_EQ(list_string.size(), test_string.size());
+  it = list_string.begin();
+  it_or = test_string.begin();
+  EXPECT_EQ(*it, *it_or);
   // Another list
-
+  auto an = list_1_.begin();
+  auto an_or = test1.begin();
+  EXPECT_EQ(list_2_.size(), test2.size());
+  list_2_.erase(an);
+  test2.erase(an_or);
+  EXPECT_EQ(list_2_.size(), test2.size());
 }
 
 TEST_F(S21List_test, ModifiersPush) {
   list_empty.push_front(10);
   test_empty.push_front(10);
-  ASSERT_EQ(list_empty.empty(), test_empty.empty());
-  ASSERT_EQ(list_empty.front(), test_empty.front());
+  EXPECT_EQ(list_empty.empty(), test_empty.empty());
+  EXPECT_EQ(list_empty.front(), test_empty.front());
   list_empty.push_back(20);
   test_empty.push_back(20);
-  ASSERT_EQ(list_empty.back(), test_empty.back());
-  ASSERT_EQ(list_empty.size(), test_empty.size());
+  EXPECT_EQ(list_empty.back(), test_empty.back());
+  EXPECT_EQ(list_empty.size(), test_empty.size());
 
   list_string.push_front("bro");
   test_string.push_front("bro");
-  ASSERT_EQ(list_string.empty(), test_string.empty());
-  ASSERT_EQ(list_string.front(), test_string.front());
+  EXPECT_EQ(list_string.empty(), test_string.empty());
+  EXPECT_EQ(list_string.front(), test_string.front());
   list_string.push_back("s21");
   test_string.push_back("s21");
-  ASSERT_EQ(list_string.back(), test_string.back());
-  ASSERT_EQ(list_string.size(), test_string.size());
+  EXPECT_EQ(list_string.back(), test_string.back());
+  EXPECT_EQ(list_string.size(), test_string.size());
 }
 
 TEST_F(S21List_test, ModifiersPop) {
   list_string.pop_front();
   test_string.pop_front();
-  ASSERT_EQ(list_string.empty(), test_string.empty());
-  ASSERT_EQ(list_string.front(), test_string.front());
+  EXPECT_EQ(list_string.empty(), test_string.empty());
+  EXPECT_EQ(list_string.front(), test_string.front());
   list_string.pop_back();
   test_string.pop_back();
-  ASSERT_EQ(list_string.back(), test_string.back());
-  ASSERT_EQ(list_string.size(), test_string.size());
+  EXPECT_EQ(list_string.back(), test_string.back());
+  EXPECT_EQ(list_string.size(), test_string.size());
 }
 
 int main(int argc, char *argv[]) {
