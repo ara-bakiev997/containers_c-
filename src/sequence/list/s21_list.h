@@ -10,6 +10,7 @@
 #include <iostream>
 #include <utility>
 #include <valarray>
+#include <memory>
 
 #include "../sequence_container.h"
 
@@ -97,7 +98,7 @@ class S21List : public SequenceContainer<T> {
   iterator end() const;
 
   // List Capacity
-  bool empty() { return (size_ ? false : true); }
+  bool empty() { return !size_; }
   size_type size() { return size_; }
   size_type max_size();
 
@@ -125,8 +126,8 @@ class S21List : public SequenceContainer<T> {
   Node<T> *fake_{};
   NodeAlloc alloc_{};
   // Support func
-  Node<T> *NewNode(const_reference value);
-  void DelNode(Node<value_type> *node);
+  Node<T> *CreateNode(const_reference value);
+  void RemNode(Node<value_type> *node);
 };
 
 }  // namespace s21
