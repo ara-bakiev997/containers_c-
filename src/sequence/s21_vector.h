@@ -58,6 +58,18 @@ public:
   T *data();               // direct access to the underlying array
   const T *data() const;   // direct access to the underlying array
 
+  //  Vector Iterators
+
+  iterator begin() override {
+    iterator temp(this->arr_);
+    return temp;
+  }
+
+  iterator end() override {
+    iterator temp(this->arr_ + this->size_);
+    return temp;
+  }
+
   // Vector Capacity
 
   bool empty();
@@ -67,9 +79,6 @@ public:
 
   void swap(S21Vector &other); // swaps the contents
 
-  bool operator==(const S21Vector<value_type, Alloc> &other);
-
-  // protected:
   //  Assignment operator
   S21Vector &operator=(const S21Vector &v);
   S21Vector &operator=(S21Vector &&v) noexcept;

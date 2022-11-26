@@ -42,12 +42,12 @@ class SequenceContainer {
       temp.data_ += size;
       return temp;
     }
-    const Iterator operator++() {
+    const Iterator operator++() const {
       ++data_;
       return *this;
     }
 
-    const Iterator operator++(int) {
+    const Iterator operator++(int) const {
       Iterator temp(*this);
       this->data_++;
       return temp;
@@ -59,6 +59,12 @@ class SequenceContainer {
     }
 
     Iterator operator--(int) {
+      Iterator temp(*this);
+      this->data_--;
+      return temp;
+    }
+
+    const Iterator operator--(int) const{
       Iterator temp(*this);
       this->data_--;
       return temp;
@@ -87,33 +93,15 @@ class SequenceContainer {
     T *data_{};
   };
 
-  virtual iterator begin() {
-    iterator temp(this->arr_);
-    return temp;
-  }
+  virtual iterator begin() = 0;
 
-  virtual iterator end() {
-    iterator temp(this->arr_ + size_);
-    return temp;
-  }
+  virtual iterator end() = 0;
 
  protected:
   size_type size_{};
   T *arr_{};
 };
 
-// template <class value_type>
-// typename S21Vector<value_type>::iterator S21Vector<value_type>::begin() {
-//   return this->arr_;
-// }
-
-// template <class T>
-// SequenceContainer<T>::SequenceContainer() {}
-
-// template <class T>
-// SequenceContainer<T>::~SequenceContainer() {}
-
-// SequenceContainer::~SequenceContainer() {}
 
 }  // namespace s21
 
