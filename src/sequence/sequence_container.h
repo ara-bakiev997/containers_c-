@@ -9,9 +9,8 @@
 
 namespace s21 {
 
-template <class T>
-class SequenceContainer {
- public:
+template <class T> class SequenceContainer {
+public:
   class Iterator;
   using value_type = T;
   using reference = T &;
@@ -20,20 +19,31 @@ class SequenceContainer {
   using const_iterator = const Iterator;
   using size_type = size_t;
 
-  //  SequenceContainer() : size_(5), arr_(new value_type[size_]{1, 2, 3, 4, 5})
-  //  {}
   SequenceContainer() = default;
   ~SequenceContainer() = default;
 
   class Iterator {
-   public:
-    Iterator() = default;
+  public:
+    Iterator() : data_(nullptr){};
     explicit Iterator(T *pt) : data_(pt) {}
     Iterator(const Iterator &other) : data_(other.data_) {}
+
     Iterator &operator=(const Iterator &other) {
-      this->data_ = other.data_;
+      if (this != &other) {
+        //      this->data_ = other.data_;
+        std::copy(*this, other);
+      }
       return *this;
     }
+
+    Iterator &operator=(Iterator &&other)  noexcept {
+      if (this != &other) {
+        //      this->data_ = other.data_;
+        std::move(*this, other);
+      }
+      return *this;
+    }
+
     ~Iterator() = default;
 
     reference operator*() { return *data_; }
@@ -42,12 +52,13 @@ class SequenceContainer {
       temp.data_ += size;
       return temp;
     }
-    const Iterator operator++() const {
+
+    Iterator operator++() {
       ++data_;
       return *this;
     }
 
-    const Iterator operator++(int) const {
+    Iterator operator++(int)  {
       Iterator temp(*this);
       this->data_++;
       return temp;
@@ -64,7 +75,7 @@ class SequenceContainer {
       return temp;
     }
 
-    const Iterator operator--(int) const{
+    const Iterator operator--(int) const {
       Iterator temp(*this);
       this->data_--;
       return temp;
@@ -89,7 +100,7 @@ class SequenceContainer {
       return this->data_ != other.data_;
     }
 
-   protected:
+  protected:
     T *data_{};
   };
 
@@ -97,13 +108,11 @@ class SequenceContainer {
 
   virtual iterator end() = 0;
 
- protected:
+protected:
   size_type size_{};
   T *arr_{};
 };
 
+} // namespace s21
 
-}  // namespace s21
-
-#endif  // S21_CONTAINERS_SRC_SEQUENCE_CONTAINER_H_
-
+#endif // S21_CONTAINERS_SRC_SEQUENCE_CONTAINER_H_

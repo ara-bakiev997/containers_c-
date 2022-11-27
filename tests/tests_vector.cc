@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-//#include <utility>
+// #include <utility>
 #include <vector>
 
 #include "../src/sequence/s21_vector.h"
@@ -8,7 +8,7 @@
 using namespace s21;
 
 class S21Vector_test : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {}
   S21Vector<int> vector_empty;
   S21Vector<int> vector_1_ = {1, 2, 3, 4, 5};
@@ -25,9 +25,7 @@ TEST_F(S21Vector_test, _operatorCopy) {
   }
 }
 
-TEST_F(S21Vector_test, _operatorMove) {
-  vector_empty = std::move(vector_1_);
-}
+TEST_F(S21Vector_test, _operatorMove) { vector_empty = std::move(vector_1_); }
 
 TEST_F(S21Vector_test, at) {
   EXPECT_EQ(vector_1_.at(0), test.at(0));
@@ -108,13 +106,13 @@ TEST_F(S21Vector_test, insert) {
   test.insert(test.begin(), 21);
   EXPECT_EQ(vector_1_.at(0), test.at(0));
 
-//  for (auto i : test2) std::cout << i << ' ';
-//  SequenceContainer<int>::iterator it2 = vector_1_.begin();
-//  std::cout << '\n' << *it2 << std::endl;
-//  std::copy(&(*it2), &(*(it2 + 4)), &(*(vector_2_.end() - 2)));
-//  std::cout << std::endl;
-//  for (auto i : vector_2_) std::cout << i << ' ';
-//
+  //  for (auto i : test2) std::cout << i << ' ';
+  //  SequenceContainer<int>::iterator it2 = vector_1_.begin();
+  //  std::cout << '\n' << *it2 << std::endl;
+  //  std::copy(&(*it2), &(*(it2 + 4)), &(*(vector_2_.end() - 2)));
+  //  std::cout << std::endl;
+  //  for (auto i : vector_2_) std::cout << i << ' ';
+  //
 
   //  std::cout << "\n+++++++++++++++++++++" << std::endl;
   //
@@ -206,6 +204,12 @@ TEST_F(S21Vector_test, originVictorInsert) {
   //  SequenceContainer<int> two;
   //  std::cout << *(one.begin()+1) << std::endl;
   //  SequenceContainer<int>::Iterator a;
+}
+
+TEST_F(S21Vector_test, mytest) {
+  std::sort(test.begin(), test.end());
+  std::set<int> set = {1, 2, 4};
+  std::is_sorted(set.begin(), set.end());
 }
 
 int main(int argc, char *argv[]) {
