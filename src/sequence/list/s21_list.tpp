@@ -189,6 +189,21 @@ void S21List<T, Alloc>::splice(const_iterator pos, S21List<T, Alloc> &other) {
   other.fake_->prev_ = other.fake_;
 }
 
+template <typename T, typename Alloc>
+void S21List<T, Alloc>::reverse() {
+  auto it = this->begin();
+  for (;;) {
+    if (it == this->end()) break;
+    Node<T> *temp = it.node_->next_;
+    it.node_->next_ = it.node_->prev_;
+    it.node_->prev_ = temp;
+    ++it;
+  }
+  Node<T> *temp = fake_->next_;
+  fake_->next_ = fake_->prev_;
+  fake_->prev_ = temp;
+}
+
 //_____SUPPORT_FUNC_____
 template <typename value_type, typename Alloc>
 Node<value_type> *S21List<value_type, Alloc>::CreateNode(

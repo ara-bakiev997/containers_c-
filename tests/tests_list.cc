@@ -209,6 +209,13 @@ TEST_F(S21List_test, ModifiersSwap) {
   EXPECT_EQ(list_1_.size(), test2.size());
 }
 
+TEST_F(S21List_test, ModifiersReverse) {
+//for (auto i : list_2_) std::cout << i << ' '; std::cout << '\n';
+//list_2_.reverse();
+//for (auto i : list_2_) std::cout << i << ' '; std::cout << '\n';
+
+}
+
 TEST_F(S21List_test, ModifiersSplice) {
   EXPECT_EQ(list_1_.size(), test1.size());
   EXPECT_EQ(list_2_.size(), test2.size());
@@ -221,6 +228,8 @@ TEST_F(S21List_test, ModifiersSplice) {
   EXPECT_EQ(list_2_.size(), test2.size());
   EXPECT_EQ(*list_2_.begin(), *test2.begin());
   EXPECT_EQ(*(++list_2_.begin()), *(++test2.begin()));
+  std::list<int>::iterator a;
+
 }
 
 int main(int argc, char *argv[]) {
