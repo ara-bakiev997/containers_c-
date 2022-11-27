@@ -40,7 +40,7 @@ TEST_F(S21List_test, constructors) {
   EXPECT_EQ(*it, *it_or);
   ++it, ++it_or;
   EXPECT_EQ(*it, *it_or);
-//  // Move
+  //  // Move
   S21List<int> list_4_ = std::move(list_3_);
   std::list<int> test4 = std::move(test3);
   EXPECT_EQ(list_4_.size(), test4.size());
@@ -145,7 +145,7 @@ TEST_F(S21List_test, ModifiersInsert) {
   EXPECT_EQ(list_2_.size(), test2.size());
   ret_em = list_2_.insert(an, 11);
   ret_em_or = test2.insert(an_or, 11);
-  EXPECT_EQ(list_2_.size(), test2.size()); // ha-ha, orig ++size
+  EXPECT_EQ(list_2_.size(), test2.size());  // ha-ha, orig ++size
   EXPECT_EQ(*ret_em, *ret_em_or);
 }
 
@@ -196,6 +196,31 @@ TEST_F(S21List_test, ModifiersPop) {
   test_string.pop_back();
   EXPECT_EQ(list_string.back(), test_string.back());
   EXPECT_EQ(list_string.size(), test_string.size());
+}
+
+TEST_F(S21List_test, ModifiersSwap) {
+  EXPECT_EQ(*list_2_.begin(), *test2.begin());
+  EXPECT_EQ(*list_1_.begin(), *test1.begin());
+  list_1_.swap(list_2_);
+  test1.swap(test2);
+  EXPECT_EQ(*list_2_.begin(), *test2.begin());
+  EXPECT_EQ(*list_1_.begin(), *test1.begin());
+  EXPECT_EQ(list_1_.size(), test1.size());
+  EXPECT_EQ(list_1_.size(), test2.size());
+}
+
+TEST_F(S21List_test, ModifiersSplice) {
+  EXPECT_EQ(list_1_.size(), test1.size());
+  EXPECT_EQ(list_2_.size(), test2.size());
+  auto it = list_2_.begin();
+  auto it_or = test2.begin();
+  ++it; ++it_or;
+  list_2_.splice(it, list_1_);
+  test2.splice(it_or, test1);
+  EXPECT_EQ(list_1_.size(), test1.size());
+  EXPECT_EQ(list_2_.size(), test2.size());
+  EXPECT_EQ(*list_2_.begin(), *test2.begin());
+  EXPECT_EQ(*(++list_2_.begin()), *(++test2.begin()));
 }
 
 int main(int argc, char *argv[]) {
