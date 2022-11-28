@@ -211,7 +211,7 @@ TEST_F(S21List_test, ModifiersSwap) {
 
 TEST_F(S21List_test, ModifiersReverse) {
 //for (auto i : list_2_) std::cout << i << ' '; std::cout << '\n';
-//list_2_.reverse();
+list_2_.reverse();
 //for (auto i : list_2_) std::cout << i << ' '; std::cout << '\n';
 
 }
