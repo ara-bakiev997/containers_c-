@@ -46,6 +46,27 @@ public:
   // destructor
   ~S21Vector() = default; //{ delete[] this->arr_; }
 
+  class VectorIterator : public  SequenceContainer<T>::Iterator {
+    VectorIterator(){
+      this->data_ = nullptr;
+    }
+    explicit VectorIterator(T *pt) {
+      this->data_ = pt;
+    }
+    VectorIterator(const VectorIterator &other) {
+      this->data_ = other.data_;
+    }
+
+    VectorIterator &operator=(const VectorIterator &other) {
+      if (this != &other) {
+        //      this->data_ = other.data_;
+        std::copy(*this, other);
+      }
+      return *this;
+    }
+
+  };
+
   //  Vector Element access
 
   reference at(size_type pos); // access specified element with bounds checking
