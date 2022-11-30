@@ -281,16 +281,6 @@ void S21Vector<value_type, Alloc>::shrink_to_fit() noexcept {
 }
 
 //_____VECTOR_MODIFIERS_____
-template <class value_type, typename Alloc>
-void S21Vector<value_type, Alloc>::push_back(const_reference value) {
-  if (capacity_ == 0) {
-    this->reserve(1);
-  }
-  if (this->size_ == capacity_) {
-    this->reserve(capacity_ * 2);
-  }
-  this->arr_[this->size_++] = value;
-}
 
 template <class value_type, typename Alloc>
 void S21Vector<value_type, Alloc>::clear() {
@@ -343,6 +333,16 @@ void S21Vector<value_type, Alloc>::swap(S21Vector &other) {
 }
 
 template <class value_type, typename Alloc>
+void S21Vector<value_type, Alloc>::push_back(const_reference value) {
+  if (capacity_ == 0) {
+    this->reserve(1);
+  } else if (this->size_ == capacity_) {
+    this->reserve(capacity_ * 2);
+  }
+  this->arr_[this->size_++] = value;
+}
+
+template <class value_type, typename Alloc>
 template <typename... Args>
 void S21Vector<value_type, Alloc>::emplace_back(Args &&...args) {
 
@@ -354,11 +354,11 @@ void S21Vector<value_type, Alloc>::emplace_back(Args &&...args) {
     this->reserve((this->size_ + element_count) * 2);
   }
 
-  value_type ar[element_count] = {args...};
+    for(auto &&ar : {args...}) {
+      this->arr_[this->size_++] = ar;
+    }
 
-  for (int i = 0; i < element_count; ++i) {
-    this->arr_[this->size_++] = ar[i];
-  }
+//  this->arr_[this->size_++] = {args...};
 }
 
 } // namespace s21
