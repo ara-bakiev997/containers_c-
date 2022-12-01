@@ -46,26 +46,26 @@ public:
   // destructor
   ~S21Vector() = default; //{ delete[] this->arr_; }
 
-  class VectorIterator : public  SequenceContainer<T>::Iterator {
-    VectorIterator(){
-      this->data_ = nullptr;
-    }
-    explicit VectorIterator(T *pt) {
-      this->data_ = pt;
-    }
-    VectorIterator(const VectorIterator &other) {
-      this->data_ = other.data_;
-    }
-
-    VectorIterator &operator=(const VectorIterator &other) {
-      if (this != &other) {
-        //      this->data_ = other.data_;
-        std::copy(*this, other);
-      }
-      return *this;
-    }
-
-  };
+  //  class VectorIterator : public  SequenceContainer<T>::Iterator {
+  //    VectorIterator(){
+  //      this->data_ = nullptr;
+  //    }
+  //    explicit VectorIterator(T *pt) {
+  //      this->data_ = pt;
+  //    }
+  //    VectorIterator(const VectorIterator &other) {
+  //      this->data_ = other.data_;
+  //    }
+  //
+  //    VectorIterator &operator=(const VectorIterator &other) override {
+  //      if (this != &other) {
+  //        //      this->data_ = other.data_;
+  //        std::copy(*this, other);
+  //      }
+  //      return *this;
+  //    }
+  //
+  //  };
 
   //  Vector Element access
 
@@ -113,7 +113,8 @@ public:
   iterator insert(iterator pos, const_reference value);
   void erase(iterator pos);              // erases element at pos
   void push_back(const_reference value); // adds an element to the end
-  void pop_back();                       // removes the last element
+  template <typename... Args> void emplace_back(Args &&...args);
+  void pop_back(); // removes the last element
 
 private:
   size_type capacity_;
@@ -280,16 +281,6 @@ void S21Vector<value_type, Alloc>::shrink_to_fit() noexcept {
 }
 
 //_____VECTOR_MODIFIERS_____
-template <class value_type, typename Alloc>
-void S21Vector<value_type, Alloc>::push_back(const_reference value) {
-  if (capacity_ == 0) {
-    this->reserve(1);
-  }
-  if (this->size_ == capacity_) {
-    this->reserve(capacity_ * 2);
-  }
-  this->arr_[this->size_++] = value;
-}
 
 template <class value_type, typename Alloc>
 void S21Vector<value_type, Alloc>::clear() {
@@ -339,6 +330,35 @@ template <class value_type, typename Alloc>
 void S21Vector<value_type, Alloc>::swap(S21Vector &other) {
 
   std::swap(*this, other);
+}
+
+template <class value_type, typename Alloc>
+void S21Vector<value_type, Alloc>::push_back(const_reference value) {
+  if (capacity_ == 0) {
+    this->reserve(1);
+  } else if (this->size_ == capacity_) {
+    this->reserve(capacity_ * 2);
+  }
+  this->arr_[this->size_++] = value;
+}
+
+template <class value_type, typename Alloc>
+template <typename... Args>
+void S21Vector<value_type, Alloc>::emplace_back(Args &&...args) {
+
+  size_type element_count = sizeof...(args);
+
+  if (capacity_ == 0) {
+    this->reserve(element_count);
+  } else if (this->size_ + element_count >= capacity_) {
+    this->reserve((this->size_ + element_count) * 2);
+  }
+
+    for(auto &&ar : {args...}) {
+      this->arr_[this->size_++] = ar;
+    }
+
+//  this->arr_[this->size_++] = {args...};
 }
 
 } // namespace s21

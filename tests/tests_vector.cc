@@ -206,6 +206,23 @@ TEST_F(S21Vector_test, originVictorInsert) {
   //  SequenceContainer<int>::Iterator a;
 }
 
+TEST_F(S21Vector_test, emplace_back) {
+  //  vector_empty.reserve(10);
+  vector_empty.emplace_back(1, 2, 3);
+  EXPECT_EQ(vector_empty.size(), 3);
+  EXPECT_EQ(vector_empty.capacity(), 3);
+  EXPECT_EQ(vector_empty.at(2), 3);
+  vector_1_.emplace_back(1, 2, 3);
+  EXPECT_EQ(vector_1_.size(), 8);
+  EXPECT_EQ(vector_1_.capacity(), 16);
+  //  vector_1_.emplace_back();
+//  test.emplace_back();
+  for (auto &&ar : test) {
+      std::cout << ar << std::endl;
+  }
+  //  std::cout << vector_empty.at(0) << std::endl;
+}
+
 TEST_F(S21Vector_test, mytest) {
   std::sort(test.begin(), test.end());
   std::set<int> set = {1, 2, 4};

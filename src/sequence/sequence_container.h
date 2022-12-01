@@ -24,19 +24,20 @@ public:
 
   class Iterator {
   public:
+    //    Iterator() = default;
     Iterator() : data_(nullptr){};
     explicit Iterator(T *pt) : data_(pt) {}
     Iterator(const Iterator &other) : data_(other.data_) {}
 
-    Iterator &operator=(const Iterator &other) {
+    virtual Iterator &operator=(const Iterator &other) {
       if (this != &other) {
-        //      this->data_ = other.data_;
-        std::copy(*this, other);
+        this->data_ = other.data_;
+        //        std::copy(*this, other);
       }
       return *this;
     }
 
-    Iterator &operator=(Iterator &&other)  noexcept {
+    Iterator &operator=(Iterator &&other) noexcept {
       if (this != &other) {
         //      this->data_ = other.data_;
         std::move(*this, other);
@@ -58,7 +59,7 @@ public:
       return *this;
     }
 
-    Iterator operator++(int)  {
+    Iterator operator++(int) {
       Iterator temp(*this);
       this->data_++;
       return temp;
