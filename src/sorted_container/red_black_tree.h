@@ -16,33 +16,35 @@ template <class T> struct Node {
   Node<T> *right_;
   enum node_colors color_;
   T *data_;
+  Node() : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK) {}
 };
 template <class T> class Tree {
 
+
 public:
   Tree () {
-    size_ = 0;
-    root_ = new Node<T>();
+    root_ = nullptr;
+  }
+
+  Tree& operator=(const Tree& other) {
+    this->root_ = other.root_;
+    return *this;
   }
 
   ~Tree() = default;
 
   void insert(const T &data) {
-    Node<T> temp = Node<T>(data);
-    ++size_;
+    Node<T> temp = Node<T>();
     if (root_ == nullptr) {
       root_ = std::swap(temp);
     } else if (temp > root_) {
       // right
     } else if (temp < root_) {
       // left
-    } else {
-      --size_;
     }
   }
 
 private:
-  size_t size_;
   Node<T> root_;
 };
 } // namespace s21
