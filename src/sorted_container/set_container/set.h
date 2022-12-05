@@ -16,24 +16,25 @@ namespace s21 {
 
 template <class Key, class Compare = std::less<Key>,
           class Allocator = std::allocator<Key>>
-
 class S21Set{
-  class SetIterator<Key>;
+public:
+  class SetIterator;
   using key_type = Key;
   using value_type = Key;
   using reference = value_type &;
   using const_reference = const value_type &;
-  using iterator = SetIterator<value_type>;
-  using const_iterator = SetConstIterator<value_type>;
+  using iterator = SetIterator;
+  using const_iterator = SetIterator;
   using size_type = size_t;
 
 
-  class SetIterator<Key> {
+  class SetIterator {
 
 
 
   };
 
+private:
 
 };
 
