@@ -9,11 +9,14 @@ namespace s21 {
 
 enum node_colors { RED, BLACK };
 
-template <class T> class Node {
+template <class T, class Alloc = std::allocator<T>> class Node {
 
 public:
-  Node() : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK), data_(nullptr) {}
-  Node(T *data) {}
+  Node()
+      : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK),
+        data_(nullptr) {}
+  explicit Node(T &data) : data_(data) {}
+
   ~Node() = default;
 
 private:
@@ -22,13 +25,27 @@ private:
   Node<T> *right_;
   enum node_colors color_;
   T *data_;
-
+  Alloc alloc_;
 };
 template <class T> class Tree {
 
 public:
-  Tree();
+  Tree() : size_(0), root_(nullptr) {}
   ~Tree() = default;
+
+  void insert(const T &data) {
+    Node<T> temp = Node<T>(data);
+    ++size_;
+    if (root_ == nullptr) {
+      root_ = std::swap(temp);
+    } else if (temp > root_) {
+      //right
+    }else if (temp < root_) {
+      //left
+    } else {
+      --size_;
+    }
+  }
 
 private:
   size_t size_;
