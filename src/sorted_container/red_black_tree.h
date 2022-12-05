@@ -15,9 +15,34 @@ public:
   Node()
       : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK),
         data_(nullptr) {}
-  explicit Node(T &data) : data_(data) {}
-
+  explicit Node(const T &data) {
+    this->data_ = alloc_.allocate(sizeof(data_));
+    std::copy(this->data_, data);
+    color_ = BLACK;
+  }
   ~Node() = default;
+
+  Node &operator=(const Node<T> &v) {
+    if (this != &v) {
+      if (this->data_ != nullptr) {
+        alloc_.deallocate(this->data_, sizeof(this->data_));
+        this->data_ = nullptr;
+      }
+      std::swap(this->data_, v.data_);
+    }
+    return *this;
+  }
+
+  Node &operator=(Node<T> &&v) noexcept {
+    if (this != &v) {
+      if (this->data_ != nullptr) {
+        alloc_.deallocate(this->data_, sizeof(this->data_));
+        this->data_ = nullptr;
+      }
+      std::swap(this->data_, v.data_);
+    }
+    return *this;
+  }
 
 private:
   Node<T> *parent_;
@@ -30,7 +55,11 @@ private:
 template <class T> class Tree {
 
 public:
-  Tree() : size_(0), root_(nullptr) {}
+  Tree () {
+    size_ = 0;
+    root_ = new Node<T>();
+  }
+
   ~Tree() = default;
 
   void insert(const T &data) {
@@ -39,9 +68,9 @@ public:
     if (root_ == nullptr) {
       root_ = std::swap(temp);
     } else if (temp > root_) {
-      //right
-    }else if (temp < root_) {
-      //left
+      // right
+    } else if (temp < root_) {
+      // left
     } else {
       --size_;
     }
