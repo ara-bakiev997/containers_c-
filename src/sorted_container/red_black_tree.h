@@ -16,17 +16,20 @@ template <class T> struct Node {
   Node<T> *right_;
   enum node_colors color_;
   T *data_;
-  Node() : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK) {}
+  Node()
+      : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK),
+        data_(nullptr) {}
+  explicit Node(const T &data)
+      : parent_(nullptr), left_(nullptr), right_(nullptr), color_(RED),
+        data_(data) {}
 };
 template <class T> class Tree {
 
-
 public:
-  Tree () {
-    root_ = nullptr;
-  }
+  Tree() { root_ = nullptr; }
 
-  Tree& operator=(const Tree& other) {
+  Tree &operator=(const Tree &other) {
+    //    if (this->root_ != other.root_)
     this->root_ = other.root_;
     return *this;
   }
@@ -43,6 +46,8 @@ public:
       // left
     }
   }
+
+  Node<T> *GetRoot() { return this->root_; }
 
 private:
   Node<T> *root_;

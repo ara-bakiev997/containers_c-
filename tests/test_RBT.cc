@@ -15,5 +15,6 @@ protected:
 };
 
 TEST_F(Tree_test, first) {
+  EXPECT_EQ(tree_.GetRoot(), nullptr);
 
 }
