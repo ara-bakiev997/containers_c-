@@ -45,7 +45,7 @@ public:
   }
 
 private:
-  Node<T> root_;
+  Node<T> *root_;
 };
 } // namespace s21
 
