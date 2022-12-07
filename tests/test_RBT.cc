@@ -17,11 +17,22 @@ protected:
 };
 
 
-TEST_F(Tree_test, first) {
+TEST_F(Tree_test, GetRoot) {
   EXPECT_EQ(tree_null_.GetRoot(), nullptr);
-  EXPECT_EQ(tree_null_.GetRoot()->data_, nullptr);
-  EXPECT_EQ(tree_null_.GetRoot()->parent_, nullptr);
-  EXPECT_EQ(tree_null_.GetRoot()->left_, nullptr);
-  EXPECT_EQ(tree_null_.GetRoot()->right_, nullptr);
-  EXPECT_EQ(tree_null_.GetRoot()->color_, BLACK);
+//  EXPECT_EQ(tree_null_.GetRoot()->data_, nullptr);
+//  EXPECT_EQ(tree_null_.GetRoot()->parent_, nullptr);
+//  EXPECT_EQ(tree_null_.GetRoot()->left_, nullptr);
+//  EXPECT_EQ(tree_null_.GetRoot()->right_, nullptr);
+//  EXPECT_EQ(tree_null_.GetRoot()->color_, BLACK);
 }
+
+TEST_F(Tree_test, Insert) {
+  tree_null_.Insert(5);
+//  EXPECT_EQ(tree_null_.GetRoot(), nullptr);
+  //  EXPECT_EQ(tree_null_.GetRoot()->data_, nullptr);
+  //  EXPECT_EQ(tree_null_.GetRoot()->parent_, nullptr);
+  //  EXPECT_EQ(tree_null_.GetRoot()->left_, nullptr);
+  //  EXPECT_EQ(tree_null_.GetRoot()->right_, nullptr);
+  //  EXPECT_EQ(tree_null_.GetRoot()->color_, BLACK);
+}
+

@@ -5,6 +5,12 @@
 #ifndef S21_CONTAINERS_SRC_SORTED_CONTAINER_RED_BLACK_TREE_H_
 #define S21_CONTAINERS_SRC_SORTED_CONTAINER_RED_BLACK_TREE_H_
 
+#include <cstddef>
+#include <initializer_list>
+#include <iostream>
+#include <utility>
+#include <valarray>
+
 namespace s21 {
 
 enum node_colors { RED, BLACK };
@@ -15,10 +21,10 @@ template <class T> struct Node {
   Node<T> *left_;
   Node<T> *right_;
   enum node_colors color_;
-  T *data_;
+  T data_;
   Node()
       : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK),
-        data_(nullptr) {}
+        data_() {}
   explicit Node(const T &data)
       : parent_(nullptr), left_(nullptr), right_(nullptr), color_(RED),
         data_(data) {}
@@ -36,15 +42,20 @@ public:
 
   ~Tree() = default;
 
-  void insert(const T &data) {
-    Node<T> temp = Node<T>();
+  void Insert(const T &data) {
+    Node<T> temp(data);
     if (root_ == nullptr) {
-      root_ = std::swap(temp);
-    } else if (temp > root_) {
-      // right
-    } else if (temp < root_) {
-      // left
+      std::swap(temp, *root_);
     }
+//    else if (temp > *root_) {
+//      // right
+//    } else if (temp < *root_) {
+//      // left
+//    }
+  }
+
+  void Remove (const T& data) {
+
   }
 
   Node<T> *GetRoot() { return this->root_; }
