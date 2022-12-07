@@ -45,8 +45,7 @@ public:
   Tree() { this->root_ = nullptr; }
 
   Tree &operator=(const Tree &other) {
-    //    if (this->root_ != other.root_)
-    this->root_ = other.root_;
+        if (this != &other) this->root_ = other.root_;
     return *this;
   }
 
