@@ -28,6 +28,15 @@ template <class T> struct Node {
   explicit Node(const T &data)
       : parent_(nullptr), left_(nullptr), right_(nullptr), color_(RED),
         data_(data) {}
+  Node& operator= (const Node&  other) {
+    if (this != &other) {
+      this->parent_ = other.parent_;
+      this->color_ = other.color_;
+      this->data_ = other.data_;
+      this->left_ = other.left_;
+      this->right_ = other.right_;
+    }
+  }
 };
 template <class T> class Tree {
 
@@ -45,7 +54,7 @@ public:
   void Insert(const T &data) {
     Node<T> temp(data);
     if (root_ == nullptr) {
-      std::swap(temp, *root_);
+      this->root_ = &temp;
     }
 //    else if (temp > *root_) {
 //      // right
