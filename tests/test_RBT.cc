@@ -29,5 +29,9 @@ TEST_F(Tree_test, GetRoot) {
 TEST_F(Tree_test, Insert) {
   tree_null_.Insert(5);
   EXPECT_EQ(tree_null_.GetRoot()->data_, 5);
+  tree_null_.Insert(7);
+  EXPECT_EQ(tree_null_.GetRoot()->right_->data_, 7);
+  tree_null_.Insert(4);
+  EXPECT_EQ(tree_null_.GetRoot()->left_->data_, 4);
 }
 

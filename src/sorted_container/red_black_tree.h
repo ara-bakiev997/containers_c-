@@ -17,9 +17,9 @@ enum node_colors { RED, BLACK };
 
 template <class T> struct Node {
 
-  Node<T> *parent_;
-  Node<T> *left_;
-  Node<T> *right_;
+  Node<T> *parent_{};
+  Node<T> *left_{};
+  Node<T> *right_{};
   enum node_colors color_;
   T data_;
   Node()
@@ -28,7 +28,7 @@ template <class T> struct Node {
   explicit Node(const T &data)
       : parent_(nullptr), left_(nullptr), right_(nullptr), color_(RED),
         data_(data) {}
-  Node& operator= (const Node&  other) {
+  Node &operator=(const Node &other) {
     if (this != &other) {
       this->parent_ = other.parent_;
       this->color_ = other.color_;
@@ -38,10 +38,11 @@ template <class T> struct Node {
     }
   }
 };
+
 template <class T> class Tree {
 
 public:
-  Tree() { root_ = nullptr; }
+  Tree() { this->root_ = nullptr; }
 
   Tree &operator=(const Tree &other) {
     //    if (this->root_ != other.root_)
@@ -52,20 +53,22 @@ public:
   ~Tree() = default;
 
   void Insert(const T &data) {
-    Node<T> temp(data);
-    if (root_ == nullptr) {
-      this->root_ = &temp;
+    auto *temp = new Node<T>(data);
+    //    temp->data_ = data;
+    if (this->root_ == nullptr) {
+//      this->root_ = temp;
+      std::swap(this->root_, temp);
+    } else if (temp->data_ > this->root_->data_) {
+      // right
+      std::swap(this->root_->right_, temp);
+//      this->root_->right_ = temp;
+    } else if (temp->data_ < this->root_->data_) {
+      // left
+      std::swap(this->root_->left_, temp);
     }
-//    else if (temp > *root_) {
-//      // right
-//    } else if (temp < *root_) {
-//      // left
-//    }
   }
 
-  void Remove (const T& data) {
-
-  }
+  void Remove(const T &data) {}
 
   Node<T> *GetRoot() { return this->root_; }
 
