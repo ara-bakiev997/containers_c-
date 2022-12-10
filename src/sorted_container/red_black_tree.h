@@ -13,29 +13,84 @@
 
 namespace s21 {
 
-enum node_colors { RED, BLACK };
+enum RBT_colors { RED, BLACK };
 
-template <class T> struct Node {
+template <class T> struct RBT {
 
-  Node<T> *parent_{};
-  Node<T> *left_{};
-  Node<T> *right_{};
-  enum node_colors color_;
+  RBT<T> *parent_{};
+  RBT<T> *left_{};
+  RBT<T> *right_{};
+  enum RBT_colors color_ = BLACK;
+  bool is_empty_ = true;
   T data_;
-  Node()
-      : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK),
-        data_() {}
-  explicit Node(const T &data)
-      : parent_(nullptr), left_(nullptr), right_(nullptr), color_(RED),
-        data_(data) {}
-  Node &operator=(const Node &other) {
-    if (this != &other) {
-      this->parent_ = other.parent_;
-      this->color_ = other.color_;
-      this->data_ = other.data_;
-      this->left_ = other.left_;
-      this->right_ = other.right_;
+//    RBT()
+//        : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK),
+//          data_(), is_empty_(true) {}
+//    explicit RBT(const T &data)
+//        : parent_(nullptr), left_(nullptr), right_(nullptr), color_(RED),
+//          data_(data), is_empty_(false) {}
+
+//    RBT()= default;
+//    explicit RBT(const T &data) : color_(RED), data_(data), is_empty_(false)
+//    {}
+
+  //  RBT &operator=(const RBT &other) {
+  //    if (this != &other) {
+  //      this->parent_ = other.parent_;
+  //      this->color_ = other.color_;
+  //      this->data_ = other.data_;
+  //      this->left_ = other.left_;
+  //      this->right_ = other.right_;
+  //    }
+  //    return *this;
+  //  }
+
+//      RBT &operator=(RBT &&other)  noexcept {
+//  //      if (this != other) {
+//          std::swap(this, other);
+//    //      this->parent_ = other.parent_;
+//    //      this->color_ = other.color_;
+//    //      this->data_ = other.data_;
+//    //      this->left_ = other.left_;
+//    //      this->right_ = other.right_;
+//  //      }
+//        return *this;
+//      }
+
+  void Insert(const T data) {
+    //    RBT<T> temp(data);
+    //    if (this->is_empty_) {
+    //      std::swap(*this, temp);
+    //      this->is_empty_ = false;
+    //    } else if (this->data_ > data) {
+    //      this->right_->Insert(data);
+    //    } else if (this->data_ < data) {
+    //      this->left_->Insert(data);
+    //    }
+
+    if (this == nullptr) {
+//      this = new RBT<T>;
+//      std::swap(this, &temp);
+//      this->is_empty_ = false;
+      return;
+    } else if (this->is_empty_) {
+      this->data_ = data;
+      this->is_empty_ = false;
+      return;
+    } else if (this->data_ > data) {
+      this->right_ = new RBT<T>;
+      right_->data_ = data;
+    } else if (this->data_ < data) {
+      this->left_->Insert(data);
     }
+  }
+
+  void RBTPrint() {
+    if (this == nullptr)
+      return;
+    this->left_->RBTPrint();
+    std::cout << this->data_ << std::endl;
+    this->right_->RBTPrint();
   }
 };
 
@@ -45,22 +100,25 @@ public:
   Tree() { this->root_ = nullptr; }
 
   Tree &operator=(const Tree &other) {
-        if (this != &other) this->root_ = other.root_;
+    if (this != &other)
+      this->root_ = other.root_;
     return *this;
   }
 
   ~Tree() = default;
 
+  void fu() {}
+
   void Insert(const T &data) {
-    auto *temp = new Node<T>(data);
+    auto *temp = new RBT<T>;
     //    temp->data_ = data;
     if (this->root_ == nullptr) {
-//      this->root_ = temp;
-      std::swap(this->root_, temp);
+      //      this->root_ = temp;
+      std::swap(this->root_, temp); // init
     } else if (temp->data_ > this->root_->data_) {
       // right
       std::swap(this->root_->right_, temp);
-//      this->root_->right_ = temp;
+      //      this->root_->right_ = temp;
     } else if (temp->data_ < this->root_->data_) {
       // left
       std::swap(this->root_->left_, temp);
@@ -69,10 +127,10 @@ public:
 
   void Remove(const T &data) {}
 
-  Node<T> *GetRoot() { return this->root_; }
+  RBT<T> *GetRoot() { return this->root_; }
 
 private:
-  Node<T> *root_;
+  RBT<T> *root_;
 };
 } // namespace s21
 
