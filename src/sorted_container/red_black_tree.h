@@ -102,27 +102,51 @@ public:
 
   void fu() {}
 
-  void InsertRBT(RBT<T>* & paste_here, RBT<T>* & node) {
-    std::swap(paste_here, node);
+  void InsertRBT(RBT<T> *&paste_here, RBT<T> *&node) {
+    if (paste_here == nullptr) {
+      std::swap(paste_here, node);
+      //      std::swap(this->root_, temp); // init
+    } else if (node->data_ > paste_here->data_) {
+      // right
+      InsertRBT(paste_here->right_, node);
+      //      this->root_->right_ = temp;
+    } else if (node->data_ < paste_here->data_) {
+      // left
+      InsertRBT(paste_here->left_, node);
+    }
   }
 
   void Insert(const T &data) {
     auto *temp = new RBT<T>;
     temp->data_ = data;
 
-    if (this->root_ == nullptr) {
-      //      this->root_ = temp;
-      InsertRBT(this->root_, temp);
-//      std::swap(this->root_, temp); // init
-    } else if (temp->data_ > this->root_->data_) {
-      // right
-      InsertRBT(this->root_->right_, temp);
-      //      this->root_->right_ = temp;
-    } else if (temp->data_ < this->root_->data_) {
-      // left
-      InsertRBT(this->root_->left_, temp);
-    }
+    InsertRBT(root_, temp);
+
+    //    if (this->root_ == nullptr) {
+    //      //      this->root_ = temp;
+    //      InsertRBT(this->root_, temp);
+    ////      std::swap(this->root_, temp); // init
+    //    } else if (temp->data_ > this->root_->data_) {
+    //      // right
+    //      InsertRBT(this->root_->right_, temp);
+    //      //      this->root_->right_ = temp;
+    //    } else if (temp->data_ < this->root_->data_) {
+    //      // left
+    //      InsertRBT(this->root_->left_, temp);
+    //    }
   }
+
+  void RBTPrint(RBT<T> *&node) {
+    if (node == nullptr)
+      return;
+    RBTPrint(node->left_);
+    std::cout << node->data_ << std::endl;
+    RBTPrint(node->right_);
+  }
+
+  void TreePrint(){
+    RBTPrint(this->root_);
+  };
 
   void Remove(const T &data) {}
 
