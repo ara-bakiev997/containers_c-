@@ -39,20 +39,21 @@ public:
   ~Tree() = default;
 
 
-  void InsertRBT(RBT<T> *&paste_here, RBT<T> *&node) {
+  void InsertRBT(RBT<T> *&paste_here, RBT<T> *&paste_this, RBT<T> *&parent) {
     if (paste_here == nullptr) {
-      std::swap(paste_here, node);
-    } else if (node->data_ > paste_here->data_) {
-      InsertRBT(paste_here->right_, node);
-    } else if (node->data_ < paste_here->data_) {
-      InsertRBT(paste_here->left_, node);
+      if (paste_here != parent) paste_this->parent_ = parent;
+      std::swap(paste_here, paste_this);
+    } else if (paste_this->data_ > paste_here->data_) {
+      InsertRBT(paste_here->right_, paste_this, paste_here);
+    } else if (paste_this->data_ < paste_here->data_) {
+      InsertRBT(paste_here->left_, paste_this,paste_here);
     }
   }
 
   void Insert(const T &data) {
     auto *temp = new RBT<T>;
     temp->data_ = data;
-    InsertRBT(root_, temp);
+    InsertRBT(root_, temp,root_);
   }
 
   void RBTPrint(RBT<T> *&node) {
