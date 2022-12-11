@@ -22,7 +22,6 @@ template <class T> struct RBT {
   RBT<T> *right_{};
   enum RBT_colors color_ = BLACK;
   T data_;
-
 };
 
 template <class T> class Tree {
@@ -37,7 +36,6 @@ public:
   }
 
   ~Tree() = default;
-
 
   void InsertRBT(RBT<T> *&paste_here, RBT<T> *&paste_this, RBT<T> *&parent) {
     if (paste_here == nullptr) {
@@ -54,6 +52,7 @@ public:
     auto *temp = new RBT<T>;
     temp->data_ = data;
     InsertRBT(root_, temp,root_);
+    if (!temp) delete temp;
   }
 
   void RBTPrint(RBT<T> *&node) {

@@ -40,6 +40,9 @@ TEST_F(Tree_test, Insert) {
   EXPECT_EQ(tree_null_.GetRoot()->left_->data_, 4);
   tree_null_.Insert(-4);
   tree_null_.Insert(124);
+  tree_null_.Insert(124);
+  tree_null_.Insert(32);
+  tree_null_.Insert(-8);
   tree_null_.TreePrint();
 }
 
