@@ -23,16 +23,16 @@ template <class T> struct RBT {
   enum RBT_colors color_ = BLACK;
   bool is_empty_ = true;
   T data_;
-//    RBT()
-//        : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK),
-//          data_(), is_empty_(true) {}
-//    explicit RBT(const T &data)
-//        : parent_(nullptr), left_(nullptr), right_(nullptr), color_(RED),
-//          data_(data), is_empty_(false) {}
+  //    RBT()
+  //        : parent_(nullptr), left_(nullptr), right_(nullptr), color_(BLACK),
+  //          data_(), is_empty_(true) {}
+  //    explicit RBT(const T &data)
+  //        : parent_(nullptr), left_(nullptr), right_(nullptr), color_(RED),
+  //          data_(data), is_empty_(false) {}
 
-//    RBT()= default;
-//    explicit RBT(const T &data) : color_(RED), data_(data), is_empty_(false)
-//    {}
+  //    RBT()= default;
+  //    explicit RBT(const T &data) : color_(RED), data_(data), is_empty_(false)
+  //    {}
 
   //  RBT &operator=(const RBT &other) {
   //    if (this != &other) {
@@ -45,33 +45,24 @@ template <class T> struct RBT {
   //    return *this;
   //  }
 
-//      RBT &operator=(RBT &&other)  noexcept {
-//  //      if (this != other) {
-//          std::swap(this, other);
-//    //      this->parent_ = other.parent_;
-//    //      this->color_ = other.color_;
-//    //      this->data_ = other.data_;
-//    //      this->left_ = other.left_;
-//    //      this->right_ = other.right_;
-//  //      }
-//        return *this;
-//      }
+  //      RBT &operator=(RBT &&other)  noexcept {
+  //  //      if (this != other) {
+  //          std::swap(this, other);
+  //    //      this->parent_ = other.parent_;
+  //    //      this->color_ = other.color_;
+  //    //      this->data_ = other.data_;
+  //    //      this->left_ = other.left_;
+  //    //      this->right_ = other.right_;
+  //  //      }
+  //        return *this;
+  //      }
 
   void Insert(const T data) {
-    //    RBT<T> temp(data);
-    //    if (this->is_empty_) {
-    //      std::swap(*this, temp);
-    //      this->is_empty_ = false;
-    //    } else if (this->data_ > data) {
-    //      this->right_->Insert(data);
-    //    } else if (this->data_ < data) {
-    //      this->left_->Insert(data);
-    //    }
 
     if (this == nullptr) {
-//      this = new RBT<T>;
-//      std::swap(this, &temp);
-//      this->is_empty_ = false;
+      //      this = new RBT<T>;
+      //      std::swap(this, &temp);
+      //      this->is_empty_ = false;
       return;
     } else if (this->is_empty_) {
       this->data_ = data;
@@ -85,12 +76,14 @@ template <class T> struct RBT {
     }
   }
 
+  void InsertRBT() {}
+
   void RBTPrint() {
     if (this == nullptr)
       return;
-    this->left_->RBTPrint();
-    std::cout << this->data_ << std::endl;
     this->right_->RBTPrint();
+    std::cout << this->data_ << std::endl;
+    this->left_->RBTPrint();
   }
 };
 
@@ -109,19 +102,25 @@ public:
 
   void fu() {}
 
+  void InsertRBT(RBT<T>* & paste_here, RBT<T>* & node) {
+    std::swap(paste_here, node);
+  }
+
   void Insert(const T &data) {
     auto *temp = new RBT<T>;
-    //    temp->data_ = data;
+    temp->data_ = data;
+
     if (this->root_ == nullptr) {
       //      this->root_ = temp;
-      std::swap(this->root_, temp); // init
+      InsertRBT(this->root_, temp);
+//      std::swap(this->root_, temp); // init
     } else if (temp->data_ > this->root_->data_) {
       // right
-      std::swap(this->root_->right_, temp);
+      InsertRBT(this->root_->right_, temp);
       //      this->root_->right_ = temp;
     } else if (temp->data_ < this->root_->data_) {
       // left
-      std::swap(this->root_->left_, temp);
+      InsertRBT(this->root_->left_, temp);
     }
   }
 
