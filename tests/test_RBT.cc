@@ -43,6 +43,8 @@ TEST_F(Tree_test, Insert) {
   tree_null_.Insert(124);
   tree_null_.Insert(32);
   tree_null_.Insert(-8);
-  tree_null_.TreePrint();
+//  tree_null_.TreePrint();
+  tree_null_.WalkInWidth();
+
 }
 

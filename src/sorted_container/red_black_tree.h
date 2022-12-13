@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
+#include <queue>
 #include <utility>
 #include <valarray>
 
@@ -39,20 +40,51 @@ public:
 
   void InsertRBT(RBT<T> *&paste_here, RBT<T> *&paste_this, RBT<T> *&parent) {
     if (paste_here == nullptr) {
-      if (paste_here != parent) paste_this->parent_ = parent;
+      if (paste_here != parent)
+        paste_this->parent_ = parent;
       std::swap(paste_here, paste_this);
     } else if (paste_this->data_ > paste_here->data_) {
       InsertRBT(paste_here->right_, paste_this, paste_here);
     } else if (paste_this->data_ < paste_here->data_) {
-      InsertRBT(paste_here->left_, paste_this,paste_here);
+      InsertRBT(paste_here->left_, paste_this, paste_here);
     }
   }
 
   void Insert(const T &data) {
     auto *temp = new RBT<T>;
     temp->data_ = data;
-    InsertRBT(root_, temp,root_);
-    if (!temp) delete temp;
+    InsertRBT(root_, temp, root_);
+    if (!temp)
+      delete temp;
+  }
+
+  void Remove(const T &data) {}
+
+  void WalkInWidth() {
+    std::queue<RBT<T> *> queue;
+    queue.push(this->root_);
+    int count = 1;
+    int sons = 1;
+
+    while (!queue.empty()) {
+      RBT<T> *temp;
+      temp = queue.front();
+      queue.pop();
+      if (temp != nullptr) {
+        std::cout << temp->data_ << std::endl;
+      } else {
+
+      }
+
+      if (temp->left_ != nullptr)
+        queue.push(temp->left_);
+      else
+        queue.push(nullptr);
+      if (temp->right_ != nullptr)
+        queue.push(temp->right_);
+      else
+        queue.push(nullptr);
+    }
   }
 
   void RBTPrint(RBT<T> *&node) {
@@ -63,11 +95,7 @@ public:
     RBTPrint(node->right_);
   }
 
-  void TreePrint(){
-    RBTPrint(this->root_);
-  };
-
-  void Remove(const T &data) {}
+  void TreePrint() { RBTPrint(this->root_); };
 
   RBT<T> *GetRoot() { return this->root_; }
 
