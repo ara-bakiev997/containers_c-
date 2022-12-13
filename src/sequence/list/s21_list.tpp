@@ -178,9 +178,7 @@ void S21List<T, Alloc>::swap(S21List<T, Alloc> &other) {
 template<typename T, typename Alloc>
 void S21List<T, Alloc>::merge(S21List<T, Alloc> &other) {
 
-
 }
-
 
 template<typename T, typename Alloc>
 void S21List<T, Alloc>::splice(const_iterator pos, S21List<T, Alloc> &other) {

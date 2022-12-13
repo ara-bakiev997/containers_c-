@@ -216,13 +216,13 @@ TEST_F(S21List_test, ModifiersMerge) {
 //  std::cout << '\n';
 //  auto it_middle = list_2_.GetMiddleList();
 //  std::cout << "middle iterator = " << *it_middle << std::endl;
-  std::list<int> test3 = {6,7,10}; // {6,7,8,9,10};
-  for (auto i : test3) std::cout << i << ' '; std::cout << '\n';
-  std::list<int> test4 = {1,2,3,8,9};
+  std::list<int> test3 = {6, 7, 10}; // {6,7,8,9,10};
+  for (auto i : test3) std::cout << i << ' ';
+  std::cout << '\n';
+  std::list<int> test4 = {1, 2, 3, 8, 9};
   test3.merge(test4);
-  for (auto i : test3) std::cout << i << ' '; std::cout << '\n';
-
-
+  for (auto i : test3) std::cout << i << ' ';
+  std::cout << '\n';
 
 }
 
