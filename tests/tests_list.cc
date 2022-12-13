@@ -209,10 +209,20 @@ TEST_F(S21List_test, ModifiersSwap) {
   EXPECT_EQ(list_1_.size(), test2.size());
 }
 
-TEST_F(S21List_test, ModifiersReverse) {
-//for (auto i : list_2_) std::cout << i << ' '; std::cout << '\n';
-list_2_.reverse();
-//for (auto i : list_2_) std::cout << i << ' '; std::cout << '\n';
+TEST_F(S21List_test, ModifiersMerge) {
+//  S21List<int> list_2_ = {1, 2, 3, 8, 9};
+//  for (auto i : list_2_) std::cout << i << ' ';
+//
+//  std::cout << '\n';
+//  auto it_middle = list_2_.GetMiddleList();
+//  std::cout << "middle iterator = " << *it_middle << std::endl;
+  std::list<int> test3 = {6,7,10}; // {6,7,8,9,10};
+  for (auto i : test3) std::cout << i << ' '; std::cout << '\n';
+  std::list<int> test4 = {1,2,3,8,9};
+  test3.merge(test4);
+  for (auto i : test3) std::cout << i << ' '; std::cout << '\n';
+
+
 
 }
 
@@ -221,7 +231,8 @@ TEST_F(S21List_test, ModifiersSplice) {
   EXPECT_EQ(list_2_.size(), test2.size());
   auto it = list_2_.begin();
   auto it_or = test2.begin();
-  ++it; ++it_or;
+  ++it;
+  ++it_or;
   list_2_.splice(it, list_1_);
   test2.splice(it_or, test1);
   EXPECT_EQ(list_1_.size(), test1.size());
@@ -229,7 +240,15 @@ TEST_F(S21List_test, ModifiersSplice) {
   EXPECT_EQ(*list_2_.begin(), *test2.begin());
   EXPECT_EQ(*(++list_2_.begin()), *(++test2.begin()));
   std::list<int>::iterator a;
+}
 
+TEST_F(S21List_test, ModifiersReverse) {
+  EXPECT_EQ(*list_2_.begin(), *test2.begin());
+  EXPECT_EQ(*(++list_2_.begin()), *(++test2.begin()));
+  list_2_.reverse();
+  test2.reverse();
+  EXPECT_EQ(*list_2_.begin(), *test2.begin());
+  EXPECT_EQ(*(++list_2_.begin()), *(++test2.begin()));
 }
 
 int main(int argc, char *argv[]) {
