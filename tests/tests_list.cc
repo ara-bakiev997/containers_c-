@@ -267,6 +267,15 @@ TEST_F(S21List_test, ModifiersUnique) {
   EXPECT_EQ(list_5_.size(), test5.size());
 }
 
+TEST_F(S21List_test, ModifiersSort) {
+  S21List<int> test_sort = {3, 1};
+  for (auto i : test_sort) std::cout << i << ' '; std::cout << std::endl;
+  test_sort.sort();
+
+  for (auto i : test_sort) std::cout << i << ' '; std::cout << std::endl;
+
+}
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
