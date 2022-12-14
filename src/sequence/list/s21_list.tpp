@@ -237,7 +237,18 @@ void S21List<T, Alloc>::unique() {
 }
 
 template <typename T, typename Alloc>
-void S21List<T, Alloc>::sort() {}
+void S21List<T, Alloc>::sort() {
+  iterator middle = this->GetMiddleList();
+  S21List<T> temp;
+  for (auto it = temp.begin() ;middle != this->end();) {
+    iterator temp_it = middle;
+    temp.insert(it, *middle);
+    ++middle;
+    this->erase(temp_it);
+    ++it;
+  }
+  this->merge(temp);
+}
 
 //_____SUPPORT_FUNC_____
 template <typename value_type, typename Alloc>

@@ -117,6 +117,7 @@ class S21List : public SequenceContainer<T> {
   void print();
   iterator GetMiddleList();
 
+
  private:
   //  Node<T> *head_{};
   //  Node<T> *tail_{};
