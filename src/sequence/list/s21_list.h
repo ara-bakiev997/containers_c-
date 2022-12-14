@@ -15,7 +15,7 @@
 #include "../sequence_container.h"
 
 namespace s21 {
-template<typename T>
+template <typename T>
 struct Node {
   T value_{};
   Node *next_{};
@@ -25,7 +25,7 @@ struct Node {
   //  ~Node() { next_ = nullptr, prev_ = nullptr;}
 };
 
-template<typename T, typename Alloc = std::allocator<T>>
+template <typename T, typename Alloc = std::allocator<T>>
 class S21List : public SequenceContainer<T> {
  public:
   using value_type = typename SequenceContainer<T>::value_type;
@@ -35,39 +35,39 @@ class S21List : public SequenceContainer<T> {
   using SequenceContainer<T>::arr_;
   using SequenceContainer<T>::size_;
   using NodeAlloc = typename std::allocator_traits<
-	  Alloc>::template rebind_alloc<Node<value_type>>;
+      Alloc>::template rebind_alloc<Node<value_type>>;
 
   // Iterators for list
   class ConstIterator {
    public:
-	ConstIterator() {}
-	ConstIterator(Node<value_type> *pt) : node_(pt) {}
-	ConstIterator(const ConstIterator &other) : node_(other.node_) {}
-	virtual ConstIterator &operator++();
-	virtual ConstIterator operator++(int);
-	virtual ConstIterator &operator--();
-	virtual ConstIterator operator--(int);
-	const_reference operator*() const { return node_->value_; }
-	bool operator!=(const ConstIterator &other) const {
-	  return node_ != other.node_;
-	}
-	bool operator==(const ConstIterator &other) const {
-	  return node_ == other.node_;
-	}
+    ConstIterator() {}
+    ConstIterator(Node<value_type> *pt) : node_(pt) {}
+    ConstIterator(const ConstIterator &other) : node_(other.node_) {}
+    virtual ConstIterator &operator++();
+    virtual ConstIterator operator++(int);
+    virtual ConstIterator &operator--();
+    virtual ConstIterator operator--(int);
+    const_reference operator*() const { return node_->value_; }
+    bool operator!=(const ConstIterator &other) const {
+      return node_ != other.node_;
+    }
+    bool operator==(const ConstIterator &other) const {
+      return node_ == other.node_;
+    }
 
    public:
-	Node<value_type> *node_{};
+    Node<value_type> *node_{};
   };
 
   class Iterator : public ConstIterator {
    public:
-	Iterator() {}
-	Iterator(Node<value_type> *pt) { this->node_ = pt; }
+    Iterator() {}
+    Iterator(Node<value_type> *pt) { this->node_ = pt; }
 
-	Iterator(const Iterator &other) : ConstIterator(other) {}
-	reference operator*() { return this->node_->value_; }
-	Iterator &operator=(const Iterator &other);
-	Node<value_type> *AccessNode() { return this->node_; }
+    Iterator(const Iterator &other) : ConstIterator(other) {}
+    reference operator*() { return this->node_->value_; }
+    Iterator &operator=(const Iterator &other);
+    Node<value_type> *AccessNode() { return this->node_; }
   };
   using iterator = Iterator;
   using const_iterator = const ConstIterator;
@@ -77,8 +77,8 @@ class S21List : public SequenceContainer<T> {
   S21List(std::initializer_list<value_type> const &items);
   S21List(const S21List &l);
   S21List(S21List &&l) noexcept {
-	InitFakeNode();
-	*this = std::move(l);
+    InitFakeNode();
+    *this = std::move(l);
   }
   ~S21List();
   S21List &operator=(S21List &&l) noexcept;
@@ -90,8 +90,8 @@ class S21List : public SequenceContainer<T> {
   // List Iterators
   iterator begin() const;
   iterator end() const;
-//  const_iterator begin() const;
-//  const_iterator end() const;
+  //  const_iterator begin() const;
+  //  const_iterator end() const;
 
   // List Capacity
   bool empty() { return !size_; }
@@ -126,7 +126,6 @@ class S21List : public SequenceContainer<T> {
   Node<T> *CreateNode(const_reference value);
   void RemNode(Node<value_type> *node);
   void InitFakeNode();
-
 };
 
 }  // namespace s21

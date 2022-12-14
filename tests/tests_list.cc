@@ -14,11 +14,15 @@ class S21List_test : public ::testing::Test {
   S21List<int> list_empty;
   S21List<int> list_1_ = S21List<int>(5);
   S21List<int> list_2_ = {1, 2, 3, 4, 5};
+  S21List<int> list_3_ = {6, 7, 8, 9, 10};
+  S21List<int> list_4_ = {1, 2, 3, 8, 9};
   S21List<std::string> list_string = {"a", "b", "c", "d"};
 
   std::list<int> test_empty;
   std::list<int> test1 = std::list<int>(5);
   std::list<int> test2 = {1, 2, 3, 4, 5};
+  std::list<int> test3 = {6, 7, 8, 9, 10};
+  std::list<int> test4 = {1, 2, 3, 8, 9};
   std::list<std::string> test_string = {"a", "b", "c", "d"};
 };
 
@@ -210,20 +214,18 @@ TEST_F(S21List_test, ModifiersSwap) {
 }
 
 TEST_F(S21List_test, ModifiersMerge) {
-//  S21List<int> list_2_ = {1, 2, 3, 8, 9};
-//  for (auto i : list_2_) std::cout << i << ' ';
-//
-//  std::cout << '\n';
-//  auto it_middle = list_2_.GetMiddleList();
-//  std::cout << "middle iterator = " << *it_middle << std::endl;
-  std::list<int> test3 = {6, 7, 10}; // {6,7,8,9,10};
-  for (auto i : test3) std::cout << i << ' ';
-  std::cout << '\n';
-  std::list<int> test4 = {1, 2, 3, 8, 9};
+  EXPECT_EQ(list_3_.size(), test3.size());
+  EXPECT_EQ(list_4_.size(), test4.size());
+  list_3_.merge(list_4_);
   test3.merge(test4);
-  for (auto i : test3) std::cout << i << ' ';
-  std::cout << '\n';
-
+  auto it_or = list_3_.begin();
+  auto it = test3.begin();
+  while (it_or != list_3_.end() || it != test3.end()) {
+    EXPECT_EQ(*it_or, *it);
+    ++it_or, ++it;
+  }
+  EXPECT_EQ(list_3_.size(), test3.size());
+  EXPECT_EQ(list_4_.size(), test4.size());
 }
 
 TEST_F(S21List_test, ModifiersSplice) {
