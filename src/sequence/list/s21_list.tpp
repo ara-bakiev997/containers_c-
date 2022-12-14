@@ -226,11 +226,18 @@ void S21List<T, Alloc>::unique() {
   auto first = this->begin();
   while (first != this->end()) {
     auto rm_node = first;
-    if (*first == *(++first)) {
+    auto next = ++first;
+    if (next == this->end()) {
+      break; // нужно чтобы не было обращение к неинит. переменной
+    }
+    if (*rm_node == *(next)) {
       this->erase(rm_node);
     }
   }
 }
+
+template <typename T, typename Alloc>
+void S21List<T, Alloc>::sort() {}
 
 //_____SUPPORT_FUNC_____
 template <typename value_type, typename Alloc>
