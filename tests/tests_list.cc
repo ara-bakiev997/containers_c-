@@ -16,6 +16,7 @@ class S21List_test : public ::testing::Test {
   S21List<int> list_2_ = {1, 2, 3, 4, 5};
   S21List<int> list_3_ = {6, 7, 8, 9, 10};
   S21List<int> list_4_ = {1, 2, 3, 8, 9};
+  S21List<int> list_5_ = {1, 1, 2, 3, 2, 4, 5, 5, 6};
   S21List<std::string> list_string = {"a", "b", "c", "d"};
 
   std::list<int> test_empty;
@@ -23,6 +24,7 @@ class S21List_test : public ::testing::Test {
   std::list<int> test2 = {1, 2, 3, 4, 5};
   std::list<int> test3 = {6, 7, 8, 9, 10};
   std::list<int> test4 = {1, 2, 3, 8, 9};
+  std::list<int> test5 = {1, 1, 2, 3, 2, 4, 5, 5, 6};
   std::list<std::string> test_string = {"a", "b", "c", "d"};
 };
 
@@ -241,7 +243,6 @@ TEST_F(S21List_test, ModifiersSplice) {
   EXPECT_EQ(list_2_.size(), test2.size());
   EXPECT_EQ(*list_2_.begin(), *test2.begin());
   EXPECT_EQ(*(++list_2_.begin()), *(++test2.begin()));
-  std::list<int>::iterator a;
 }
 
 TEST_F(S21List_test, ModifiersReverse) {
@@ -251,6 +252,19 @@ TEST_F(S21List_test, ModifiersReverse) {
   test2.reverse();
   EXPECT_EQ(*list_2_.begin(), *test2.begin());
   EXPECT_EQ(*(++list_2_.begin()), *(++test2.begin()));
+}
+
+TEST_F(S21List_test, ModifiersUnique) {
+  EXPECT_EQ(list_5_.size(), test5.size());
+  list_5_.unique();
+  test5.unique();
+  auto it_or = list_5_.begin();
+  auto it = test5.begin();
+  while (it_or != list_5_.end() || it != test5.end()) {
+    EXPECT_EQ(*it_or, *it);
+    ++it_or, ++it;
+  }
+  EXPECT_EQ(list_5_.size(), test5.size());
 }
 
 int main(int argc, char *argv[]) {

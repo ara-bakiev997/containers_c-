@@ -221,6 +221,17 @@ void S21List<T, Alloc>::reverse() {
   std::swap(fake_->next_, fake_->prev_);
 }
 
+template <typename T, typename Alloc>
+void S21List<T, Alloc>::unique() {
+  auto first = this->begin();
+  while (first != this->end()) {
+    auto rm_node = first;
+    if (*first == *(++first)) {
+      this->erase(rm_node);
+    }
+  }
+}
+
 //_____SUPPORT_FUNC_____
 template <typename value_type, typename Alloc>
 Node<value_type> *S21List<value_type, Alloc>::CreateNode(
