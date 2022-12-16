@@ -48,20 +48,17 @@ S21List<T, Alloc> &S21List<T, Alloc>::operator=(
   return *this;
 }
 
-//_____LIST_ELEMENT_ACCESS_____
 //_____LIST_ITERATORS_____
 template<typename value_type, typename Alloc>
 typename S21List<value_type, Alloc>::iterator
 S21List<value_type, Alloc>::begin() const {
-  //  iterator temp(fake_->next_);
   return iterator(fake_->next_);
 }
 
 template<typename value_type, typename Alloc>
 typename S21List<value_type, Alloc>::iterator S21List<value_type, Alloc>::end()
 const {
-  iterator temp(fake_);
-  return temp;
+  return iterator(fake_);
 }
 
 // template <typename value_type, typename Alloc>
@@ -109,6 +106,14 @@ typename S21List<T, Alloc>::iterator S21List<T, Alloc>::insert(
   ++size_;  // оригинал также работает, если пришел итератор от другого объекта
   // он не добавляет его в лист, но size увеличивает(ХА-ХА-ХА)
   return iterator(new_node);
+}
+
+template<typename T, typename Alloc>
+template<typename ...Args>
+typename S21List<T, Alloc>::const_iterator S21List<T, Alloc>::insert(
+	S21List<T, Alloc>::const_iterator pos, S21List<T, Alloc>::const_reference value, Args... args) {
+  insert(pos, value);
+  return const_iterator();
 }
 
 template<typename T, typename Alloc>
@@ -254,6 +259,20 @@ void S21List<T, Alloc>::sort() {
 	temp.sort();
   }
   this->merge(temp);
+}
+
+//_____BONUS_____
+template<typename T, typename Alloc>
+template<typename ...Args>
+typename S21List<T, Alloc>::iterator S21List<T, Alloc>::emplace(const_iterator pos, Args &&...args) {
+//  iterator it((const_cast<Node<T>>(pos)).node_);
+//  (insert(it, std::forward<Args>(args)), ...);
+}
+
+template<typename T, typename Alloc>
+template<typename ...Args>
+void S21List<T, Alloc>::emplace_back(Args &&...args) {
+  (push_back(std::forward<Args>(args)), ...);
 }
 
 //_____SUPPORT_FUNC_____

@@ -103,6 +103,8 @@ class S21List : public SequenceContainer<T> {
   // List Modifiers
   void clear();
   iterator insert(iterator pos, const_reference value);
+  template<typename ...Args>
+  const_iterator insert(const_iterator pos, const_reference value, Args... args);
   void erase(iterator pos);
   void push_back(const_reference value);
   void pop_back();
@@ -114,6 +116,15 @@ class S21List : public SequenceContainer<T> {
   void reverse();
   void unique();
   void sort();
+
+  // Bonus
+  template<typename ...Args>
+  iterator emplace(const_iterator pos, Args&&... args);
+  template<typename ...Args>
+  void emplace_back(Args&&... args);
+  template<typename ...Args>
+  void emplace_front(Args&&... args);
+
 
   // Support func
   void print();

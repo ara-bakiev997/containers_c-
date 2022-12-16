@@ -293,6 +293,26 @@ TEST_F(S21List_test, ModifiersSort) {
   }
 }
 
+TEST_F(S21List_test, BonusEmplace) {
+  for (auto i : list_2_) std::cout << i << ' ';
+  std::cout << std::endl;
+  S21List<int>::iterator it = list_2_.begin();
+//  list_2_.emplace(it, 5, 4, 6, 10);
+  for (auto i : list_2_) std::cout << i << ' ';
+  std::cout << std::endl;
+
+}
+
+TEST_F(S21List_test, BonusEmplaceBack) {
+  for (auto i : list_2_) std::cout << i << ' ';
+  std::cout << std::endl;
+//  S21List<int>::iterator it = list_2_.begin();
+  list_2_.emplace_back(5, 4, 6, 10);
+  for (auto i : list_2_) std::cout << i << ' ';
+  std::cout << std::endl;
+
+}
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
