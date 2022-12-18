@@ -18,7 +18,8 @@ class S21List_test : public ::testing::Test {
   S21List<int> list_4_ = {1, 2, 3, 8, 9};
   S21List<int> list_5_ = {1, 1, 2, 3, 2, 4, 5, 5, 6};
   S21List<std::string> list_string = {"a", "b", "c", "d"};
-  S21List<int> list_sort = {9, 8, 7, 6, 6, 6, 5, 8, 8, 9, 4, 3, 2, 1, -153, -1, 0};
+  S21List<int> list_sort = {9, 8, 7, 6, 6, 6,    5,  8, 8,
+                            9, 4, 3, 2, 1, -153, -1, 0};
   S21List<std::string> list_sort_string = {"ad", "bc", "bd", "ac"};
 
   std::list<int> test_empty;
@@ -28,8 +29,9 @@ class S21List_test : public ::testing::Test {
   std::list<int> test4 = {1, 2, 3, 8, 9};
   std::list<int> test5 = {1, 1, 2, 3, 2, 4, 5, 5, 6};
   std::list<std::string> test_string = {"a", "b", "c", "d"};
-  S21List<int> test_sort = {9, 8, 7, 6, 6, 6, 5, 8, 8, 9, 4, 3, 2, 1, -153, -1, 0};
-  S21List<std::string> test_sort_string = {"ad", "bc", "bd", "ac"};
+  std::list<int> test_sort = {9, 8, 7, 6, 6, 6,    5,  8, 8,
+                              9, 4, 3, 2, 1, -153, -1, 0};
+  std::list<std::string> test_sort_string = {"ad", "bc", "bd", "ac"};
 };
 
 TEST_F(S21List_test, constructors) {
@@ -230,8 +232,8 @@ TEST_F(S21List_test, ModifiersMerge) {
   auto it_or = list_3_.begin();
   auto it = test3.begin();
   while (it_or != list_3_.end() || it != test3.end()) {
-	EXPECT_EQ(*it_or, *it);
-	++it_or, ++it;
+    EXPECT_EQ(*it_or, *it);
+    ++it_or, ++it;
   }
   EXPECT_EQ(list_3_.size(), test3.size());
   EXPECT_EQ(list_4_.size(), test4.size());
@@ -268,8 +270,8 @@ TEST_F(S21List_test, ModifiersUnique) {
   auto it_or = list_5_.begin();
   auto it = test5.begin();
   while (it_or != list_5_.end() || it != test5.end()) {
-	EXPECT_EQ(*it_or, *it);
-	++it_or, ++it;
+    EXPECT_EQ(*it_or, *it);
+    ++it_or, ++it;
   }
   EXPECT_EQ(list_5_.size(), test5.size());
 }
@@ -280,37 +282,53 @@ TEST_F(S21List_test, ModifiersSort) {
   test_sort.sort();
   list_sort.sort();
   while (it_or != test_sort.end() || it != list_sort.end()) {
-	EXPECT_EQ(*it_or, *it);
-	++it_or, ++it;
+    EXPECT_EQ(*it_or, *it);
+    ++it_or, ++it;
   }
   auto it_or_string = test_sort_string.begin();
   auto it_string = list_sort_string.begin();
   test_sort_string.sort();
   list_sort_string.sort();
-  while (it_or_string != test_sort_string.end() || it_string != list_sort_string.end()) {
-	EXPECT_EQ(*it_or_string, *it_string);
-	++it_or_string, ++it_string;
+  while (it_or_string != test_sort_string.end() ||
+         it_string != list_sort_string.end()) {
+    EXPECT_EQ(*it_or_string, *it_string);
+    ++it_or_string, ++it_string;
   }
 }
 
 TEST_F(S21List_test, BonusEmplace) {
-  for (auto i : list_2_) std::cout << i << ' ';
-  std::cout << std::endl;
-  S21List<int>::iterator it = list_2_.begin();
-//  list_2_.emplace(it, 5, 4, 6, 10);
-  for (auto i : list_2_) std::cout << i << ' ';
-  std::cout << std::endl;
-
+  auto it = list_2_.begin();
+  auto it_or = test2.begin();
+  list_2_.emplace(it, 2);
+  test2.emplace(it_or, 2);
+  auto it_test = list_2_.begin();
+  auto it_test_or = test2.begin();
+  while (it_test != list_2_.end() || it_test_or != test2.end()) {
+    EXPECT_EQ(*it_test, *it_test_or);
+    ++it_test, ++it_test_or;
+  }
 }
 
 TEST_F(S21List_test, BonusEmplaceBack) {
-  for (auto i : list_2_) std::cout << i << ' ';
-  std::cout << std::endl;
-//  S21List<int>::iterator it = list_2_.begin();
-  list_2_.emplace_back(5, 4, 6, 10);
-  for (auto i : list_2_) std::cout << i << ' ';
-  std::cout << std::endl;
+  list_2_.emplace_back(2);
+  test2.emplace_back(2);
+  auto it_test = list_2_.begin();
+  auto it_test_or = test2.begin();
+  while (it_test != list_2_.end() || it_test_or != test2.end()) {
+    EXPECT_EQ(*it_test, *it_test_or);
+    ++it_test, ++it_test_or;
+  }
+}
 
+TEST_F(S21List_test, BonusEmplaceFront) {
+  list_2_.emplace_front(2);
+  test2.emplace_front(2);
+  auto it_test = list_2_.begin();
+  auto it_test_or = test2.begin();
+  while (it_test != list_2_.end() || it_test_or != test2.end()) {
+    EXPECT_EQ(*it_test, *it_test_or);
+    ++it_test, ++it_test_or;
+  }
 }
 
 int main(int argc, char *argv[]) {
