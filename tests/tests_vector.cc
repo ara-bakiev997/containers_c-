@@ -2,10 +2,19 @@
 
 //#include <utility>
 #include <vector>
-
+#include <cstring>
 #include "../src/sequence/s21_vector.h"
 
 using namespace s21;
+
+class S21Point {
+    void set_x (int x) {
+        x_ = x;
+    }
+private:
+    int x_{};
+    std::string vector{"hello"};
+};
 
 class S21Vector_test : public ::testing::Test {
  protected:
@@ -13,10 +22,25 @@ class S21Vector_test : public ::testing::Test {
   S21Vector<int> vector_empty;
   S21Vector<int> vector_1_ = {1, 2, 3, 4, 5};
   S21Vector<int> vector_2_ = S21Vector<int>(10);
+  S21Vector<int> vector_3_ = {5, 4, 3, 2, 1};
+//  S21Vector<S21Point> pvector{S21Point(), S21Point(), S21Point()};
   std::vector<int> test_empty;
   std::vector<int> test = {1, 2, 3, 4, 5};
   std::vector<int> test2 = {10, 20, 30, 40};
+  std::vector<int> test3 = {5, 4, 3, 2, 1};
+  std::vector<S21Point> ptest = {S21Point(), S21Point(), S21Point()};
 };
+
+TEST_F(S21Vector_test, constructor_move) {
+    S21Vector<int> vector_4 = std::move(vector_1_);
+    std::vector<int> test4 = std::move(test);
+    EXPECT_EQ(vector_4.size(), test4.size());
+    for (auto i = 0; i < vector_4.size(); ++i)
+        EXPECT_EQ(vector_4.at(i), test4.at(i));
+//    std::cout <<ptest.size() << std::endl;
+//    std::cout <<pvector.size() << std::endl;
+
+}
 
 TEST_F(S21Vector_test, _operatorCopy) {
   vector_empty = vector_1_;
@@ -56,16 +80,14 @@ TEST_F(S21Vector_test, empty) {
 TEST_F(S21Vector_test, size) {
   EXPECT_EQ(vector_empty.size(), 0);
   EXPECT_EQ(vector_1_.size(), 5);
+//  EXPECT_EQ(ptest.size(), pvector.size());
 }
 
-// TEST_F(S21Vector_test, max_size) {
-//  не проходит на маке
-//   EXPECT_EQ(test.max_size(), vector_1_.max_size());
-//   std::cout << test.max_size() << std::endl;
-//   std::cout << vector_1_.max_size() << std::endl;
-//   std::cout << std::numeric_limits<int>::max() << std::endl;
-//   std::cout << SIZE_MAX / sizeof(int) << std::endl;
-// }
+ TEST_F(S21Vector_test, max_size) {
+   EXPECT_EQ(test.max_size(), vector_1_.max_size());
+   std::cout << test.max_size() << std::endl;
+   std::cout << vector_1_.max_size() << std::endl;
+ }
 
 TEST_F(S21Vector_test, reserve) {
   EXPECT_ANY_THROW(vector_1_.reserve(vector_1_.max_size() + 1));
@@ -87,7 +109,10 @@ TEST_F(S21Vector_test, shrink_to_fit) {
 TEST_F(S21Vector_test, push_back) {
   vector_empty.push_back(0);
   vector_1_.push_back(6);
+//  pvector.push_back(S21Point());
   EXPECT_EQ(vector_1_.at(5), 6);
+//  EXPECT_EQ( pvector.size(), 4);
+//  std::cout <<pvector.size() << std::endl;
 }
 
 TEST_F(S21Vector_test, clear) {
@@ -146,28 +171,24 @@ TEST_F(S21Vector_test, popback) {
   EXPECT_EQ(vector_1_.size(), 5);
   vector_1_.pop_back();
   EXPECT_EQ(vector_1_.size(), 4);
-
-  //  test.pop_back();
-  //  std::cout << "\nsize = " << test.size() << std::endl;
-  //  std::cout << "capacity = " << test.capacity() << std::endl;
-  //  test_empty.pop_back();
-  //  std::cout << "\nsize = " << test_empty.size() << std::endl;
-  //  std::cout << "capacity = " << test_empty.capacity() << std::endl;
-  //  size_t my_size = 0;
-  //  std::cout << --my_size << std::endl;
+  test_empty.pop_back();
+  vector_empty.pop_back();
+  EXPECT_EQ(vector_empty.data(), test_empty.data());
+  EXPECT_EQ(vector_empty.size(), test_empty.size());
+  EXPECT_EQ(vector_empty.capacity(), test_empty.capacity());
 }
 
 TEST_F(S21Vector_test, swap) {
-  int *test_vector_1_ = vector_1_.data();
-  int *test_empty = vector_empty.data();
-  vector_empty.swap(vector_1_);
-  EXPECT_EQ(vector_empty.size(), 5);
-  EXPECT_EQ(vector_empty.capacity(), 5);
-  EXPECT_EQ(&(*vector_empty.begin()), test_vector_1_);
-  EXPECT_EQ(vector_1_.size(), 0);
-  EXPECT_EQ(vector_1_.capacity(), 0);
-  EXPECT_EQ(&(*vector_1_.begin()), test_empty);
+    vector_1_.swap(vector_3_);
+    test.swap(test3);
+    EXPECT_EQ(vector_1_.size(), test.size());
+    EXPECT_EQ(vector_1_.capacity(), test.capacity());
+    for (auto i = 0; i < vector_1_.size(); ++i)
+        EXPECT_EQ(vector_1_.at(i), test.at(i));
+//    vector_1_.swap(vector_3_);
+//    test.swap(test3);
 }
+
 
 TEST_F(S21Vector_test, originVictorClear) {
   //  std::cout << test.size() << std::endl;
@@ -199,7 +220,7 @@ TEST_F(S21Vector_test, originVictorInsert) {
   //      auto i = vtr.begin()->begin();
   //    i++;
   //   std::vector<int>::iterator i;
-  auto it = test.begin();
+//  auto it = test.begin();
   //   auto a = *it;
 
   //  SequenceContainer<int> one;

@@ -20,8 +20,6 @@ class SequenceContainer {
   using const_iterator = const Iterator;
   using size_type = size_t;
 
-  //  SequenceContainer() : size_(5), arr_(new value_type[size_]{1, 2, 3, 4, 5})
-  //  {}
   SequenceContainer() = default;
   ~SequenceContainer() = default;
 
