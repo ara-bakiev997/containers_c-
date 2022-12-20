@@ -68,6 +68,36 @@ TEST_F(S21List_test, constructors) {
   EXPECT_EQ(*it, *it_or);
 }
 
+TEST_F(S21List_test, operatorAssignments) {
+  list_2_ = list_3_;
+  test2 = test3;
+  auto it = list_2_.begin();
+  auto it_or = test2.begin();
+  while (it != list_2_.end() && it_or != test2.end()) {
+	EXPECT_EQ(*(it++), *(it_or++));
+  }
+  auto it2 = list_3_.begin();
+  auto it_or2 = test3.begin();
+  while (it2 != list_3_.end() && it_or2 != test3.end()) {
+	EXPECT_EQ(*(it2++), *(it_or2++));
+  }
+}
+
+TEST_F(S21List_test, operatorAssignmentsMoving) {
+  list_2_ = std::move(list_3_);
+  test2 = std::move(test3);
+  auto it = list_2_.begin();
+  auto it_or = test2.begin();
+  while (it != list_2_.end() && it_or != test2.end()) {
+	EXPECT_EQ(*(it++), *(it_or++));
+  }
+  auto it2 = list_3_.begin();
+  auto it_or2 = test3.begin();
+  while (it2 != list_3_.end() && it_or2 != test3.end()) {
+	EXPECT_EQ(*(it2++), *(it_or2++));
+  }
+}
+
 TEST_F(S21List_test, Access) {
   EXPECT_EQ(list_1_.front(), test1.front());
   EXPECT_EQ(list_1_.back(), test1.back());

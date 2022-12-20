@@ -22,6 +22,7 @@ struct Node {
   Node *prev_{};
   Node() : value_(), next_(nullptr), prev_(nullptr) {}
   explicit Node(const T &value) : value_(value), next_(nullptr), prev_(nullptr) {}
+  explicit Node(T &&value) : value_(value), next_(nullptr), prev_(nullptr) {}
   //  ~Node() { next_ = nullptr, prev_ = nullptr;}
 };
 
@@ -32,8 +33,7 @@ class S21List : public SequenceContainer<T> {
   using reference = typename SequenceContainer<T>::reference;
   using const_reference = typename SequenceContainer<T>::const_reference;
   using size_type = typename SequenceContainer<T>::size_type;
-  using NodeAlloc = typename std::allocator_traits<
-	  Alloc>::template rebind_alloc<Node<value_type>>;
+  using NodeAlloc = typename std::allocator_traits<Alloc>::template rebind_alloc<Node<T>>;
 
   // Iterators for list
   class ConstIterator {
@@ -78,6 +78,7 @@ class S21List : public SequenceContainer<T> {
 	*this = std::move(l);
   }
   ~S21List();
+  S21List &operator=(const S21List &l) noexcept;
   S21List &operator=(S21List &&l) noexcept;
 
   // List Element access
@@ -121,8 +122,6 @@ class S21List : public SequenceContainer<T> {
   iterator GetMiddleList();
 
  private:
-  //  Node<T> *head_{};
-  //  Node<T> *tail_{};
   Node<T> *fake_{};
   NodeAlloc alloc_{};
   // Support func

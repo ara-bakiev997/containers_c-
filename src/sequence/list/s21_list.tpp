@@ -41,6 +41,16 @@ S21List<value_type, Alloc>::~S21List() {
 }
 
 template<typename T, typename Alloc>
+S21List<T, Alloc> &S21List<T, Alloc>::operator=(const S21List<T, Alloc> &l) noexcept {
+  if (this == &l) return *this;
+  this->clear();
+  for (auto i = l.begin(); i != l.end(); ++i) {
+	push_back(*i);
+  }
+  return *this;
+}
+
+template<typename T, typename Alloc>
 S21List<T, Alloc> &S21List<T, Alloc>::operator=(
 	S21List<T, Alloc> &&l) noexcept {
   std::swap(this->size_, l.size_);
