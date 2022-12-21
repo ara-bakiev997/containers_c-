@@ -38,15 +38,15 @@ public:
 
   ~Tree() = default;
 
-  void InsertRBT(RBT<T> *&paste_here, RBT<T> *&paste_this, RBT<T> *&parent) {
+  void InsertRBT(RBT<T> *&paste_here, RBT<T> *&data, RBT<T> *&parent) {
     if (paste_here == nullptr) {
       if (paste_here != parent)
-        paste_this->parent_ = parent;
-      std::swap(paste_here, paste_this);
-    } else if (paste_this->data_ > paste_here->data_) {
-      InsertRBT(paste_here->right_, paste_this, paste_here);
-    } else if (paste_this->data_ < paste_here->data_) {
-      InsertRBT(paste_here->left_, paste_this, paste_here);
+        data->parent_ = parent;
+      std::swap(paste_here, data);
+    } else if (data->data_ > paste_here->data_) {
+      InsertRBT(paste_here->right_, data, paste_here);
+    } else if (data->data_ < paste_here->data_) {
+      InsertRBT(paste_here->left_, data, paste_here);
     }
   }
 
@@ -58,7 +58,45 @@ public:
       delete temp;
   }
 
-  void Remove(const T &data) {}
+  void Remove(const T &data) {
+    auto *temp = new RBT<T>;
+    temp->data_ = data;
+    FindAndRemove(root_, temp, root_);
+    delete temp;
+  }
+
+    void FindAndRemove (RBT<T> *&find_here, RBT<T> *&remove, RBT<T> *&parent) {
+      if (find_here == nullptr) {
+        return;
+      } else if (find_here->data_ == remove->data_){
+        if (find_here->right_ == nullptr && find_here->left_ == nullptr) {
+          delete find_here;
+          find_here = nullptr;
+        } else if (find_here->right_ == nullptr) {
+          delete remove;
+          remove = find_here->left_;
+          delete find_here;
+          find_here = remove;
+          find_here->parent_ = parent;
+        } else if (find_here->left_ == nullptr) {
+          delete remove;
+          remove = find_here->right_;
+          delete find_here;
+          find_here = remove;
+          find_here->parent_ = parent;
+        } else if (find_here->left_->data_ > find_here->right_->data_) {
+          delete remove;
+          remove = find_here->right_;
+          delete find_here;
+          find_here = remove;
+          find_here->parent_ = parent;
+        }
+      } else if (find_here->data_ < remove->data_) {
+        FindAndRemove(find_here->right_, remove, find_here);
+      } else if (find_here->data_ > remove->data_) {
+        FindAndRemove(find_here->left_, remove, find_here);
+      }
+    }
 
   void WalkInWidth() {
     std::queue<RBT<T> *> queue;
@@ -96,15 +134,13 @@ public:
         } else {
           queue.push(fake);
         }
-
       }
     }
   }
 
   // Function to print binary tree in 2D
   // It does reverse inorder traversal
-  void print2DUtil(RBT<T>* root, int space)
-  {
+  void print2DUtil(RBT<T> *root, int space) {
     // Base case
     if (root == NULL)
       return;

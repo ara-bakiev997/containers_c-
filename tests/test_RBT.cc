@@ -30,22 +30,26 @@ TEST_F(Tree_test, GetRoot) {
 }
 
 TEST_F(Tree_test, Insert) {
-  tree_null_.Insert(5);
-  EXPECT_EQ(tree_null_.GetRoot()->data_, 5);
-  tree_null_.Insert(7);
-  EXPECT_EQ(tree_null_.GetRoot()->right_->data_, 7);
+  tree_null_.Insert(6);
+  EXPECT_EQ(tree_null_.GetRoot()->data_, 6);
+  tree_null_.Insert(20);
+  EXPECT_EQ(tree_null_.GetRoot()->right_->data_, 20);
   tree_null_.Insert(4);
   EXPECT_EQ(tree_null_.GetRoot()->left_->data_, 4);
   tree_null_.Insert(1);
+  tree_null_.Insert(5);
   EXPECT_EQ(tree_null_.GetRoot()->left_->data_, 4);
   tree_null_.Insert(-4);
-  tree_null_.Insert(124);
-  tree_null_.Insert(124);
+  tree_null_.Insert(80);
+  tree_null_.Insert(80);
   tree_null_.Insert(32);
   tree_null_.Insert(-8);
+  tree_null_.Insert(16);
 //  tree_null_.TreePrint();
 //  tree_null_.WalkInWidth();
+//  tree_null_.Remove(-8);
+//  tree_null_.Remove(-4);
+//  tree_null_.Remove(7);
   tree_null_.print2D();
-
 }
 
