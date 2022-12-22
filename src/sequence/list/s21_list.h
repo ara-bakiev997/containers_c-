@@ -17,7 +17,7 @@
 namespace s21 {
 template<typename T>
 struct Node {
-  T* value_{};
+  T *value_{};
   Node *next_{};
   Node *prev_{};
   Node() : value_(), next_(nullptr), prev_(nullptr) {}

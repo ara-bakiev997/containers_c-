@@ -290,7 +290,6 @@ void S21List<T, Alloc>::emplace_back(Args &&...args) {
 	value_type_alloc_.deallocate(new_node->value_, 1);
   }
 
-
   if (this->begin() != this->end()) {
 	fake_->prev_->next_ = new_node;
 	new_node->prev_ = fake_->prev_;
