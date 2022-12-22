@@ -17,7 +17,7 @@
 namespace s21 {
 template<typename T>
 struct Node {
-  T value_{};
+  T* value_{};
   Node *next_{};
   Node *prev_{};
   Node() : value_(), next_(nullptr), prev_(nullptr) {}
@@ -33,6 +33,7 @@ class S21List : public SequenceContainer<T> {
   using reference = typename SequenceContainer<T>::reference;
   using const_reference = typename SequenceContainer<T>::const_reference;
   using size_type = typename SequenceContainer<T>::size_type;
+  using ValueTypeAlloc = Alloc;
   using NodeAlloc = typename std::allocator_traits<Alloc>::template rebind_alloc<Node<T>>;
 
   // Iterators for list
@@ -63,7 +64,7 @@ class S21List : public SequenceContainer<T> {
 	Iterator operator++(int);
 	Iterator &operator--();
 	Iterator operator--(int);
-	reference operator*() { return this->node_->value_; }
+	reference operator*() { return *(this->node_->value_); }
 	Iterator &operator=(const Iterator &other);
   };
   using iterator = Iterator;
@@ -82,8 +83,8 @@ class S21List : public SequenceContainer<T> {
   S21List &operator=(S21List &&l) noexcept;
 
   // List Element access
-  const_reference front() { return fake_->next_->value_; }
-  const_reference back() { return fake_->prev_->value_; }
+  const_reference front() { return *(fake_->next_->value_); }
+  const_reference back() { return *(fake_->prev_->value_); }
 
   // List Iterators
   iterator begin() const;
@@ -92,15 +93,17 @@ class S21List : public SequenceContainer<T> {
   // List Capacity
   bool empty() { return !this->size_; }
   size_type size() { return this->size_; }
-  size_type max_size() { return alloc_.max_size(); }
+  size_type max_size() { return node_alloc_.max_size(); }
 
   // List Modifiers
   void clear();
   iterator insert(iterator pos, const_reference value);
   void erase(iterator pos);
   void push_back(const_reference value);
+//  void push_back(reference&& value);
   void pop_back();
   void push_front(const_reference value);
+//  void push_front(reference&& value);
   void pop_front();
   void swap(S21List &other);
   void merge(S21List &other);
@@ -119,15 +122,16 @@ class S21List : public SequenceContainer<T> {
 
   // Support func
   void print();
-  iterator GetMiddleList();
 
  private:
   Node<T> *fake_{};
-  NodeAlloc alloc_{};
+  NodeAlloc node_alloc_{};
+  ValueTypeAlloc value_type_alloc_{};
   // Support func
   Node<T> *CreateNode(const_reference value);
   void RemNode(Node<value_type> *node);
   void InitFakeNode();
+  iterator GetMiddleList();
 };
 
 }  // namespace s21

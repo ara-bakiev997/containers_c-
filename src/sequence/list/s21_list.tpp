@@ -37,7 +37,7 @@ S21List<value_type, Alloc>::~S21List() {
 	if (it == this->end()) break;
 	pop_back();
   }
-  alloc_.deallocate(fake_, 1);  // отдельно удаляем память под fake ноду
+  node_alloc_.deallocate(fake_, 1);  // отдельно удаляем память под fake ноду
 }
 
 template<typename T, typename Alloc>
@@ -246,14 +246,62 @@ template<typename... Args>
 typename S21List<T, Alloc>::iterator S21List<T, Alloc>::emplace(
 	const_iterator pos, Args &&...args) {
   iterator it(pos.node_);
-  insert(it, std::forward<Args>(args) ...);
-  return it;
+  Node<value_type> *shift_node = pos.node_;
+  Node<value_type> *prev_node = shift_node->prev_;
+
+  // memory alloc
+  Node<value_type> *new_node = node_alloc_.allocate(1);
+  try {
+	node_alloc_.construct(new_node, Node<value_type>());
+  } catch (...) {
+	node_alloc_.deallocate(new_node, 1);
+  }
+  new_node->value_ = value_type_alloc_.allocate(1);
+  try {
+	value_type_alloc_.construct(new_node->value_, args...);
+  } catch (...) {
+	value_type_alloc_.deallocate(new_node->value_, 1);
+  }
+
+  new_node->next_ = shift_node;
+  new_node->prev_ = prev_node;
+  prev_node->next_ = new_node;
+  shift_node->prev_ = new_node;
+  ++this->size_;
+  return iterator(shift_node);
 }
 
 template<typename T, typename Alloc>
 template<typename... Args>
 void S21List<T, Alloc>::emplace_back(Args &&...args) {
-  push_back(std::forward<Args>(args) ...);
+//  push_back(std::forward<Args>(args) ...);
+// Переписать все в одну функцию ->>
+
+  Node<value_type> *new_node = node_alloc_.allocate(1);
+  try {
+	node_alloc_.construct(new_node, Node<value_type>());
+  } catch (...) {
+	node_alloc_.deallocate(new_node, 1);
+  }
+  new_node->value_ = value_type_alloc_.allocate(1);
+  try {
+	value_type_alloc_.construct(new_node->value_, args...);
+  } catch (...) {
+	value_type_alloc_.deallocate(new_node->value_, 1);
+  }
+
+
+  if (this->begin() != this->end()) {
+	fake_->prev_->next_ = new_node;
+	new_node->prev_ = fake_->prev_;
+	fake_->prev_ = new_node;
+  } else {
+	fake_->next_ = fake_->prev_ = new_node;
+  }
+  fake_->prev_->next_ = fake_;
+  fake_->next_->prev_ = fake_;
+  ++this->size_;
+
 }
 
 template<typename T, typename Alloc>
@@ -266,24 +314,33 @@ void S21List<T, Alloc>::emplace_front(Args &&...args) {
 template<typename value_type, typename Alloc>
 Node<value_type> *S21List<value_type, Alloc>::CreateNode(
 	const_reference value) {
-  Node<value_type> *new_node = alloc_.allocate(1);
+  Node<value_type> *new_node = node_alloc_.allocate(1);
   try {
-	alloc_.construct(new_node, value);
+	node_alloc_.construct(new_node, Node<value_type>());
   } catch (...) {
-	alloc_.deallocate(new_node, 1);
+	node_alloc_.deallocate(new_node, 1);
   }
+  new_node->value_ = value_type_alloc_.allocate(1);
+  try {
+	value_type_alloc_.construct(new_node->value_, value);
+  } catch (...) {
+	value_type_alloc_.deallocate(new_node->value_, 1);
+  }
+
   return new_node;
 }
 
 template<typename value_type, typename Alloc>
 void S21List<value_type, Alloc>::RemNode(Node<value_type> *node) {
-  alloc_.destroy(node);
-  alloc_.deallocate(node, 1);
+  value_type_alloc_.destroy(node->value_);
+  value_type_alloc_.deallocate(node->value_, 1);
+  node_alloc_.destroy(node);
+  node_alloc_.deallocate(node, 1);
 }
 
 template<typename value_type, typename Alloc>
 void S21List<value_type, Alloc>::InitFakeNode() {
-  fake_ = alloc_.allocate(1);
+  fake_ = node_alloc_.allocate(1);
   fake_->prev_ = fake_;
   fake_->next_ = fake_;
 }

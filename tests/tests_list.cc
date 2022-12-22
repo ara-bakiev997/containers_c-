@@ -6,6 +6,42 @@
 
 using namespace s21;
 
+struct A {
+  std::string s;
+  A(std::string str) : s(std::move(str))  { std::cout << " constructed\n"; }
+  A(const A& o) : s(o.s) { std::cout << " copy constructed\n"; }
+  A(A&& o) : s(std::move(o.s)) { std::cout << " move constructed\n"; }
+  A& operator=(const A& other) {
+	s = other.s;
+	std::cout << " copy assigned\n";
+	return *this;
+  }
+  A& operator=(A&& other) {
+	s = std::move(other.s);
+	std::cout << " move assigned\n";
+	return *this;
+  }
+};
+
+struct President
+{
+  std::string name;
+  std::string country;
+  int year;
+
+  President(std::string p_name, std::string p_country, int p_year)
+	  : name(std::move(p_name)), country(std::move(p_country)), year(p_year)
+  {
+	std::cout << "I am being constructed.\n";
+  }
+  President(President&& other)
+	  : name(std::move(other.name)), country(std::move(other.country)), year(other.year)
+  {
+	std::cout << "I am being moved.\n";
+  }
+  President& operator=(const President& other) = default;
+};
+
 class S21List_test : public ::testing::Test {
  protected:
   void SetUp() override {}
@@ -19,6 +55,8 @@ class S21List_test : public ::testing::Test {
   S21List<int> list_sort = {9, 8, 7, 6, 6, 6, 5, 8, 8,
 							9, 4, 3, 2, 1, -153, -1, 0};
   S21List<std::string> list_sort_string = {"ad", "bc", "bd", "ac"};
+  S21List<A> list_obj;
+  S21List<President> list_elections;
 
   std::list<int> test_empty;
   std::list<int> test1 = std::list<int>(5);
@@ -30,6 +68,8 @@ class S21List_test : public ::testing::Test {
   std::list<int> test_sort = {9, 8, 7, 6, 6, 6, 5, 8, 8,
 							  9, 4, 3, 2, 1, -153, -1, 0};
   std::list<std::string> test_sort_string = {"ad", "bc", "bd", "ac"};
+  std::list<A> test_obj;
+  std::list<President> test_elections;
 };
 
 TEST_F(S21List_test, constructors) {
@@ -335,6 +375,36 @@ TEST_F(S21List_test, BonusEmplace) {
 	EXPECT_EQ(*it_test, *it_test_or);
 	++it_test, ++it_test_or;
   }
+  // test obj N1
+  A two { "two" };
+  A three { "three" };
+
+  list_obj.emplace(list_obj.end(), "one");
+  test_obj.emplace(test_obj.end(), "one");
+  auto it_obj = list_obj.begin();
+  auto it_obj_or = test_obj.begin();
+  while (it_obj != list_obj.end() || it_obj_or != test_obj.end()) {
+	EXPECT_EQ((*it_obj).s, (*it_obj_or).s);
+	++it_obj, ++it_obj_or;
+  }
+  // test obj N2
+  list_obj.emplace(list_obj.end(), two);
+  test_obj.emplace(test_obj.end(), two);
+  it_obj = list_obj.begin();
+  it_obj_or = test_obj.begin();
+  while (it_obj != list_obj.end() || it_obj_or != test_obj.end()) {
+	EXPECT_EQ((*it_obj).s, (*it_obj_or).s);
+	++it_obj, ++it_obj_or;
+  }
+  // test obj N3
+  list_obj.emplace(list_obj.end(), std::move(three));
+  test_obj.emplace(test_obj.end(), std::move(three));
+  it_obj = list_obj.begin();
+  it_obj_or = test_obj.begin();
+  while (it_obj != list_obj.end() || it_obj_or != test_obj.end()) {
+	EXPECT_EQ((*it_obj).s, (*it_obj_or).s);
+	++it_obj, ++it_obj_or;
+  }
 }
 
 TEST_F(S21List_test, BonusEmplaceBack) {
@@ -346,6 +416,33 @@ TEST_F(S21List_test, BonusEmplaceBack) {
 	EXPECT_EQ(*it_test, *it_test_or);
 	++it_test, ++it_test_or;
   }
+  // test obj N1
+  list_elections.emplace_back("Nelson Mandela", "South Africa", 1994);
+  test_elections.emplace_back("Nelson Mandela", "South Africa", 1994);
+  auto it_obj = list_elections.begin();
+  auto it_obj_or = test_elections.begin();
+  while (it_obj != list_elections.end() || it_obj_or != test_elections.end()) {
+	EXPECT_EQ((*it_obj).country, (*it_obj_or).country);
+	EXPECT_EQ((*it_obj).name, (*it_obj_or).name);
+	EXPECT_EQ((*it_obj).year, (*it_obj_or).year);
+	++it_obj, ++it_obj_or;
+  }
+
+  S21List<President> reElections;
+  std::list<President> reElections_or;
+
+  // push back смотри!!!
+//  reElections.push_back(President("Franklin Delano Roosevelt", "the USA", 1936));
+//  reElections_or.push_back(President("Franklin Delano Roosevelt", "the USA", 1936));
+//  it_obj = reElections.begin();
+//  it_obj_or = reElections_or.begin();
+//  while (it_obj != reElections.end() || it_obj_or != reElections_or.end()) {
+//	EXPECT_EQ((*it_obj).country, (*it_obj_or).country);
+//	EXPECT_EQ((*it_obj).name, (*it_obj_or).name);
+//	EXPECT_EQ((*it_obj).year, (*it_obj_or).year);
+//	++it_obj, ++it_obj_or;
+//  }
+
 }
 
 TEST_F(S21List_test, BonusEmplaceFront) {
