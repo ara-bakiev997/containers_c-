@@ -22,7 +22,7 @@ struct Node {
   Node *prev_{};
   Node() : value_(), next_(nullptr), prev_(nullptr) {}
   explicit Node(const T &value) : value_(value), next_(nullptr), prev_(nullptr) {}
-  explicit Node(T &&value) : value_(value), next_(nullptr), prev_(nullptr) {}
+  explicit Node(T &&value) : value_(std::move(value)), next_(nullptr), prev_(nullptr) {}
   //  ~Node() { next_ = nullptr, prev_ = nullptr;}
 };
 
@@ -100,10 +100,10 @@ class S21List : public SequenceContainer<T> {
   iterator insert(iterator pos, const_reference value);
   void erase(iterator pos);
   void push_back(const_reference value);
-//  void push_back(reference&& value);
+  void push_back(T &&value);
   void pop_back();
   void push_front(const_reference value);
-//  void push_front(reference&& value);
+  void push_front(T &&value);
   void pop_front();
   void swap(S21List &other);
   void merge(S21List &other);
@@ -120,18 +120,18 @@ class S21List : public SequenceContainer<T> {
   template<typename... Args>
   void emplace_front(Args &&...args);
 
-  // Support func
-  void print();
-
  private:
   Node<T> *fake_{};
   NodeAlloc node_alloc_{};
   ValueTypeAlloc value_type_alloc_{};
   // Support func
-  Node<T> *CreateNode(const_reference value);
-  void RemNode(Node<value_type> *node);
+  template<typename... Args>
+  Node<T> *CreateNode(Args &&...args);
+  void RemNode(Node<T> *node);
   void InitFakeNode();
   iterator GetMiddleList();
+  void ConnectBack(Node<T> *new_node);
+  void ConnectFront(Node<T> *new_node);
 };
 
 }  // namespace s21

@@ -5,8 +5,8 @@
 namespace s21 {
 //_____LIST_____
 //_____CONSTRUCTORS_AND_DESTRUCTOR_____
-template<typename value_type, typename Alloc>
-S21List<value_type, Alloc>::S21List(size_type n) {
+template<typename T, typename Alloc>
+S21List<T, Alloc>::S21List(size_type n) {
   InitFakeNode();
   for (auto i = n; i > 0; --i) {
 	push_back(0);
@@ -30,8 +30,8 @@ S21List<T, Alloc>::S21List(const S21List<T, Alloc> &l) {
   }
 }
 
-template<typename value_type, typename Alloc>
-S21List<value_type, Alloc>::~S21List() {
+template<typename T, typename Alloc>
+S21List<T, Alloc>::~S21List() {
   for (;;) {
 	auto it = this->begin();
 	if (it == this->end()) break;
@@ -59,14 +59,14 @@ S21List<T, Alloc> &S21List<T, Alloc>::operator=(
 }
 
 //_____LIST_ITERATORS_____
-template<typename value_type, typename Alloc>
-typename S21List<value_type, Alloc>::iterator
-S21List<value_type, Alloc>::begin() const {
+template<typename T, typename Alloc>
+typename S21List<T, Alloc>::iterator
+S21List<T, Alloc>::begin() const {
   return iterator(fake_->next_);
 }
 
-template<typename value_type, typename Alloc>
-typename S21List<value_type, Alloc>::iterator S21List<value_type, Alloc>::end()
+template<typename T, typename Alloc>
+typename S21List<T, Alloc>::iterator S21List<T, Alloc>::end()
 const {
   return iterator(fake_);
 }
@@ -89,9 +89,7 @@ typename S21List<T, Alloc>::iterator S21List<T, Alloc>::insert(
   new_node->prev_ = prev_node;
   prev_node->next_ = new_node;
   shift_node->prev_ = new_node;
-  ++this->size_;  // оригинал также работает, если пришел итератор от другого
-  // объекта
-  // он не добавляет его в лист, но size увеличивает(ХА-ХА-ХА)
+  ++this->size_;  // оригинал также работает, если пришел итератор от другого объекта он не добавляет его в лист, но size увеличивает
   return iterator(new_node);
 }
 
@@ -108,15 +106,14 @@ void S21List<T, Alloc>::erase(iterator pos) {
 template<typename T, typename Alloc>
 void S21List<T, Alloc>::push_back(const_reference value) {
   Node<value_type> *temp = CreateNode(value);
-  if (this->begin() != this->end()) {
-	fake_->prev_->next_ = temp;
-	temp->prev_ = fake_->prev_;
-	fake_->prev_ = temp;
-  } else {
-	fake_->next_ = fake_->prev_ = temp;
-  }
-  fake_->prev_->next_ = fake_;
-  fake_->next_->prev_ = fake_;
+  ConnectBack(temp);
+  ++this->size_;
+}
+
+template<typename T, typename Alloc>
+void S21List<T, Alloc>::push_back(T &&value) {
+  Node<value_type> *temp = CreateNode(std::move(value));
+  ConnectBack(temp);
   ++this->size_;
 }
 
@@ -132,15 +129,14 @@ void S21List<T, Alloc>::pop_back() {
 template<typename T, typename Alloc>
 void S21List<T, Alloc>::push_front(const_reference value) {
   Node<value_type> *temp = CreateNode(value);
-  if (this->begin() != this->end()) {
-	fake_->next_->prev_ = temp;
-	temp->next_ = fake_->next_;
-	fake_->next_ = temp;
-  } else {
-	fake_->next_ = fake_->prev_ = temp;
-  }
-  fake_->prev_->next_ = fake_;
-  fake_->next_->prev_ = fake_;
+  ConnectFront(temp);
+  ++this->size_;
+}
+
+template<typename T, typename Alloc>
+void S21List<T, Alloc>::push_front(T &&value) {
+  Node<value_type> *temp = CreateNode(std::move(value));
+  ConnectFront(temp);
   ++this->size_;
 }
 
@@ -246,107 +242,66 @@ template<typename... Args>
 typename S21List<T, Alloc>::iterator S21List<T, Alloc>::emplace(
 	const_iterator pos, Args &&...args) {
   iterator it(pos.node_);
-  Node<value_type> *shift_node = pos.node_;
-  Node<value_type> *prev_node = shift_node->prev_;
-
-  // memory alloc
-  Node<value_type> *new_node = node_alloc_.allocate(1);
-  try {
-	node_alloc_.construct(new_node, Node<value_type>());
-  } catch (...) {
-	node_alloc_.deallocate(new_node, 1);
-  }
-  new_node->value_ = value_type_alloc_.allocate(1);
-  try {
-	value_type_alloc_.construct(new_node->value_, args...);
-  } catch (...) {
-	value_type_alloc_.deallocate(new_node->value_, 1);
-  }
-
-  new_node->next_ = shift_node;
-  new_node->prev_ = prev_node;
-  prev_node->next_ = new_node;
-  shift_node->prev_ = new_node;
-  ++this->size_;
-  return iterator(shift_node);
+  return insert(it,
+				value_type(std::forward<Args>(args)...)); // к сожалению, вызывается конструктор копирования.. Или делать без insert
 }
 
 template<typename T, typename Alloc>
 template<typename... Args>
 void S21List<T, Alloc>::emplace_back(Args &&...args) {
-//  push_back(std::forward<Args>(args) ...);
-// Переписать все в одну функцию ->>
-
-  Node<value_type> *new_node = node_alloc_.allocate(1);
-  try {
-	node_alloc_.construct(new_node, Node<value_type>());
-  } catch (...) {
-	node_alloc_.deallocate(new_node, 1);
-  }
-  new_node->value_ = value_type_alloc_.allocate(1);
-  try {
-	value_type_alloc_.construct(new_node->value_, args...);
-  } catch (...) {
-	value_type_alloc_.deallocate(new_node->value_, 1);
-  }
-
-  if (this->begin() != this->end()) {
-	fake_->prev_->next_ = new_node;
-	new_node->prev_ = fake_->prev_;
-	fake_->prev_ = new_node;
-  } else {
-	fake_->next_ = fake_->prev_ = new_node;
-  }
-  fake_->prev_->next_ = fake_;
-  fake_->next_->prev_ = fake_;
+  Node<value_type> *new_node = CreateNode(std::forward<Args>(args)...);
+  ConnectBack(new_node);
   ++this->size_;
-
 }
 
 template<typename T, typename Alloc>
 template<typename... Args>
 void S21List<T, Alloc>::emplace_front(Args &&...args) {
-  push_front(std::forward<Args>(args) ...);
+  Node<value_type> *new_node = CreateNode(std::forward<Args>(args)...);
+  ConnectFront(new_node);
+  ++this->size_;
 }
 
 //_____SUPPORT_FUNC_____
-template<typename value_type, typename Alloc>
-Node<value_type> *S21List<value_type, Alloc>::CreateNode(
-	const_reference value) {
+template<typename T, typename Alloc>
+template<typename... Args>
+Node<T> *S21List<T, Alloc>::CreateNode(
+	Args &&...args) {
+  // memory alloc for node
   Node<value_type> *new_node = node_alloc_.allocate(1);
   try {
 	node_alloc_.construct(new_node, Node<value_type>());
   } catch (...) {
 	node_alloc_.deallocate(new_node, 1);
   }
+  // memory alloc for value in node
   new_node->value_ = value_type_alloc_.allocate(1);
   try {
-	value_type_alloc_.construct(new_node->value_, value);
+	value_type_alloc_.construct(new_node->value_, std::forward<Args>(args)...);
   } catch (...) {
 	value_type_alloc_.deallocate(new_node->value_, 1);
   }
-
   return new_node;
 }
 
-template<typename value_type, typename Alloc>
-void S21List<value_type, Alloc>::RemNode(Node<value_type> *node) {
+template<typename T, typename Alloc>
+void S21List<T, Alloc>::RemNode(Node<T> *node) {
   value_type_alloc_.destroy(node->value_);
   value_type_alloc_.deallocate(node->value_, 1);
   node_alloc_.destroy(node);
   node_alloc_.deallocate(node, 1);
 }
 
-template<typename value_type, typename Alloc>
-void S21List<value_type, Alloc>::InitFakeNode() {
+template<typename T, typename Alloc>
+void S21List<T, Alloc>::InitFakeNode() {
   fake_ = node_alloc_.allocate(1);
   fake_->prev_ = fake_;
   fake_->next_ = fake_;
 }
 
-template<typename value_type, typename Alloc>
-typename S21List<value_type, Alloc>::iterator
-S21List<value_type, Alloc>::GetMiddleList() {
+template<typename T, typename Alloc>
+typename S21List<T, Alloc>::iterator
+S21List<T, Alloc>::GetMiddleList() {
   auto it_fast = this->begin();
   auto it_slow = this->begin();
   auto it_fake = this->end();
@@ -357,15 +312,30 @@ S21List<value_type, Alloc>::GetMiddleList() {
   return it_slow;
 }
 
-template<typename value_type, typename Alloc>
-void S21List<value_type, Alloc>::print() {
-  std::cout << "size = " << this->size_ << std::endl;
-  Node<value_type> *temp = fake_->next_;
-  for (auto i = this->size_; i > 0; --i) {
-	std::cout << temp->value_ << ' ';
-	temp = temp->next_;
+template<typename T, typename Alloc>
+void S21List<T, Alloc>::ConnectBack(Node<T> *new_node) {
+  if (this->begin() != this->end()) {
+	fake_->prev_->next_ = new_node;
+	new_node->prev_ = fake_->prev_;
+	fake_->prev_ = new_node;
+  } else {
+	fake_->next_ = fake_->prev_ = new_node;
   }
-  std::cout << std::endl;
+  fake_->prev_->next_ = fake_;
+  fake_->next_->prev_ = fake_;
+}
+
+template<typename T, typename Alloc>
+void S21List<T, Alloc>::ConnectFront(Node<T> *new_node) {
+  if (this->begin() != this->end()) {
+	fake_->next_->prev_ = new_node;
+	new_node->next_ = fake_->next_;
+	fake_->next_ = new_node;
+  } else {
+	fake_->next_ = fake_->prev_ = new_node;
+  }
+  fake_->prev_->next_ = fake_;
+  fake_->next_->prev_ = fake_;
 }
 
 //_____Iterator_____
