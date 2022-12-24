@@ -21,27 +21,28 @@ protected:
     tree_int.Insert(32);
     tree_int.Insert(-8);
     tree_int.Insert(16);
+    tree_int.Insert(38);
+    tree_int.Insert(-19);
+    tree_int.Insert(63);
+    tree_int.Insert(18);
+    tree_int.Insert(35);
   }
   std::set<int> set_empty;
   Tree<int> tree_null_;
   Tree<int> tree_int;
-//  RBT<int>* RBT_null = new RBT<int>;
-//  Node<int> node_data(1);
-
+  //  RBT<int>* RBT_null = new RBT<int>;
+  //  Node<int> node_data(1);
 };
 
-//TEST_F(Tree_test, Node_insert) {
-//  RBT_null->Insert(5);
+// TEST_F(Tree_test, Node_insert) {
+//   RBT_null->Insert(5);
 ////  std::cout << node_null.data_ << std::endl;
 //  RBT_null->Insert(3);
 ////  node_null->Insert(7);
 //  RBT_null->RBTPrint();
 //}
 
-TEST_F(Tree_test, GetRoot) {
-  EXPECT_EQ(tree_null_.GetRoot(), nullptr);
-
-}
+TEST_F(Tree_test, GetRoot) { EXPECT_EQ(tree_null_.GetRoot(), nullptr); }
 
 TEST_F(Tree_test, Insert) {
   tree_null_.Insert(6);
@@ -59,16 +60,22 @@ TEST_F(Tree_test, Insert) {
   tree_null_.Insert(32);
   tree_null_.Insert(-8);
   tree_null_.Insert(16);
-//  tree_null_.TreePrint();
-//  tree_null_.WalkInWidth();
-//  tree_null_.Remove(-8);
-  tree_null_.Remove(-4);
-  tree_null_.Remove(20);
+  //  tree_null_.TreePrint();
+  //  tree_null_.WalkInWidth();
+  //  tree_null_.Remove(-8);
+  //  tree_null_.Remove(-4);
+  //  tree_null_.Remove(20);
+  //    tree_null_.Remove(6);
   tree_null_.print2D();
 }
 
 TEST_F(Tree_test, FindMin) {
   tree_int.print2D();
-  std::cout << tree_int.FindMin(reinterpret_cast<RBT<int> *&>(tree_int))->data_ << std::endl;
+  std::cout << tree_int.FindMin(reinterpret_cast<RBT<int> *&>(tree_int))->data_
+            << std::endl;
 }
 
+TEST_F(Tree_test, Remove) {
+  tree_int.Remove(20);
+  tree_int.print2D();
+}

@@ -88,18 +88,23 @@ public:
         // если есть оба - заменить на минимальное из правого поддерева
       } else {
         // найти минимум из правого дерева
-        auto *temp = new RBT<T>;
-        temp->data_ = FindMin(find_here->right_)->data_;
-        temp->left_ = find_here->left_;
-        temp->right_ = find_here->right_;
-        temp->parent_ = parent;
-        // удалить этот элемент
-        delete find_here;
-        find_here = nullptr;
-        // скопировать сюда минимум
-        std::swap(find_here, temp);
+//        auto *temp = new RBT<T>;
+//        temp->data_ = FindMin(find_here->right_)->data_;
+//        temp->left_ = find_here->left_;
+//        temp->right_ = find_here->right_;
+//        temp->parent_ = parent;
+//        // удалить этот элемент
+//        delete find_here;
+//        find_here = nullptr;
+//        // скопировать сюда минимум
+//        std::swap(find_here, temp);
+
+        find_here->data_ = FindMin(find_here->right_)->data_;
         // удалить минимум из правого поддерева
-        FindAndRemove(find_here->right_, find_here, find_here);
+        auto *temp = new RBT<T>;
+        temp->data_ = find_here->data_;
+        FindAndRemove(find_here->right_, temp, find_here);
+        delete temp;
       }
     } else if (remove->data_ >
                find_here->data_) { // искомое больше - искать справа
