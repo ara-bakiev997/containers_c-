@@ -1,8 +1,43 @@
-//
-// Created by Lok on 17.11.2022.
-//
-
 #ifndef S21_CONTAINERS_SRC_CONTAINER_ADAPTOR_QUEUE_H_
 #define S21_CONTAINERS_SRC_CONTAINER_ADAPTOR_QUEUE_H_
 
-#endif //S21_CONTAINERS_SRC_CONTAINER_ADAPTOR_QUEUE_H_
+#include "../sequence/list/s21_list.h"
+#include "container_adaptor.h"
+
+namespace s21 {
+template <typename T, typename Container = S21List<T>>
+class S21Queue {
+ public:
+  using container_type = Container;
+  using value_type = typename Container::value_type;
+  using size_type = typename Container::size_type;
+  using reference = typename Container::reference;
+  using const_reference = typename Container::const_reference;
+  S21Queue() : container_() {}
+  S21Queue(std::initializer_list<value_type> const &items)
+      : container_(items) {}
+  S21Queue(const S21Queue &q) : container_(q) {}
+  S21Queue(S21Queue &&q) : container_(q) {}
+  ~S21Queue() = default;
+  S21Queue<T> &operator=(S21Queue<T> &&q) {
+    this->container_ = std::move(q.container_);
+  }
+  S21Queue<T> &operator=(const S21Queue<T> &q) {
+    this->container_ = q.container_;
+  }
+  const_reference front() { return container_.front(); }
+  const_reference back() { return container_.back(); }
+  bool empty() { return container_.empty(); }
+  size_type size() { return container_.size(); }
+  void push(const_reference value) { container_.push_back(value); }
+  void push(T &&value) { container_.push_back(value); }
+  void pop() { container_.pop_front(); }
+  void swap(S21Queue<T> &other) { this->container_.swap(other); }
+
+ private:
+  container_type container_;
+};
+
+}  // namespace s21
+
+#endif  // S21_CONTAINERS_SRC_CONTAINER_ADAPTOR_QUEUE_H_
