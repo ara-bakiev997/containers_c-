@@ -65,38 +65,38 @@ public:
     delete temp;
   }
 
-    void FindAndRemove (RBT<T> *&find_here, RBT<T> *&remove, RBT<T> *&parent) {
-      if (find_here == nullptr) {
-        return;
-      } else if (find_here->data_ == remove->data_){
-        if (find_here->right_ == nullptr && find_here->left_ == nullptr) {
-          delete find_here;
-          find_here = nullptr;
-        } else if (find_here->right_ == nullptr) {
-          delete remove;
-          remove = find_here->left_;
-          delete find_here;
-          find_here = remove;
-          find_here->parent_ = parent;
-        } else if (find_here->left_ == nullptr) {
-          delete remove;
-          remove = find_here->right_;
-          delete find_here;
-          find_here = remove;
-          find_here->parent_ = parent;
-        } else if (find_here->left_->data_ > find_here->right_->data_) {
-          delete remove;
-          remove = find_here->right_;
-          delete find_here;
-          find_here = remove;
-          find_here->parent_ = parent;
-        }
-      } else if (find_here->data_ < remove->data_) {
-        FindAndRemove(find_here->right_, remove, find_here);
-      } else if (find_here->data_ > remove->data_) {
-        FindAndRemove(find_here->left_, remove, find_here);
+  void FindAndRemove(RBT<T> *&find_here, RBT<T> *&remove, RBT<T> *&parent) {
+    if (find_here == nullptr) { // пустое дерево
+      return;
+    } else if (find_here->data_ == remove->data_) { // найден элемент
+      if (find_here->right_ == nullptr &&
+          find_here->left_ == nullptr) { // нет детей
+        delete find_here;
+        find_here = nullptr;
+      } else if (find_here->right_ == nullptr) { // только левый
+        delete remove;
+        remove = find_here->left_;
+        delete find_here;
+        find_here = remove;
+        find_here->parent_ = parent;
+      } else if (find_here->left_ == nullptr) { // только правый
+        delete remove;
+        remove = find_here->right_;
+        delete find_here;
+        find_here = remove;
+        find_here->parent_ = parent;
+        // если есть оба - заменит на минимальное из правого поддерева
+      } else {
+
       }
+    } else if (remove->data_ >
+               find_here->data_) { // искомое больше - искать справа
+      FindAndRemove(find_here->right_, remove, find_here);
+    } else if (remove->data_ <
+               find_here->data_) { // искомое меньше - искать слева
+      FindAndRemove(find_here->left_, remove, find_here);
     }
+  }
 
   void WalkInWidth() {
     std::queue<RBT<T> *> queue;
