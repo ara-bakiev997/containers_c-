@@ -62,13 +62,12 @@ TEST_F(Tree_test, Insert) {
 //  tree_null_.TreePrint();
 //  tree_null_.WalkInWidth();
 //  tree_null_.Remove(-8);
-//  tree_null_.Remove(-4);
-//  tree_null_.Remove(7);
+  tree_null_.Remove(-4);
+  tree_null_.Remove(20);
   tree_null_.print2D();
 }
 
 TEST_F(Tree_test, FindMin) {
-
   tree_int.print2D();
   std::cout << tree_int.FindMin(reinterpret_cast<RBT<int> *&>(tree_int))->data_ << std::endl;
 }
