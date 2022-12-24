@@ -85,7 +85,7 @@ public:
         delete find_here;
         find_here = remove;
         find_here->parent_ = parent;
-        // если есть оба - заменит на минимальное из правого поддерева
+        // если есть оба - заменить на минимальное из правого поддерева
       } else {
 
       }
@@ -96,6 +96,11 @@ public:
                find_here->data_) { // искомое меньше - искать слева
       FindAndRemove(find_here->left_, remove, find_here);
     }
+  }
+
+  RBT<T> * FindMin(RBT<T> *&find_here) {
+    if (find_here->left_ == nullptr) return find_here;
+    else return FindMin(find_here->left_);
   }
 
   void WalkInWidth() {

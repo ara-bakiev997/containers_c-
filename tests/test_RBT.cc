@@ -9,8 +9,22 @@ using namespace s21;
 
 class Tree_test : public ::testing::Test {
 protected:
+  void SetUp() override {
+    tree_int.Insert(6);
+    tree_int.Insert(20);
+    tree_int.Insert(4);
+    tree_int.Insert(1);
+    tree_int.Insert(5);
+    tree_int.Insert(-4);
+    tree_int.Insert(80);
+    tree_int.Insert(80);
+    tree_int.Insert(32);
+    tree_int.Insert(-8);
+    tree_int.Insert(16);
+  }
   std::set<int> set_empty;
   Tree<int> tree_null_;
+  Tree<int> tree_int;
 //  RBT<int>* RBT_null = new RBT<int>;
 //  Node<int> node_data(1);
 
@@ -51,5 +65,11 @@ TEST_F(Tree_test, Insert) {
 //  tree_null_.Remove(-4);
 //  tree_null_.Remove(7);
   tree_null_.print2D();
+}
+
+TEST_F(Tree_test, FindMin) {
+
+  tree_int.print2D();
+  std::cout << tree_int.FindMin(reinterpret_cast<RBT<int> *&>(tree_int))->data_ << std::endl;
 }
 
