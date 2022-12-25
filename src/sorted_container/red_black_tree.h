@@ -80,9 +80,64 @@ public:
           balance_RBT->parent_->parent_->color_ = RED;
           BalanceInsert(balance_RBT->parent_->parent_); // балансируем выше
         }
+        // second r-r-B-b -> r-B-r-b / if B root -> change root
+      } else { // red black
+        if (balance_RBT->parent_ == balance_RBT->parent_->parent_->left_) {
+          // вставка влево поворачиваем вправо
+          // проверка на рут деда
+          if (balance_RBT->parent_->parent_->parent_ != nullptr) { // не рут
+
+            // замена указателя главного родителя
+            if (balance_RBT->parent_->parent_->parent_->left_ == balance_RBT->parent_->parent_) {
+              balance_RBT->parent_->parent_->parent_->left_ = balance_RBT->parent_;
+            } else {
+              balance_RBT->parent_->parent_->parent_->right_ = balance_RBT->parent_;
+            }
+            auto temp = new RBT<T>;
+            temp->parent_ = balance_RBT->parent_->parent_;
+            balance_RBT->parent_->parent_ = balance_RBT->parent_->parent_->parent_;
+            temp->right_ = balance_RBT->parent_->right_;
+            balance_RBT->parent_->right_ = temp->parent_;
+            balance_RBT->parent_->right_->parent_ = balance_RBT->parent_;
+            balance_RBT->parent_->right_->left_ = temp->right_;
+            temp->parent_ = temp->right_ = temp->left_ = nullptr;
+            delete temp;
+            balance_RBT->parent_->color_ = BLACK;
+            balance_RBT->parent_->right_->color_ = RED;
+          } else { // рут/ как заменить рут?
+
+          }
+
+        } else {
+
+          // вставка вправо поворачиваем влево
+          // проверка на рут деда
+          if (balance_RBT->parent_->parent_->parent_ != nullptr) { // не рут
+
+            // замена указателя главного родителя
+            if (balance_RBT->parent_->parent_->parent_->left_ == balance_RBT->parent_->parent_) {
+              balance_RBT->parent_->parent_->parent_->left_ = balance_RBT->parent_;
+            } else {
+              balance_RBT->parent_->parent_->parent_->right_ = balance_RBT->parent_;
+            }
+            auto temp = new RBT<T>;
+            temp->parent_ = balance_RBT->parent_->parent_;
+            balance_RBT->parent_->parent_ = balance_RBT->parent_->parent_->parent_;
+            temp->left_ = balance_RBT->parent_->left_;
+            balance_RBT->parent_->left_ = temp->parent_;
+            balance_RBT->parent_->left_->parent_ = balance_RBT->parent_;
+            balance_RBT->parent_->left_->right_ = temp->left_;
+            temp->parent_ = temp->right_ = temp->left_ = nullptr;
+            delete temp;
+            balance_RBT->parent_->color_ = BLACK;
+            balance_RBT->parent_->left_->color_ = RED;
+          } else { // рут/ как заменить рут?
+
+          }
+
+        }
+
       }
-
-
 
     }
   }
