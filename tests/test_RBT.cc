@@ -76,7 +76,17 @@ TEST_F(Tree_test, FindMin) {
 }
 
 TEST_F(Tree_test, Remove) {
-  tree_int.Remove(20);
+//  tree_int.Remove(6);
   tree_int.print2D();
 //  tree_int.TreePrint();
 }
+
+TEST_F(Tree_test, GetBrother) {
+  tree_int.print2D();
+  std::cout << tree_int.GetBrother(tree_int.GetRoot()->left_->right_)->data_ << std::endl;
+}
+
+//TEST_F(Tree_test, IsRoot) {
+//  tree_int.print2D();
+//  std::cout << tree_int.IsRoot(tree_int.GetRoot()) << std::endl;
+//}

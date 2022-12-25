@@ -42,11 +42,17 @@ public:
   void InsertRBT(RBT<T> *&paste_here, RBT<T> *&data, RBT<T> *&parent) {
     if (paste_here == nullptr) { // если нул можно добавить сюда
       if (paste_here != parent) { // проверка рута
-        data->parent_ = parent; // добавить родителя
+        data->parent_ = parent;   // добавить родителя
       } else {
         data->color_ = BLACK; // рут черный
       }
       std::swap(paste_here, data); // добавление элемента
+
+      if (paste_here->parent_ != nullptr) { // проверка рута
+        BalanceInsert(paste_here);
+      }
+
+
     } else if (data->data_ > paste_here->data_) {
       InsertRBT(paste_here->right_, data, paste_here);
     } else if (data->data_ < paste_here->data_) {
@@ -60,6 +66,52 @@ public:
     InsertRBT(root_, temp, root_);
     if (!temp)
       delete temp;
+  }
+
+  void BalanceInsert(RBT<T> *&balance_RBT) {
+
+    if (balance_RBT->parent_->color_ == RED) { // балансируем
+      // first r-r-B-r -> r-b-R-b if B -root B -> B
+      if (balance_RBT->parent_->color_ ==
+          GetBrotherColor(balance_RBT->parent_)) { // red == red
+        balance_RBT->parent_->color_ = BLACK;
+        GetBrother(balance_RBT->parent_)->color_ = BLACK;
+        if (balance_RBT->parent_->parent_->parent_ != nullptr) {
+          balance_RBT->parent_->parent_->color_ = RED;
+          BalanceInsert(balance_RBT->parent_->parent_); // балансируем выше
+        }
+      }
+
+
+
+    }
+  }
+
+  RBT<T> *GetGranPa(RBT<T> *&node) {}
+
+//  bool IsRoot(RBT<T> *&node) {
+//    if (node->parent_ == nullptr) {
+//      return true;
+//    } else {
+//      return false;
+//    }
+//  }
+
+  RBT<T> *GetBrother(RBT<T> *&node) {
+    if (node->parent_ == nullptr) {
+      return nullptr;
+    } else {
+      if (node == node->parent_->left_)
+        return node->parent_->right_;
+      else
+        return node->parent_->left_;
+    }
+  }
+
+  RBT_colors GetBrotherColor(RBT<T> *&node) {
+    if (GetBrother(node) == nullptr) {
+      return BLACK;
+    } else return GetBrother(node)->color_;
   }
 
   void Remove(const T &data) {
@@ -92,16 +144,16 @@ public:
         // если есть оба - заменить на минимальное из правого поддерева
       } else {
         // найти минимум из правого дерева
-//        auto *temp = new RBT<T>;
-//        temp->data_ = FindMin(find_here->right_)->data_;
-//        temp->left_ = find_here->left_;
-//        temp->right_ = find_here->right_;
-//        temp->parent_ = parent;
-//        // удалить этот элемент
-//        delete find_here;
-//        find_here = nullptr;
-//        // скопировать сюда минимум
-//        std::swap(find_here, temp);
+        //        auto *temp = new RBT<T>;
+        //        temp->data_ = FindMin(find_here->right_)->data_;
+        //        temp->left_ = find_here->left_;
+        //        temp->right_ = find_here->right_;
+        //        temp->parent_ = parent;
+        //        // удалить этот элемент
+        //        delete find_here;
+        //        find_here = nullptr;
+        //        // скопировать сюда минимум
+        //        std::swap(find_here, temp);
 
         find_here->data_ = FindMin(find_here->right_)->data_;
         // удалить минимум из правого поддерева
@@ -119,9 +171,11 @@ public:
     }
   }
 
-  RBT<T> * FindMin(RBT<T> *&find_here) {
-    if (find_here->left_ == nullptr) return find_here;
-    else return FindMin(find_here->left_);
+  RBT<T> *FindMin(RBT<T> *&find_here) {
+    if (find_here->left_ == nullptr)
+      return find_here;
+    else
+      return FindMin(find_here->left_);
   }
 
   void WalkInWidth() {
@@ -182,12 +236,15 @@ public:
     std::cout << std::endl;
     for (int i = 5; i < space; i++)
       std::cout << " ";
+    if (root->parent_ == nullptr)
+      std::cout << "#";
     if (root->color_ == BLACK) {
-      std::cout << root->data_ << "_B" << "\n";
+      std::cout << root->data_ << "_B"
+                << "\n";
     } else {
-      std::cout << root->data_ << "_R" << "\n";
+      std::cout << root->data_ << "_R"
+                << "\n";
     }
-
 
     // Process left child
     print2DUtil(root->left_, space);
