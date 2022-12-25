@@ -11,6 +11,7 @@
 #include <queue>
 #include <utility>
 #include <valarray>
+#include <windows.h>
 
 namespace s21 {
 
@@ -21,7 +22,7 @@ template <class T> struct RBT {
   RBT<T> *parent_{};
   RBT<T> *left_{};
   RBT<T> *right_{};
-  enum RBT_colors color_ = BLACK;
+  enum RBT_colors color_ = RED;
   T data_;
 };
 
@@ -39,10 +40,13 @@ public:
   ~Tree() = default;
 
   void InsertRBT(RBT<T> *&paste_here, RBT<T> *&data, RBT<T> *&parent) {
-    if (paste_here == nullptr) {
-      if (paste_here != parent)
-        data->parent_ = parent;
-      std::swap(paste_here, data);
+    if (paste_here == nullptr) { // если нул можно добавить сюда
+      if (paste_here != parent) { // проверка рута
+        data->parent_ = parent; // добавить родителя
+      } else {
+        data->color_ = BLACK; // рут черный
+      }
+      std::swap(paste_here, data); // добавление элемента
     } else if (data->data_ > paste_here->data_) {
       InsertRBT(paste_here->right_, data, paste_here);
     } else if (data->data_ < paste_here->data_) {
@@ -178,7 +182,12 @@ public:
     std::cout << std::endl;
     for (int i = 5; i < space; i++)
       std::cout << " ";
-    std::cout << root->data_ << "\n";
+    if (root->color_ == BLACK) {
+      std::cout << root->data_ << "_B" << "\n";
+    } else {
+      std::cout << root->data_ << "_R" << "\n";
+    }
+
 
     // Process left child
     print2DUtil(root->left_, space);

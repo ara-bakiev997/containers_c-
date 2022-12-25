@@ -78,4 +78,5 @@ TEST_F(Tree_test, FindMin) {
 TEST_F(Tree_test, Remove) {
   tree_int.Remove(20);
   tree_int.print2D();
+//  tree_int.TreePrint();
 }
