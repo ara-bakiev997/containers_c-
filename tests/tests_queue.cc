@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <cstring>
 #include <queue>
 
 #include "../src/container_adaptor/queue.h"
@@ -39,7 +40,7 @@ TEST_F(S21Queue_test, constuctors_tests) {
   EXPECT_EQ(queue_copy.size(), orig_copy.size());
   EXPECT_EQ(queue_copy.front(), orig_copy.front());
   EXPECT_EQ(queue_copy.back(), orig_copy.back());
-  EXPECT_EQ(queue.size(), orig.size()); // empty after move
+  EXPECT_EQ(queue.size(), orig.size());  // empty after move
 }
 
 TEST_F(S21Queue_test, assignment_tests) {
@@ -109,6 +110,29 @@ TEST_F(S21Queue_test, modifiers_tests) {
     if (queue_swap.empty() || orig_swap.empty()) break;
     EXPECT_EQ(queue_swap.front(), orig_swap.front());
     EXPECT_EQ(queue_swap.back(), orig_swap.back());
+  }
+}
+
+TEST_F(S21Queue_test, bonus_emplace_back) {
+  S21Queue<std::string> queue_string;
+  std::queue<std::string> orig_string;
+  queue_string.emplace_back("1");
+  orig_string.emplace("1");
+  queue_string.emplace_back("2");
+  orig_string.emplace("2");
+  queue_string.emplace_back("3");
+  orig_string.emplace("3");
+  queue_string.emplace_back("4");
+  orig_string.emplace("4");
+  queue_string.emplace_back("5");
+  orig_string.emplace("5");
+  // pop
+  while (1) {
+    queue_string.pop();
+    orig_string.pop();
+    if (queue_string.empty() || orig_string.empty()) break;
+    EXPECT_EQ(queue_string.front(), orig_string.front());
+    EXPECT_EQ(queue_string.back(), orig_string.back());
   }
 }
 
