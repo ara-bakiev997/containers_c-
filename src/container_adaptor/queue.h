@@ -16,14 +16,16 @@ class S21Queue {
   S21Queue() : container_() {}
   S21Queue(std::initializer_list<value_type> const &items)
       : container_(items) {}
-  S21Queue(const S21Queue &q) : container_(q) {}
-  S21Queue(S21Queue &&q) : container_(q) {}
+  S21Queue(const S21Queue &q) : container_(q.container_) {}
+  S21Queue(S21Queue &&q) : container_(std::move(q.container_)) {}
   ~S21Queue() = default;
   S21Queue<T> &operator=(S21Queue<T> &&q) {
     this->container_ = std::move(q.container_);
+    return *this;
   }
   S21Queue<T> &operator=(const S21Queue<T> &q) {
     this->container_ = q.container_;
+    return *this;
   }
   const_reference front() { return container_.front(); }
   const_reference back() { return container_.back(); }
@@ -32,10 +34,16 @@ class S21Queue {
   void push(const_reference value) { container_.push_back(value); }
   void push(T &&value) { container_.push_back(value); }
   void pop() { container_.pop_front(); }
-  void swap(S21Queue<T> &other) { this->container_.swap(other); }
+  void swap(S21Queue<T> &other) { this->container_.swap(other.container_); }
+
+  // Bonus
+  template <typename... Args>
+  void emplace_back(Args &&...args) {
+    container_.emplace_back(args...);
+  }
 
  private:
-  container_type container_;
+  container_type container_{};
 };
 
 }  // namespace s21
