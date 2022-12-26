@@ -3,7 +3,7 @@
 #include <cstring>
 #include <queue>
 
-#include "../src/container_adaptor/queue.h"
+#include "../src/container_adaptor/s21_queue.h"
 using namespace s21;
 
 class S21Queue_test : public ::testing::Test {
