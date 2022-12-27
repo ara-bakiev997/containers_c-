@@ -17,13 +17,13 @@ class S21Stack : public ContainerAdaptor<T> {
   S21Stack(std::initializer_list<value_type> const &items)
       : container_(items) {}
   S21Stack(const S21Stack &q) : container_(q.container_) {}
-  S21Stack(S21Stack &&q) : container_(std::move(q.container_)) {}
+  S21Stack(S21Stack &&q) noexcept : container_(std::move(q.container_)) {}
   ~S21Stack() = default;
-  S21Stack<T> &operator=(S21Stack<T> &&q) {
+  S21Stack &operator=(S21Stack<T> &&q) {
     this->container_ = std::move(q.container_);
     return *this;
   }
-  S21Stack<T> &operator=(const S21Stack<T> &q) {
+  S21Stack &operator=(const S21Stack<T> &q) {
     this->container_ = q.container_;
     return *this;
   }

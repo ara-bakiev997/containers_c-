@@ -17,13 +17,13 @@ class S21Queue : public ContainerAdaptor<T> {
   S21Queue(std::initializer_list<value_type> const &items)
       : container_(items) {}
   S21Queue(const S21Queue &q) : container_(q.container_) {}
-  S21Queue(S21Queue &&q) : container_(std::move(q.container_)) {}
+  S21Queue(S21Queue &&q) noexcept : container_(std::move(q.container_)) {}
   ~S21Queue() = default;
-  S21Queue<T> &operator=(S21Queue<T> &&q) {
+  S21Queue &operator=(S21Queue<T> &&q) {
     this->container_ = std::move(q.container_);
     return *this;
   }
-  S21Queue<T> &operator=(const S21Queue<T> &q) {
+  S21Queue &operator=(const S21Queue<T> &q) {
     this->container_ = q.container_;
     return *this;
   }
