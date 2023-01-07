@@ -100,5 +100,22 @@ TEST_F(Tree_test, tree_left_round) {
   tree_left_round.Insert(60);
   tree_left_round.Insert(70);
   tree_left_round.Insert(80);
-  tree_left_round.print2D();
+  tree_left_round.Insert(81);
+  tree_left_round.Insert(82);
+  tree_left_round.Insert(83);
+  tree_left_round.Insert(84);
+  tree_left_round.Insert(85);
+  tree_left_round.Insert(86);
+tree_left_round.Insert(6);
+tree_left_round.Insert(20);
+tree_left_round.Insert(4);
+tree_left_round.Insert(1);
+tree_left_round.Insert(5);
+tree_left_round.Insert(-4);
+tree_left_round.Insert(80);
+tree_left_round.Insert(80);
+tree_left_round.Insert(32);
+tree_left_round.Insert(-8);
+tree_left_round.Insert(16);
+tree_left_round.print2D();
 }
