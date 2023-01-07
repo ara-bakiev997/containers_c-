@@ -76,22 +76,25 @@ public:
   }
 
   void BalanceInsert(RBT<T> *&balance_RBT) {
-    if (balance_RBT->parent_ == nullptr)
+    if (GetParent(balance_RBT) == nullptr)
       return ;
 
-    if (balance_RBT->parent_->color_ == RED) { // балансируем
+    if (GetParent(balance_RBT)->color_ == RED) { // балансируем
+
       // first r-r-B-r -> r-b-R-b if B -root B -> B
-      if (balance_RBT->parent_->color_ ==
-          GetBrotherColor(balance_RBT->parent_)) { // red == red
-        balance_RBT->parent_->color_ = BLACK;
-        GetBrother(balance_RBT->parent_)->color_ = BLACK;
-        if (balance_RBT->parent_->parent_->parent_ != nullptr) {
-          balance_RBT->parent_->parent_->color_ = RED;
-          BalanceInsert(balance_RBT->parent_->parent_); // балансируем выше
+      if (GetParent(balance_RBT)->color_ ==
+          GetBrotherColor(GetParent(balance_RBT)   )) { // red == red
+        GetParent(balance_RBT)->color_ = BLACK;
+        GetBrother(GetParent(balance_RBT))->color_ = BLACK;
+
+        if (!IsRoot(GetGrandParent(balance_RBT))) { // not root
+          GetGrandParent(balance_RBT)->color_ = RED;
+          BalanceInsert(GetGrandParent(balance_RBT)); // балансируем выше
         }
         // second r-r-B-b -> r-B-r-b / if B root -> change root
-      } else { // red black
-        if (balance_RBT->parent_ == balance_RBT->parent_->parent_->left_) {
+      } else { // parent and uncle is red and black
+
+        if (GetParent(balance_RBT) == GetGrandParent(balance_RBT)->left_) {
           // вставка влево поворачиваем вправо
           // проверка на рут деда
           if (balance_RBT->parent_->parent_->parent_ != nullptr) { // не рут
@@ -109,7 +112,7 @@ public:
                    // замена указателя главного родителя
             auto temp_root = new RBT<T>;
             temp_root = balance_RBT->parent_->parent_;
-            this->root_ == balance_RBT->parent_;
+            this->root_ = balance_RBT->parent_;
           }
           auto temp = new RBT<T>;
           temp->parent_ = balance_RBT->parent_->parent_;
@@ -141,7 +144,7 @@ public:
 
           } else { // рут/ как заменить рут?
             // замена указателя главного родителя
-            this->root_ == balance_RBT->parent_;
+            this->root_ = balance_RBT->parent_;
           }
           auto temp = new RBT<T>;
           temp->parent_ = balance_RBT->parent_->parent_;
@@ -158,6 +161,21 @@ public:
         }
       }
     }
+  }
+
+
+  RBT<T> *&GetParent(RBT<T> *&node) {
+    return node->parent_;
+  }
+
+//  RBT<T> *GetGrandParent(RBT<T> *&node) {
+//    if (GetParent(node) != nullptr)
+//    return GetParent(node)->parent_;
+//    else return nullptr;
+//  }
+
+  RBT<T> *&GetGrandParent(RBT<T> *&node) {
+    return GetParent(node)->parent_;
   }
 
   RBT<T> *GetBrother(RBT<T> *&node) {
@@ -177,6 +195,16 @@ public:
     } else
       return GetBrother(node)->color_;
   }
+
+  bool IsRoot (RBT<T> *&node) {
+    if (node->parent_ == nullptr) return true;
+    else return false;
+  }
+
+//  bool IsRoot (RBT<T> *node) {
+//    if (node->parent_ == nullptr) return true;
+//    else return false;
+//  }
 
   void Remove(const T &data) {
     auto *temp = new RBT<T>;
