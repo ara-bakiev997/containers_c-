@@ -140,3 +140,8 @@ TEST_F(Tree_test, segfolt) {
 //  tree_left_round.Insert(35);
   tree_left_round.print2D();
 }
+
+//          GetParent(balance_RBT)->parent_ = temp->parent_; // A.p = B.p
+//          temp->parent_ = GetParent(balance_RBT); // B.p = A
+//          temp->left_ = GetParent(balance_RBT)->right_; // B.l = A.r
+//          GetParent(balance_RBT)->right_ = temp;

@@ -99,26 +99,22 @@ public:
           // проверка на рут деда
 
           auto temp = new RBT<T>;
-
+          temp->parent_ = GetGrandParent(balance_RBT); // temp = B
           if (GetGrandParent(balance_RBT)->parent_ != nullptr) { // не рут
             // замена указателя главного родителя
             if (GetGrandParent(balance_RBT)->parent_->left_ ==
                 GetGrandParent(balance_RBT)) { // замена левого
               GetGrandParent(balance_RBT)->parent_->left_ =
-                  GetParent(balance_RBT);
+                  GetParent(balance_RBT); // main parent = A
             } else { // замена правого
               GetGrandParent(balance_RBT)->parent_->right_ =
-                  GetParent(balance_RBT);
+                  GetParent(balance_RBT); // main parent = A
             }
-
           } else { // рут/ как заменить рут
                    // замена указателя главного родителя
-            auto temp_root = new RBT<T>;
-            temp_root = balance_RBT->parent_->parent_;
-            this->root_ = balance_RBT->parent_;
+            this->root_ = GetParent(balance_RBT); // root = A
           }
 
-          temp->parent_ = balance_RBT->parent_->parent_;
           balance_RBT->parent_->parent_ =
               balance_RBT->parent_->parent_->parent_;
           temp->right_ = balance_RBT->parent_->right_;
@@ -168,13 +164,15 @@ public:
     }
   }
 
-  RBT<T> *&GetParent(RBT<T> *&node) { return node->parent_; }
+  void RotationRight (RBT<T> *&node) {
 
-  //  RBT<T> *GetGrandParent(RBT<T> *&node) {
-  //    if (GetParent(node) != nullptr)
-  //    return GetParent(node)->parent_;
-  //    else return nullptr;
-  //  }
+  }
+
+  void RotationLeft (RBT<T> *&node) {
+
+  }
+
+  RBT<T> *&GetParent(RBT<T> *&node) { return node->parent_; }
 
   RBT<T> *&GetGrandParent(RBT<T> *&node) { return GetParent(node)->parent_; }
 
