@@ -10,22 +10,22 @@ using namespace s21;
 class Tree_test : public ::testing::Test {
 protected:
   void SetUp() override {
-//    tree_int.Insert(6);
-//    tree_int.Insert(20);
-//    tree_int.Insert(4);
-//    tree_int.Insert(1);
-//    tree_int.Insert(5);
-//    tree_int.Insert(-4);
-//    tree_int.Insert(80);
-//    tree_int.Insert(80);
-//    tree_int.Insert(32);
-//    tree_int.Insert(-8);
-//    tree_int.Insert(16);
-//    tree_int.Insert(38);
-//    tree_int.Insert(-19);
-//    tree_int.Insert(63);
-//    tree_int.Insert(18);
-//    tree_int.Insert(35);
+    //        tree_int.Insert(6);
+    //        tree_int.Insert(20);
+    //        tree_int.Insert(4);
+    //        tree_int.Insert(1);
+    //        tree_int.Insert(5);
+    //        tree_int.Insert(-4);
+    //        tree_int.Insert(80);
+    //        tree_int.Insert(80);
+    //        tree_int.Insert(32);
+    //        tree_int.Insert(-8);
+    //        tree_int.Insert(16);
+    //        tree_int.Insert(38);
+    //        tree_int.Insert(-19);
+    //        tree_int.Insert(63);
+    //        tree_int.Insert(18);
+    //        tree_int.Insert(35);
   }
   std::set<int> set_empty;
   Tree<int> tree_null_;
@@ -77,20 +77,21 @@ TEST_F(Tree_test, FindMin) {
 }
 
 TEST_F(Tree_test, Remove) {
-//  tree_int.Remove(6);
+  //  tree_int.Remove(6);
   tree_int.print2D();
-//  tree_int.TreePrint();
+  //  tree_int.TreePrint();
 }
 
 TEST_F(Tree_test, GetBrother) {
   tree_int.print2D();
-  std::cout << tree_int.GetBrother(tree_int.GetRoot()->left_->right_)->data_ << std::endl;
+  std::cout << tree_int.GetBrother(tree_int.GetRoot()->left_->right_)->data_
+            << std::endl;
 }
 
-//TEST_F(Tree_test, IsRoot) {
-//  tree_int.print2D();
-//  std::cout << tree_int.IsRoot(tree_int.GetRoot()) << std::endl;
-//}
+// TEST_F(Tree_test, IsRoot) {
+//   tree_int.print2D();
+//   std::cout << tree_int.IsRoot(tree_int.GetRoot()) << std::endl;
+// }
 
 TEST_F(Tree_test, tree_left_round) {
   tree_left_round.Insert(50);
@@ -106,16 +107,36 @@ TEST_F(Tree_test, tree_left_round) {
   tree_left_round.Insert(84);
   tree_left_round.Insert(85);
   tree_left_round.Insert(86);
-tree_left_round.Insert(6);
-tree_left_round.Insert(20);
-tree_left_round.Insert(4);
-tree_left_round.Insert(1);
-tree_left_round.Insert(5);
-tree_left_round.Insert(-4);
-tree_left_round.Insert(80);
-tree_left_round.Insert(80);
-tree_left_round.Insert(32);
-tree_left_round.Insert(-8);
-tree_left_round.Insert(16);
-tree_left_round.print2D();
+  tree_left_round.Insert(6);
+  tree_left_round.Insert(20);
+  tree_left_round.Insert(4);
+  tree_left_round.Insert(1);
+  tree_left_round.Insert(5);
+  tree_left_round.Insert(-4);
+  tree_left_round.Insert(80);
+  tree_left_round.Insert(80);
+  tree_left_round.Insert(32);
+  tree_left_round.Insert(-8);
+  tree_left_round.Insert(16);
+  tree_left_round.print2D();
+}
+
+TEST_F(Tree_test, segfolt) {
+  tree_left_round.Insert(6);
+  tree_left_round.Insert(20);
+  tree_left_round.Insert(4);
+  tree_left_round.Insert(1);
+  tree_left_round.Insert(5);
+  tree_left_round.Insert(-4);
+  tree_left_round.Insert(80);
+  tree_left_round.Insert(80);
+  tree_left_round.Insert(32);
+  tree_left_round.Insert(-8);
+//  tree_left_round.Insert(16);
+//  tree_left_round.Insert(38);
+//  tree_left_round.Insert(-19);
+//  tree_left_round.Insert(63);
+//  tree_left_round.Insert(18);
+//  tree_left_round.Insert(35);
+  tree_left_round.print2D();
 }
