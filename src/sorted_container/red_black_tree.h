@@ -89,71 +89,16 @@ public:
         // second r-r-B-b -> r-B-r-b / if B root -> change root
       } else { // parent and uncle is red and black
 
+        auto temp = new RBT<T>;
+        temp->parent_ = GetGrandParent(balance_RBT); // temp = B
+        ChangeMainParentLink(balance_RBT);
+
         if (GetParent(balance_RBT) == GetGrandParent(balance_RBT)->left_) {
           // вставка влево поворачиваем вправо
-          // проверка на рут деда
-
-          auto temp = new RBT<T>;
-          temp->parent_ = GetGrandParent(balance_RBT);           // temp = B
-          if (GetGrandParent(balance_RBT)->parent_ != nullptr) { // не рут
-            // замена указателя главного родителя
-            if (GetGrandParent(balance_RBT)->parent_->left_ ==
-                GetGrandParent(balance_RBT)) { // замена левого
-              GetGrandParent(balance_RBT)->parent_->left_ =
-                  GetParent(balance_RBT); // main parent = A
-            } else {                      // замена правого
-              GetGrandParent(balance_RBT)->parent_->right_ =
-                  GetParent(balance_RBT); // main parent = A
-            }
-          } else { // рут/ как заменить рут
-                   // замена указателя главного родителя
-            this->root_ = GetParent(balance_RBT); // root = A
-          }
-
-          GetParent(balance_RBT)->parent_ =
-              GetGrandParent(balance_RBT)->parent_;
-          temp->right_ = GetParent(balance_RBT)->right_;
-          GetParent(balance_RBT)->right_ = temp->parent_;
-          GetParent(balance_RBT)->right_->parent_ = GetParent(balance_RBT);
-          GetParent(balance_RBT)->right_->left_ = temp->right_;
-          temp->parent_ = temp->right_ = temp->left_ = nullptr;
-          delete temp;
-          GetParent(balance_RBT)->color_ = BLACK;
-          GetParent(balance_RBT)->right_->color_ = RED;
+          RotationRight(balance_RBT, temp);
         } else {
-
           // вставка вправо поворачиваем влево
-          // проверка на рут деда
-          if (balance_RBT->parent_->parent_->parent_ != nullptr) { // не рут
-
-            // замена указателя главного родителя
-            if (balance_RBT->parent_->parent_->parent_->left_ ==
-                balance_RBT->parent_->parent_) {
-              balance_RBT->parent_->parent_->parent_->left_ =
-                  balance_RBT->parent_;
-            } else {
-              balance_RBT->parent_->parent_->parent_->right_ =
-                  balance_RBT->parent_;
-            }
-
-          } else { // рут/ как заменить рут?
-            // замена указателя главного родителя
-            auto temp_root = new RBT<T>;
-            temp_root = balance_RBT->parent_->parent_;
-            this->root_ = balance_RBT->parent_;
-          }
-          auto temp = new RBT<T>;
-          temp->parent_ = balance_RBT->parent_->parent_;
-          balance_RBT->parent_->parent_ =
-              balance_RBT->parent_->parent_->parent_;
-          temp->left_ = balance_RBT->parent_->left_;
-          balance_RBT->parent_->left_ = temp->parent_;
-          balance_RBT->parent_->left_->parent_ = balance_RBT->parent_;
-          balance_RBT->parent_->left_->right_ = temp->left_;
-          temp->parent_ = temp->right_ = temp->left_ = nullptr;
-          delete temp;
-          balance_RBT->parent_->color_ = BLACK;
-          balance_RBT->parent_->left_->color_ = RED;
+          RotationLeft(balance_RBT, temp);
         }
       }
     }
@@ -169,9 +114,47 @@ public:
     }
   }
 
-  void RotationRight(RBT<T> *&node) {}
+  void RotationRight(RBT<T> *&balance_RBT, RBT<T> *&temp) {
+    GetParent(balance_RBT)->parent_ = GetGrandParent(balance_RBT)->parent_;
+    temp->right_ = GetParent(balance_RBT)->right_;
+    GetParent(balance_RBT)->right_ = temp->parent_;
+    GetParent(balance_RBT)->right_->parent_ = GetParent(balance_RBT);
+    GetParent(balance_RBT)->right_->left_ = temp->right_;
+    temp->parent_ = temp->right_ = temp->left_ = nullptr;
+    delete temp;
+    GetParent(balance_RBT)->color_ = BLACK;
+    GetParent(balance_RBT)->right_->color_ = RED;
+  }
 
-  void RotationLeft(RBT<T> *&node) {}
+  void RotationLeft(RBT<T> *&balance_RBT, RBT<T> *&temp) {
+    GetParent(balance_RBT)->parent_ = GetGrandParent(balance_RBT)->parent_;
+    temp->left_ = GetParent(balance_RBT)->left_;
+    GetParent(balance_RBT)->left_ = temp->parent_;
+    GetParent(balance_RBT)->left_->parent_ = balance_RBT->parent_;
+    GetParent(balance_RBT)->left_->right_ = temp->left_;
+    temp->parent_ = temp->right_ = temp->left_ = nullptr;
+    delete temp;
+    balance_RBT->parent_->color_ = BLACK;
+    balance_RBT->parent_->left_->color_ = RED;
+  }
+
+  void ChangeMainParentLink(RBT<T> *&balance_RBT) {
+
+    if (GetGrandParent(balance_RBT)->parent_ != nullptr) { // не рут
+      // замена указателя главного родителя
+      if (GetGrandParent(balance_RBT)->parent_->left_ ==
+          GetGrandParent(balance_RBT)) { // замена левого
+        GetGrandParent(balance_RBT)->parent_->left_ =
+            GetParent(balance_RBT); // main parent = A
+      } else {                      // замена правого
+        GetGrandParent(balance_RBT)->parent_->right_ =
+            GetParent(balance_RBT); // main parent = A
+      }
+    } else { // рут/ как заменить рут
+      // замена указателя главного родителя
+      this->root_ = GetParent(balance_RBT); // root = A
+    }
+  }
 
   RBT<T> *&GetParent(RBT<T> *&node) { return node->parent_; }
 
