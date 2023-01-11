@@ -91,14 +91,55 @@ public:
 
         auto temp = new RBT<T>;
         temp->parent_ = GetGrandParent(balance_RBT); // temp = B
-        ChangeMainParentLink(balance_RBT);
 
         if (GetParent(balance_RBT) == GetGrandParent(balance_RBT)->left_) {
           // вставка влево поворачиваем вправо
-          RotationRight(balance_RBT, temp);
+          if (balance_RBT == GetParent(balance_RBT)->right_) { // малый поворот
+            auto temp_parent = new RBT<T>;
+            temp_parent->data_ = balance_RBT->parent_->data_;
+            auto temp_x = new RBT<T>;
+            temp_x->data_ = balance_RBT->data_;
+
+            balance_RBT->parent_->parent_->left_ = temp_x;
+            temp_x->parent_ = balance_RBT->parent_->parent_;
+            temp_x->left_ = temp_parent;
+
+            temp_parent->parent_ = temp_x;
+            BalanceInsert(temp_parent);
+          } else {
+            ChangeMainParentLink(balance_RBT);
+            RotationRight(balance_RBT, temp);
+          }
+
         } else {
           // вставка вправо поворачиваем влево
-          RotationLeft(balance_RBT, temp);
+          if (balance_RBT == GetParent(balance_RBT)->left_) { // малый поворот
+
+            auto temp_parent = new RBT<T>;
+            temp_parent->data_ = balance_RBT->parent_->data_;
+            auto temp_x = new RBT<T>;
+            temp_x->data_ = balance_RBT->data_;
+            balance_RBT->parent_->parent_->right_ = temp_x;
+            temp_x->parent_ = balance_RBT->parent_->parent_;
+            temp_x->right_ = temp_parent;
+            temp_parent->parent_ = temp_x;
+            BalanceInsert(temp_parent);
+
+
+//            auto temp_small = new RBT<T>;
+//            temp_small->parent_ = GetParent(balance_RBT);
+//            GetGrandParent(balance_RBT)->right_ = balance_RBT;
+//            balance_RBT->parent_ = temp_small->parent_->parent_;
+//            balance_RBT->right_ = temp_small->parent_;
+//            balance_RBT->right_->parent_ = balance_RBT;
+//            std::swap(balance_RBT->right_->left_, temp_small->left_);
+//            delete temp_small;
+//            BalanceInsert(balance_RBT->right_);
+          } else {
+            ChangeMainParentLink(balance_RBT);
+            RotationLeft(balance_RBT, temp);
+          }
+
         }
       }
     }
