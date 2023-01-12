@@ -10,22 +10,22 @@ using namespace s21;
 class Tree_test : public ::testing::Test {
 protected:
   void SetUp() override {
-    //        tree_int.Insert(6);
-    //        tree_int.Insert(20);
-    //        tree_int.Insert(4);
-    //        tree_int.Insert(1);
-    //        tree_int.Insert(5);
-    //        tree_int.Insert(-4);
-    //        tree_int.Insert(80);
-    //        tree_int.Insert(80);
-    //        tree_int.Insert(32);
-    //        tree_int.Insert(-8);
-    //        tree_int.Insert(16);
-    //        tree_int.Insert(38);
-    //        tree_int.Insert(-19);
-    //        tree_int.Insert(63);
-    //        tree_int.Insert(18);
-    //        tree_int.Insert(35);
+//            tree_int.Insert(6);
+//            tree_int.Insert(20);
+//            tree_int.Insert(4);
+//            tree_int.Insert(1);
+//            tree_int.Insert(5);
+//            tree_int.Insert(-4);
+//            tree_int.Insert(80);
+//            tree_int.Insert(80);
+//            tree_int.Insert(32);
+//            tree_int.Insert(-8);
+//            tree_int.Insert(16);
+//            tree_int.Insert(38);
+//            tree_int.Insert(-19);
+//            tree_int.Insert(63);
+//            tree_int.Insert(18);
+//            tree_int.Insert(35);
   }
   std::set<int> set_empty;
   Tree<int> tree_null_;
@@ -95,14 +95,6 @@ TEST_F(Tree_test, GetBrother) {
 
 TEST_F(Tree_test, tree_left_round) {
   tree_left_round.Insert(50);
-
-//  tree_left_round.Insert(60);
-//  tree_left_round.Insert(55);
-
-//    tree_left_round.Insert(40);
-//    tree_left_round.Insert(45);
-
-
   tree_left_round.Insert(40);
   tree_left_round.Insert(30);
   tree_left_round.Insert(20);
@@ -139,13 +131,21 @@ TEST_F(Tree_test, segfolt) {
   tree_left_round.Insert(80);
   tree_left_round.Insert(32);
   tree_left_round.Insert(-8);
-//  tree_left_round.Insert(16);
-//  tree_left_round.Insert(38);
-//  tree_left_round.Insert(-19);
-//  tree_left_round.Insert(63);
-//  tree_left_round.Insert(18);
-//  tree_left_round.Insert(35);
+  tree_left_round.Insert(16);
+  tree_left_round.Insert(38);
+  tree_left_round.Insert(-19);
+  tree_left_round.Insert(63);
+  tree_left_round.Insert(18);
+  tree_left_round.Insert(35);
   tree_left_round.print2D();
+}
+
+TEST_F(Tree_test, small_left_rotation) {
+  tree_null_.Insert(10);
+  tree_null_.Insert(5);
+  tree_null_.Insert(7);
+
+  tree_null_.print2D();
 }
 
 //          GetParent(balance_RBT)->parent_ = temp->parent_; // A.p = B.p

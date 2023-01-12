@@ -95,17 +95,9 @@ public:
         if (GetParent(balance_RBT) == GetGrandParent(balance_RBT)->left_) {
           // вставка влево поворачиваем вправо
           if (balance_RBT == GetParent(balance_RBT)->right_) { // малый поворот
-            auto temp_parent = new RBT<T>;
-            temp_parent->data_ = balance_RBT->parent_->data_;
-            auto temp_x = new RBT<T>;
-            temp_x->data_ = balance_RBT->data_;
 
-            balance_RBT->parent_->parent_->left_ = temp_x;
-            temp_x->parent_ = balance_RBT->parent_->parent_;
-            temp_x->left_ = temp_parent;
+            SmallRotationLeft(balance_RBT);
 
-            temp_parent->parent_ = temp_x;
-            BalanceInsert(temp_parent);
           } else {
             ChangeMainParentLink(balance_RBT);
             RotationRight(balance_RBT, temp);
@@ -115,31 +107,12 @@ public:
           // вставка вправо поворачиваем влево
           if (balance_RBT == GetParent(balance_RBT)->left_) { // малый поворот
 
-            auto temp_parent = new RBT<T>;
-            temp_parent->data_ = balance_RBT->parent_->data_;
-            auto temp_x = new RBT<T>;
-            temp_x->data_ = balance_RBT->data_;
-            balance_RBT->parent_->parent_->right_ = temp_x;
-            temp_x->parent_ = balance_RBT->parent_->parent_;
-            temp_x->right_ = temp_parent;
-            temp_parent->parent_ = temp_x;
-            BalanceInsert(temp_parent);
+            SmallRotationRight(balance_RBT);
 
-
-//            auto temp_small = new RBT<T>;
-//            temp_small->parent_ = GetParent(balance_RBT);
-//            GetGrandParent(balance_RBT)->right_ = balance_RBT;
-//            balance_RBT->parent_ = temp_small->parent_->parent_;
-//            balance_RBT->right_ = temp_small->parent_;
-//            balance_RBT->right_->parent_ = balance_RBT;
-//            std::swap(balance_RBT->right_->left_, temp_small->left_);
-//            delete temp_small;
-//            BalanceInsert(balance_RBT->right_);
           } else {
             ChangeMainParentLink(balance_RBT);
             RotationLeft(balance_RBT, temp);
           }
-
         }
       }
     }
@@ -153,6 +126,34 @@ public:
       GetGrandParent(balance_RBT)->color_ = RED;
       BalanceInsert(GetGrandParent(balance_RBT)); // балансируем выше
     }
+  }
+
+  void SmallRotationRight(RBT<T> *&balance_RBT) {
+    auto x = new RBT<T>;
+    auto parent = balance_RBT->parent_;
+    std::swap(x, balance_RBT);
+    delete balance_RBT;
+    parent->left_ = nullptr;
+    x->parent_ = parent->parent_;
+    x->parent_->right_ = x;
+    x->right_ = parent;
+    parent->parent_ = x;
+
+    BalanceInsert(parent);
+  }
+
+  void SmallRotationLeft(RBT<T> *&balance_RBT) {
+    auto x = new RBT<T>;
+    auto parent = balance_RBT->parent_;
+    std::swap(x, balance_RBT);
+    delete balance_RBT;
+    parent->right_ = nullptr;
+    x->parent_ = parent->parent_;
+    x->parent_->left_ = x;
+    x->left_ = parent;
+    parent->parent_ = x;
+
+    BalanceInsert(parent);
   }
 
   void RotationRight(RBT<T> *&balance_RBT, RBT<T> *&temp) {
@@ -293,46 +294,6 @@ public:
       return find_here;
     else
       return FindMin(find_here->left_);
-  }
-
-  void WalkInWidth() {
-    std::queue<RBT<T> *> queue;
-    queue.push(this->root_);
-    int count = 0;
-    int sons = 1;
-    RBT<T> *fake;
-
-    while (!queue.empty()) {
-      RBT<T> *temp;
-      temp = queue.front();
-      queue.pop();
-      if (temp != fake) {
-        std::cout << temp->data_ << " ";
-      } else {
-        std::cout << "null"
-                  << " ";
-      }
-      ++count;
-      if (count == sons) {
-        std::cout << std::endl;
-        count = 0;
-        sons *= 2;
-      }
-
-      if (temp != fake) {
-        if (temp->left_ != nullptr) {
-          queue.push(temp->left_);
-        } else {
-          queue.push(fake);
-        }
-
-        if (temp->right_ != nullptr) {
-          queue.push(temp->right_);
-        } else {
-          queue.push(fake);
-        }
-      }
-    }
   }
 
   // Function to print binary tree in 2D
