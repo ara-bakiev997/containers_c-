@@ -53,6 +53,29 @@ namespace s21 {
         // destructor
         ~S21Vector() = default; //{ delete[] this->arr_; }
 
+        // iterators
+
+        class Iterator {
+        public:
+
+            explicit Iterator(value_type* ptr): ptr_(ptr) {}
+
+            value_type& operator*() {
+                return *ptr_;
+            }
+
+            value_type* operator->() {
+                return ptr_;
+            }
+
+            Iterator& operator++() {
+                ++ptr_;
+                return *this;
+            }
+        private:
+            value_type* ptr_;
+        };
+
         //  Vector Element access
 
         reference at(size_type pos); // access specified element with bounds checking
@@ -127,7 +150,7 @@ namespace s21 {
 // not ready
     template<class value_type, typename Alloc>
     S21Vector<value_type, Alloc> &
-    S21Vector<value_type, Alloc>::operator=(const S21Vector &v) {
+    S21Vector<value_type, Alloc>::operator=(const S21Vector& v) {
         bool is_not_ready_to_return = true;
 
         if (this == &v) {
@@ -150,7 +173,7 @@ namespace s21 {
 // not ready
     template<class value_type, typename Alloc>
     S21Vector<value_type, Alloc> &
-    S21Vector<value_type, Alloc>::operator=(S21Vector &&v) noexcept {
+    S21Vector<value_type, Alloc>::operator=(S21Vector&& v) noexcept {
         if (this != &v) {
             if (this->arr_ != v.arr_) {
                 if (this->arr_ != nullptr) {
