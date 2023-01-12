@@ -205,6 +205,7 @@ S21Vector<value_type, Alloc>::operator[](S21Vector::size_type pos) const {
     return this->arr_[pos];
 }
 
+
 template<class value_type, typename Alloc>
 typename S21Vector<value_type, Alloc>::const_reference
 S21Vector<value_type, Alloc>::front() {
