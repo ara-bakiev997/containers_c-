@@ -15,10 +15,11 @@ class Tree_test : public ::testing::Test {
 };
 
 TEST_F(Tree_test, Insert) {
-  tree_null_.insert(5);
-  tree_null_.insert(6);
-  tree_null_.insert(7);
-  tree_null_.insert(8);
+  tree_null_.insert(0);
+  tree_null_.insert(2);
+  tree_null_.insert(1);
+  tree_null_.insert(3);
+  tree_null_.insert(4);
   tree_null_.print2D();
 }
 

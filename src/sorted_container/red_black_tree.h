@@ -31,144 +31,211 @@ class Tree {
  public:
   Tree() { this->root_ = nullptr; }
   ~Tree() = default;
-  //_____INSERT_SIMPLE_____
+  //_____MODIFIERS_SIMPLE_____
   void insert(const T &value) { add_tree(this->root_, value, this->root_); }
+  void erase_node(T value);
 
-  // добавить связку с родителем
-  void add_tree(RBT<T> *&node, const T &value, RBT<T> *&parent) {
-    if (node == nullptr) {
-      node = create_node(value);
-      if (node != root_) {
-        node->parent_ = parent;
-      }
-    } else if (value < node->data_) {
-      add_tree(node->left_, value, node);
-    } else if (node->data_ < value) {
-      add_tree(node->right_, value, node);
-    }
-  }
-
-  RBT<T> *create_node(const T &value) {
-    auto temp = new RBT<T>;
-    temp->data_ = value;
-    temp->left_ = temp->right_ = temp->parent_ = nullptr;
-    return temp;
-  }
-
-  //_____ERASE_SIMPLE_____
-  void erase_node(T value) {
-    RBT<T> *find = find_node(this->root_, value);
-    if (find != nullptr) {
-      del_node_by_condition(find);
-    }
-  }
-
-  void del_node_by_condition(RBT<T> *node) {
-    if (!node->right_ && !node->left_) {  // удаление листа
-      if (node->parent_->left_ == node) {
-        node->parent_->left_ = nullptr;
-      } else {
-        node->parent_->right_ = nullptr;
-      }
-      delete node;
-    } else if (node->left_ && !node->right_) {
-      del_node_with_one_child(node, node->left_, node->parent_);
-    } else if (!node->left_ && node->right_) {
-      del_node_with_one_child(node, node->right_, node->parent_);
-    } else if (node->left_ && node->right_) {
-      RBT<T> *change = min_node(node->right_);  // find min node in node->right_
-      std::swap(change->data_, node->data_);
-      del_node_by_condition(change);
-    }
-  }
-
-  void del_node_with_one_child(RBT<T> *del_node, RBT<T> *child,
-                               RBT<T> *parent) {
-    if (parent->left_ == del_node) {
-      parent->left_ = child;
-      child->parent_ = parent;
-    } else {
-      parent->right_ = child;
-      child->parent_ = parent;
-    }
-    delete del_node;
-  }
-
-  //_____FIND_NODE_____
-  RBT<T> *find_node(RBT<T> *node, T &value) {
-    RBT<T> *ret = nullptr;
-    if (node != nullptr) {
-      if (node->data_ == value) {
-        ret = node;
-      } else if (value < node->data_) {
-        ret = find_node(node->left_, value);
-      } else if (node->data_ < value) {
-        ret = find_node(node->right_, value);
-      }
-    }
-    return ret;
-  }
-
-  RBT<T> *min_node(RBT<T> *node) {
-    RBT<T> *ret = nullptr;
-    if (node != nullptr) {
-      ret = node;
-      if (node->left_) {
-        ret = min_node(node->left_);
-      }
-    }
-    return ret;
-  }
-
-  //_____FUNCTIONS_FOR_PRINT_____
-
-  // Function to print binary tree in 2D
-  // It does reverse inorder traversal
-  void print2DUtil(RBT<T> *root, int space) {
-    // Base case
-    if (root == nullptr) return;
-
-    // Increase distance between levels
-    space += 5;
-
-    // Process right child first
-    print2DUtil(root->right_, space);
-
-    // Print current node after space
-    // count
-    std::cout << std::endl;
-    for (int i = 5; i < space; i++) std::cout << " ";
-    if (root->parent_ == nullptr) std::cout << "#";
-    if (root->color_ == BLACK) {
-      std::cout << root->data_ << "_B"
-                << "\n";
-    } else {
-      std::cout << root->data_ << "_R"
-                << "\n";
-    }
-
-    // Process left child
-    print2DUtil(root->left_, space);
-  }
-
-  // Wrapper over print2DUtil()
-  void print2D() {
-    // Pass initial space count as 0
-    print2DUtil(this->root_, 0);
-  }
-
-  void RBTPrint(RBT<T> *&node) {
-    if (node == nullptr) return;
-    RBTPrint(node->left_);
-    std::cout << node->data_ << std::endl;
-    RBTPrint(node->right_);
-  }
-
+  void print2D();
+  void RBTPrint(RBT<T> *&node);
   void TreePrint() { RBTPrint(this->root_); };
 
  private:
   RBT<T> *root_{};
+  //_____SUPPORT_FOR_INSERT_SIMPLE_____
+  void add_tree(RBT<T> *&node, const T &value, RBT<T> *&parent);
+  RBT<T> *create_node(const T &value);
+
+  //_____SUPPORT_FOR_ERASE_SIMPLE_____
+  void del_node_by_condition(RBT<T> *node);
+  void del_node_with_one_child(RBT<T> *del_node, RBT<T> *child, RBT<T> *parent);
+
+  //_____FIND_NODE_____
+  RBT<T> *find_node(RBT<T> *node, T &value);
+  RBT<T> *min_node(RBT<T> *node);
+
+  //_____BALANCE_FUNC____
+  void balance(RBT<T> *node, RBT<T> *parent);
+  RBT<T> *get_bro(RBT<T> *node);
+  RBT<T> *get_father(RBT<T> *node);
+  void rotate() {}
+
+
+  //_____SUPPORT_FOR_PRINT_____
+  void print2DUtil(RBT<T> *root, int space);
 };
+
+//_____INSERT_SIMPLE_____
+template <typename T>
+void Tree<T>::add_tree(RBT<T> *&node, const T &value, RBT<T> *&parent) {
+  if (node == nullptr) {
+    node = create_node(value);
+    if (node != root_) {
+      node->parent_ = parent;
+    } else {
+      node->color_ = BLACK;
+    }
+    if (parent->color_ == RED) {
+      balance(node, parent);
+    }
+  } else if (value < node->data_) {
+    add_tree(node->left_, value, node);
+  } else if (node->data_ < value) {
+    add_tree(node->right_, value, node);
+  }
+}
+
+template <typename T>
+RBT<T> *Tree<T>::create_node(const T &value) {
+  auto temp = new RBT<T>;
+  temp->data_ = value;
+  temp->left_ = temp->right_ = temp->parent_ = nullptr;
+  return temp;
+}
+
+//_____ERASE_SIMPLE_____
+template <typename T>
+void Tree<T>::erase_node(T value) {
+  RBT<T> *find = find_node(this->root_, value);
+  if (find != nullptr) {
+    del_node_by_condition(find);
+  }
+}
+
+template <typename T>
+void Tree<T>::del_node_by_condition(RBT<T> *node) {
+  if (!node->right_ && !node->left_) {  // удаление листа
+    if (node->parent_->left_ == node) {
+      node->parent_->left_ = nullptr;
+    } else {
+      node->parent_->right_ = nullptr;
+    }
+    delete node;
+  } else if (node->left_ && !node->right_) {
+    del_node_with_one_child(node, node->left_, node->parent_);
+  } else if (!node->left_ && node->right_) {
+    del_node_with_one_child(node, node->right_, node->parent_);
+  } else if (node->left_ && node->right_) {
+    RBT<T> *change = min_node(node->right_);  // find min node in node->right_
+    std::swap(change->data_, node->data_);
+    del_node_by_condition(change);
+  }
+}
+
+template <typename T>
+void Tree<T>::del_node_with_one_child(RBT<T> *del_node, RBT<T> *child,
+                                      RBT<T> *parent) {
+  if (parent->left_ == del_node) {
+    parent->left_ = child;
+  } else {
+    parent->right_ = child;
+  }
+  child->parent_ = parent;
+  delete del_node;
+}
+
+//_____FIND_NODE_____
+template <typename T>
+RBT<T> *Tree<T>::find_node(RBT<T> *node, T &value) {
+  RBT<T> *ret = nullptr;
+  if (node != nullptr) {
+    if (node->data_ == value) {
+      ret = node;
+    } else if (value < node->data_) {
+      ret = find_node(node->left_, value);
+    } else if (node->data_ < value) {
+      ret = find_node(node->right_, value);
+    }
+  }
+  return ret;
+}
+
+template <typename T>
+RBT<T> *Tree<T>::min_node(RBT<T> *node) {
+  RBT<T> *ret = nullptr;
+  if (node != nullptr) {
+    ret = node;
+    if (node->left_) {
+      ret = min_node(node->left_);
+    }
+  }
+  return ret;
+}
+
+//_____BALANCE_FUNC____
+template <typename T>
+void Tree<T>::balance(RBT<T> *node, RBT<T> *parent) {
+  RBT<T> *bro_parent = get_bro(parent);
+  if (bro_parent) {
+    if (bro_parent->color_ == BLACK) {
+      //  если отец и дедушка в одной стороне поворот большой иначе маленький
+
+    }
+  }
+}
+
+template <typename T>
+RBT<T> *Tree<T>::get_bro(RBT<T> *node) {
+  RBT<T> *parent = node->parent_;
+  RBT<T> *ret = nullptr;
+  if (parent != nullptr) {
+    if (parent->left_ != node) {
+      ret = parent->left_;
+    } else {
+      ret = parent->right_;
+    }
+  }
+  return ret;
+}
+
+template <typename T>
+RBT<T> *Tree<T>::get_father(RBT<T> *node) {
+  return node->parent_;
+}
+
+//_____FUNCTIONS_FOR_PRINT_____
+template <typename T>
+void Tree<T>::print2DUtil(RBT<T> *root, int space) {
+  // Base case
+  if (root == nullptr) return;
+
+  // Increase distance between levels
+  space += 5;
+
+  // Process right child first
+  print2DUtil(root->right_, space);
+
+  // Print current node after space
+  // count
+  std::cout << std::endl;
+  for (int i = 5; i < space; i++) std::cout << " ";
+  if (root->parent_ == nullptr) std::cout << "#";
+  if (root->color_ == BLACK) {
+    std::cout << root->data_ << "_B"
+              << "\n";
+  } else {
+    std::cout << root->data_ << "_R"
+              << "\n";
+  }
+
+  // Process left child
+  print2DUtil(root->left_, space);
+}
+
+// Wrapper over print2DUtil()
+template <typename T>
+void Tree<T>::print2D() {
+  // Pass initial space count as 0
+  print2DUtil(this->root_, 0);
+}
+
+template <typename T>
+void Tree<T>::RBTPrint(RBT<T> *&node) {
+  if (node == nullptr) return;
+  RBTPrint(node->left_);
+  std::cout << node->data_ << std::endl;
+  RBTPrint(node->right_);
+}
+
 }  // namespace s21
 
 #endif  // S21_CONTAINERS_SRC_SORTED_CONTAINER_RED_BLACK_TREE_H_
