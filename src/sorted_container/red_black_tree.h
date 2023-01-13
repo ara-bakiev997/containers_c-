@@ -32,69 +32,69 @@ class Tree {
   Tree() { this->root_ = nullptr; }
   ~Tree() = default;
   //_____INSERT_SIMPLE_____
-  void insert(const T &value) { add_tree(this->root_, value); }
+  void insert(const T &value) { add_tree(this->root_, value, this->root_); }
 
   // добавить связку с родителем
-  void add_tree(RBT<T> *&node, const T &value) {
+  void add_tree(RBT<T> *&node, const T &value, RBT<T> *&parent) {
     if (node == nullptr) {
       node = create_node(value);
+      if (node != root_) {
+        node->parent_ = parent;
+      }
     } else if (value < node->data_) {
-      add_tree(node->left_, value);
+      add_tree(node->left_, value, node);
     } else if (node->data_ < value) {
-      add_tree(node->right_, value);
+      add_tree(node->right_, value, node);
     }
   }
 
   RBT<T> *create_node(const T &value) {
-    RBT<T> *temp = new RBT<T>;
+    auto temp = new RBT<T>;
     temp->data_ = value;
     temp->left_ = temp->right_ = temp->parent_ = nullptr;
     return temp;
   }
 
   //_____ERASE_SIMPLE_____
-  // доработать мб рекурсивно
   void erase_node(T value) {
     RBT<T> *find = find_node(this->root_, value);
     if (find != nullptr) {
-      if (!find->right_ && !find->left_) {  // удаление листа
-        delete_node(find);
-      } else if (find->left_ && !find->right_) {  // del if Э left child
-        RBT<T> *parent = find->parent_;
-        if (parent->left_ == find) {
-          parent->left_ = find->left_;
-          find->left_->parent_ = parent;
-        } else {
-          parent->right_ = find->left_;
-          find->left_->parent_ = parent;
-        }
-        delete_node(find);
-      }
-      else if (!find->left_ && find->right_) {  // del if Э right child
-        RBT<T> *parent = find->parent_;
-        if (parent->left_ == find) {
-          parent->left_ = find->right_;
-          find->right_->parent_ = parent;
-        } else {
-          parent->right_ = find->right_;
-          find->right_->parent_ = parent;
-        }
-        delete_node(find);
-      }
-//      else if (find->left_ && find->right_) {
-//        RBT<T> *change = min_node(find->right_);
-//        std::swap(change->data_, find->data_);
-//        delete_node(change);
-//      }
+      del_node_by_condition(find);
     }
   }
 
-  void delete_node(RBT<T> *node) {
-    delete node;
+  void del_node_by_condition(RBT<T> *node) {
+    if (!node->right_ && !node->left_) {  // удаление листа
+      if (node->parent_->left_ == node) {
+        node->parent_->left_ = nullptr;
+      } else {
+        node->parent_->right_ = nullptr;
+      }
+      delete node;
+    } else if (node->left_ && !node->right_) {
+      del_node_with_one_child(node, node->left_, node->parent_);
+    } else if (!node->left_ && node->right_) {
+      del_node_with_one_child(node, node->right_, node->parent_);
+    } else if (node->left_ && node->right_) {
+      RBT<T> *change = min_node(node->right_);  // find min node in node->right_
+      std::swap(change->data_, node->data_);
+      del_node_by_condition(change);
+    }
+  }
+
+  void del_node_with_one_child(RBT<T> *del_node, RBT<T> *child,
+                               RBT<T> *parent) {
+    if (parent->left_ == del_node) {
+      parent->left_ = child;
+      child->parent_ = parent;
+    } else {
+      parent->right_ = child;
+      child->parent_ = parent;
+    }
+    delete del_node;
   }
 
   //_____FIND_NODE_____
-
   RBT<T> *find_node(RBT<T> *node, T &value) {
     RBT<T> *ret = nullptr;
     if (node != nullptr) {
@@ -126,7 +126,7 @@ class Tree {
   // It does reverse inorder traversal
   void print2DUtil(RBT<T> *root, int space) {
     // Base case
-    if (root == NULL) return;
+    if (root == nullptr) return;
 
     // Increase distance between levels
     space += 5;

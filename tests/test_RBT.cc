@@ -19,9 +19,23 @@ TEST_F(Tree_test, Insert) {
   tree_null_.insert(6);
   tree_null_.insert(7);
   tree_null_.insert(8);
-
   tree_null_.print2D();
-  tree_null_.erase_node(8);
-  tree_null_.print2D();
-
 }
+
+TEST_F(Tree_test, Erase) {
+  tree_null_.insert(3);
+  tree_null_.insert(2);
+  tree_null_.insert(5);
+  tree_null_.insert(10);
+  tree_null_.insert(5);
+  tree_null_.insert(4);
+  tree_null_.insert(7);
+  tree_null_.insert(8);
+  tree_null_.insert(11);
+
+  tree_null_.print2D();
+  std::cout << "____AFTER_CHANGE____" << std::endl;
+  tree_null_.erase_node(3);
+  tree_null_.print2D();
+}
+
