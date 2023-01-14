@@ -31,7 +31,7 @@ namespace s21 {
         // default constructor (simplified syntax for assigning values to attributes)
         S21Vector() { this->size_ = 0U, capacity_ = 0U, this->arr_ = nullptr; }
 
-        explicit S21Vector(size_type n, const T &value = T(), const Alloc &alloc = Alloc()) {
+        explicit S21Vector(size_type n, const T& value = T(), const Alloc &alloc = Alloc()) {
             this->size_ = n;
             capacity_ = n;
 //            this->arr_ = n ? alloc_.allocate(n) : nullptr;
@@ -40,9 +40,8 @@ namespace s21 {
 
         S21Vector(std::initializer_list<value_type> const &items);
 
-        S21Vector(const S21Vector &v) {
-            this->size_ = v.size_, capacity_ = v.capacity_, this->arr_ = v.arr_;
-        };
+        S21Vector(const S21Vector &other);
+
 
         S21Vector(S21Vector &&v) noexcept {
             this->size_ = v.size_, capacity_ = v.capacity_;
@@ -52,20 +51,23 @@ namespace s21 {
         }
 
         // destructor
-        ~S21Vector() = default; //{ delete[] this->arr_; }
+        ~S21Vector() = default;//{ delete[] this->arr_; }
 
         // iterators
         template<bool IsConst>
         class CommonIterator {
         public:
 
-            explicit CommonIterator(std::conditional_t<IsConst, const value_type *, value_type *> ptr) : ptr_(ptr) {}
-            CommonIterator(const CommonIterator& other) : ptr_(other.ptr_) {}
+            explicit CommonIterator(value_type *ptr) : ptr_(ptr) {}
 
-            CommonIterator& operator=(const CommonIterator &other) {
+            CommonIterator(const CommonIterator &other) : ptr_(other.ptr_) {}
+
+            CommonIterator &operator=(const CommonIterator &other) {
                 this->ptr_ = other.ptr_;
                 return *this;
             }
+
+            ~CommonIterator() = default;
 
             std::conditional_t<IsConst, const value_type &, value_type &> operator*() {
                 return *ptr_;
@@ -75,7 +77,7 @@ namespace s21 {
                 return ptr_;
             }
 
-            CommonIterator& operator++() {
+            CommonIterator &operator++() {
                 ++ptr_;
                 return *this;
             }
@@ -86,7 +88,7 @@ namespace s21 {
                 return tmp;
             }
 
-            CommonIterator& operator--() {
+            CommonIterator &operator--() {
                 --ptr_;
                 return *this;
             }
@@ -109,19 +111,20 @@ namespace s21 {
                 return tmp;
             }
 
-            ptrdiff_t operator-(CommonIterator& value) { return this->ptr_ - value.ptr_; }
-            ptrdiff_t operator-(const CommonIterator& value) { return this->ptr_ - value.ptr_; }
+            ptrdiff_t operator-(CommonIterator &value) { return this->ptr_ - value.ptr_; }
 
-            bool operator==(const CommonIterator& other) {
+            ptrdiff_t operator-(const CommonIterator &value) { return this->ptr_ - value.ptr_; }
+
+            bool operator==(const CommonIterator &other) {
                 return this->ptr_ == other.ptr_;
             }
 
-            bool operator!=(const CommonIterator& other) {
+            bool operator!=(const CommonIterator &other) {
                 return this->ptr_ != other.ptr_;
             }
 
         private:
-            std::conditional_t<IsConst, const value_type*, value_type*> ptr_;
+            std::conditional_t<IsConst, const value_type *, value_type *> ptr_{};
         };
 
         using iterator = CommonIterator<true>;
@@ -131,13 +134,17 @@ namespace s21 {
         reference at(size_type pos); // access specified element with bounds checking
         const_reference at(size_type pos) const;
 
-        reference operator[](size_type pos);             // access specified element
-        const_reference operator[](size_type pos) const; // access specified element
+        reference operator[](size_type pos) noexcept;             // access specified element
+        const_reference operator[](size_type pos) const noexcept; // access specified element
 
-        const_reference front(); // access the first element
-        const_reference back();  // access the last element
-        T *data();               // direct access to the underlying array
-        const T *data() const;   // direct access to the underlying array
+        reference front() noexcept; // access the first element
+        const_reference front() const noexcept;
+
+        reference back() noexcept;  // access the last element
+        const_reference back() const noexcept;
+
+        T *data() noexcept;               // direct access to the underlying array
+        const T *data() const noexcept;   // direct access to the underlying array
 
         //  Vector Iterators
 
@@ -151,10 +158,11 @@ namespace s21 {
 
         // Vector Capacity
 
-        bool empty();
+        bool empty() const noexcept;
 
-        size_type size();
+        size_type size() const noexcept;
 
+        size_type capacity() const noexcept;
         // Vector Modifiers
 
         void swap(S21Vector &other); // swaps the contents
@@ -168,11 +176,10 @@ namespace s21 {
 
         void reserve(size_type size);
 
-        size_type capacity() const;
 
         void shrink_to_fit() noexcept;
 
-        void clear(); // clears the contents
+        void clear() noexcept; // clears the contents
         iterator insert(iterator pos, const_reference value);
 
         void erase(iterator pos);              // erases element at pos
@@ -185,6 +192,7 @@ namespace s21 {
     };
 
 //_____CONSTRUCTORS_____
+
     template<class value_type, typename Alloc>
     S21Vector<value_type, Alloc>::S21Vector(
             const std::initializer_list<value_type> &items) {
@@ -192,6 +200,13 @@ namespace s21 {
         std::copy(items.begin(), items.end(), this->arr_);
         this->size_ = items.size();
         capacity_ = items.size();
+    }
+
+    template<typename T, typename Alloc>
+    S21Vector<T, Alloc>::S21Vector(const S21Vector &other) {
+        this->size_ = other.size_, capacity_ = other.capacity_;
+        this->arr_ = new value_type[other.size_];
+        std::copy(other.arr_, (other.arr_ + other.size_), this->arr_);
     }
 
 //_____ASSIGNMENT_OPERATORS_____
@@ -246,10 +261,6 @@ namespace s21 {
     S21Vector<value_type, Alloc>::at(S21Vector::size_type pos) {
         return (pos < this->size_) ? this->arr_[pos]
                                    : throw std::out_of_range("out_of_range");
-//        if (pos >= this->size_) {
-//            throw std::out_of_range("out_of_range");
-//        }
-//        return this->arr_[pos];
     }
 
     template<class value_type, typename Alloc>
@@ -257,57 +268,65 @@ namespace s21 {
     S21Vector<value_type, Alloc>::at(S21Vector::size_type pos) const {
         return (pos < this->size_) ? this->arr_[pos]
                                    : throw std::out_of_range("out_of_range");
-//        if (pos >= this->size_) {
-//            throw std::out_of_range("out_of_range");
-//        }
-//        return this->arr_[pos];
     }
 
 
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::reference
-    S21Vector<value_type, Alloc>::operator[](S21Vector::size_type pos) {
+    S21Vector<value_type, Alloc>::operator[](S21Vector::size_type pos) noexcept {
         return this->arr_[pos];
     }
 
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::const_reference
-    S21Vector<value_type, Alloc>::operator[](S21Vector::size_type pos) const {
+    S21Vector<value_type, Alloc>::operator[](S21Vector::size_type pos) const noexcept {
         return this->arr_[pos];
     }
 
 
     template<class value_type, typename Alloc>
-    typename S21Vector<value_type, Alloc>::const_reference
-    S21Vector<value_type, Alloc>::front() {
+    typename S21Vector<value_type, Alloc>::reference
+    S21Vector<value_type, Alloc>::front() noexcept {
         return *this->arr_;
     }
 
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::const_reference
-    S21Vector<value_type, Alloc>::back() {
+    S21Vector<value_type, Alloc>::front() const noexcept {
+        return *this->arr_;
+    }
+
+    template<class value_type, typename Alloc>
+    typename S21Vector<value_type, Alloc>::reference
+    S21Vector<value_type, Alloc>::back() noexcept {
+        return this->arr_[this->size_ - 1];
+    }
+
+    template<class value_type, typename Alloc>
+    typename S21Vector<value_type, Alloc>::const_reference
+    S21Vector<value_type, Alloc>::back() const noexcept {
         return this->arr_[this->size_ - 1];
     }
 
     template<class T, typename Alloc>
-    T *S21Vector<T, Alloc>::data() {
+    T *S21Vector<T, Alloc>::data() noexcept {
         return this->arr_;
     }
 
     template<class T, typename Alloc>
-    const T *S21Vector<T, Alloc>::data() const {
+    const T *S21Vector<T, Alloc>::data() const noexcept {
         return this->arr_;
     }
 
 //_____VECTOR_CAPACITY_____
     template<class value_type, typename Alloc>
-    bool S21Vector<value_type, Alloc>::empty() {
+    bool S21Vector<value_type, Alloc>::empty() const noexcept {
         return !this->size_;
     }
 
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::size_type
-    S21Vector<value_type, Alloc>::size() {
+    S21Vector<value_type, Alloc>::size() const noexcept {
         return this->size_;
     }
 
@@ -351,7 +370,7 @@ namespace s21 {
 
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::size_type
-    S21Vector<value_type, Alloc>::capacity() const {
+    S21Vector<value_type, Alloc>::capacity() const noexcept {
         return capacity_;
     }
 
@@ -380,7 +399,7 @@ namespace s21 {
     }
 
     template<class value_type, typename Alloc>
-    void S21Vector<value_type, Alloc>::clear() {
+    void S21Vector<value_type, Alloc>::clear() noexcept {
         this->size_ = 0;
     }
 
@@ -393,9 +412,9 @@ namespace s21 {
             new_capacity *= 2;
         }
         auto *buff = alloc_.allocate(new_capacity);
-        std::copy(&(*this->begin()), &(*(this->begin() + pos_index)), buff);
+        std::copy(this->begin(), (this->begin() + pos_index), buff);
         buff[pos_index] = value;
-        std::copy(&(*(this->begin() + pos_index)), &(*(this->begin() + this->size_)),
+        std::copy((this->begin() + pos_index), (this->begin() + this->size_),
                   buff + pos_index + 1);
         std::swap(this->arr_, buff);
         ++this->size_, capacity_ = new_capacity;
@@ -427,9 +446,9 @@ namespace s21 {
 
     template<class value_type, typename Alloc>
     void S21Vector<value_type, Alloc>::swap(S21Vector &other) {
-
         std::swap(*this, other);
     }
+
 
 } // namespace s21
 

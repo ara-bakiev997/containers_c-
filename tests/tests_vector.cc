@@ -28,8 +28,17 @@ class S21Vector_test : public ::testing::Test {
   std::vector<int> test = {1, 2, 3, 4, 5};
   std::vector<int> test2 = {10, 20, 30, 40};
   std::vector<int> test3 = {5, 4, 3, 2, 1};
+//  std::vector<int> test8(5);
   std::vector<S21Point> ptest = {S21Point(), S21Point(), S21Point()};
 };
+
+TEST_F(S21Vector_test, constructor_copy) {
+    S21Vector<int> vector_5 = vector_1_;
+    std::vector<int> test5 = test;
+    EXPECT_EQ(vector_5.size(), test5.size());
+    for (auto i = 0; i < vector_5.size(); ++i)
+        EXPECT_EQ(vector_5.at(i), test5.at(i));
+}
 
 TEST_F(S21Vector_test, constructor_move) {
     S21Vector<int> vector_4 = std::move(vector_1_);
@@ -124,14 +133,9 @@ TEST_F(S21Vector_test, clear) {
 TEST_F(S21Vector_test, insert) {
   vector_1_.insert(vector_1_.end() - 1, 19);
   test.insert(test.end() - 1, 19);
-  EXPECT_EQ(vector_1_.at(vector_1_.size() - 1), test.at(test.size() - 1));
-  vector_1_.insert(vector_1_.end() - 2, 20);
-  test.insert(test.end() - 2, 20);
-  EXPECT_EQ(vector_1_.at(vector_1_.size() - 2), test.at(test.size() - 2));
-  //  ////  vector_1_.insert(vector_1_.begin() - 2, 20);
-  vector_1_.insert(vector_1_.begin(), 21);
-  test.insert(test.begin(), 21);
-  EXPECT_EQ(vector_1_.at(0), test.at(0));
+  for (auto i = 0; i < vector_1_.size(); ++i)
+        EXPECT_EQ(vector_1_.at(i), test.at(i));
+
 
 //  for (auto i : test2) std::cout << i << ' ';
 //  SequenceContainer<int>::iterator it2 = vector_1_.begin();
