@@ -29,10 +29,12 @@ struct RBT {
 template <class T>
 class Tree {
  public:
-  Tree() { this->root_ = nullptr; }
+  Tree() : root_(nullptr) {}
   ~Tree() = default;
   //_____MODIFIERS_SIMPLE_____
-  void insert(const T &value) { add_tree(this->root_, value, this->root_); }
+  void insert_node(const T &value) {
+    add_tree(this->root_, value, this->root_);
+  }
   void erase_node(T value);
 
   void print2D();
@@ -48,10 +50,12 @@ class Tree {
   //_____SUPPORT_FOR_ERASE_SIMPLE_____
   void del_node_by_condition(RBT<T> *node);
   void del_node_with_one_child(RBT<T> *del_node, RBT<T> *child, RBT<T> *parent);
+  void del_node_without_child(RBT<T> *del_node, RBT<T> *parent);
 
   //_____FIND_NODE_____
   RBT<T> *find_node(RBT<T> *node, T &value);
   RBT<T> *min_node(RBT<T> *node);
+  RBT<T> *max_node_for_testing(RBT<T> *node);
 
   //_____BALANCE_FUNC____
   void balance(RBT<T> *node, RBT<T> *parent);
@@ -109,35 +113,85 @@ void Tree<T>::erase_node(T value) {
 
 template <typename T>
 void Tree<T>::del_node_by_condition(RBT<T> *node) {
-  if (!node->right_ && !node->left_) {  // удаление листа
-    if (node->parent_->left_ == node) {
-      node->parent_->left_ = nullptr;
-    } else {
-      node->parent_->right_ = nullptr;
-    }
-    delete node;
-  } else if (node->left_ && !node->right_) {
-    del_node_with_one_child(node, node->left_, node->parent_);
-  } else if (!node->left_ && node->right_) {
-    del_node_with_one_child(node, node->right_, node->parent_);
-  } else if (node->left_ && node->right_) {
-    RBT<T> *change = min_node(node->right_);  // find min node in node->right_
+  if (node->left_ && node->right_) {
+    RBT<T> *change = max_node_for_testing(node->left_);  // node->right_ ранее
     std::swap(change->data_, node->data_);
     del_node_by_condition(change);
+  } else if (node->left_ && !node->right_) {  // есть один левый ребенок
+    if (node->color_ == BLACK) {
+      del_node_with_one_child(node, node->left_, node->parent_);
+    }
+
+  } else if (!node->left_ && node->right_) {  // есть один правый ребенок
+    if (node->color_ == BLACK) {
+      del_node_with_one_child(node, node->right_, node->parent_);
+    }
+
+  } else {  // лист
+    if (node->color_ == RED) {
+      del_node_without_child(node, node->parent_);
+    } else {  // если лист черный то ппц
+      RBT<T> *parent = get_father(node);
+      del_node_without_child(node, node->parent_);
+      // требует доработки так как красит не верно
+      if (parent != root_) {
+        balance(parent, parent->parent_);
+      }
+    }
   }
 }
 
 template <typename T>
 void Tree<T>::del_node_with_one_child(RBT<T> *del_node, RBT<T> *child,
                                       RBT<T> *parent) {
-  if (parent->left_ == del_node) {
-    parent->left_ = child;
+  if (del_node != root_) {
+    if (parent->left_ == del_node) {
+      parent->left_ = child;
+    } else {
+      parent->right_ = child;
+    }
   } else {
-    parent->right_ = child;
+    root_ = child;
   }
   child->parent_ = parent;
+  std::swap(del_node->color_, child->color_);
   delete del_node;
 }
+
+template <typename T>
+void Tree<T>::del_node_without_child(RBT<T> *del_node, RBT<T> *parent) {
+  if (del_node != root_) {
+    if (parent->left_ == del_node) {
+      parent->left_ = nullptr;
+    } else {
+      parent->right_ = nullptr;
+    }
+  } else {
+    root_ = nullptr;
+  }
+  delete del_node;
+}
+
+//_____БЕЗ__БАЛАНСА_____
+// template <typename T>
+// void Tree<T>::del_node_by_condition(RBT<T> *node) {
+//  if (!node->right_ && !node->left_) {  // удаление листа
+//    if (node->parent_->left_ == node) {
+//      node->parent_->left_ = nullptr;
+//    } else {
+//      node->parent_->right_ = nullptr;
+//    }
+//    delete node;
+//  } else if (node->left_ && !node->right_) {
+//    del_node_with_one_child(node, node->left_, node->parent_);
+//  } else if (!node->left_ && node->right_) {
+//    del_node_with_one_child(node, node->right_, node->parent_);
+//  } else if (node->left_ && node->right_) {
+//    RBT<T> *change = min_node(node->right_);  // find min node in node->right_
+//    std::swap(change->data_, node->data_);
+//    del_node_by_condition(change);
+//  }
+//}
 
 //_____FIND_NODE_____
 template <typename T>
@@ -162,6 +216,18 @@ RBT<T> *Tree<T>::min_node(RBT<T> *node) {
     ret = node;
     if (node->left_) {
       ret = min_node(node->left_);
+    }
+  }
+  return ret;
+}
+
+template <typename T>
+RBT<T> *Tree<T>::max_node_for_testing(RBT<T> *node) {
+  RBT<T> *ret = nullptr;
+  if (node != nullptr) {
+    ret = node;
+    if (node->right_) {
+      ret = max_node_for_testing(node->right_);
     }
   }
   return ret;
@@ -275,7 +341,7 @@ void Tree<T>::big_rotate_left(RBT<T> *node, RBT<T> *parent) {
   grandfather->parent_ = parent;
   parent->color_ = BLACK;
   grandfather->color_ = RED;
-  if (grandfather == root_) {  // если нужно менять рута
+  if (grandfather == root_) {  // если нужно поменять рута
     root_ = parent;
   }
 }
@@ -301,7 +367,7 @@ void Tree<T>::big_rotate_right(RBT<T> *node, RBT<T> *parent) {
   grandfather->parent_ = parent;
   parent->color_ = BLACK;
   grandfather->color_ = RED;
-  if (grandfather == root_) {  // если нужно менять рута
+  if (grandfather == root_) {  // если нужно поменять рута
     root_ = parent;
   }
 }
