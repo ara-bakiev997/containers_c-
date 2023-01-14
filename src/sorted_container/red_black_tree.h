@@ -57,8 +57,13 @@ class Tree {
   void balance(RBT<T> *node, RBT<T> *parent);
   RBT<T> *get_bro(RBT<T> *node);
   RBT<T> *get_father(RBT<T> *node);
-  void rotate() {}
 
+  //_____CHANGE_FUNC____
+  void change_color(RBT<T> *parent, RBT<T> *bro_parent, RBT<T> *grand_parent);
+  void small_rotate_left(RBT<T> *node, RBT<T> *parent);
+  void small_rotate_right(RBT<T> *node, RBT<T> *parent);
+  void big_rotate_left(RBT<T> *node, RBT<T> *parent);
+  void big_rotate_right(RBT<T> *node, RBT<T> *parent);
 
   //_____SUPPORT_FOR_PRINT_____
   void print2DUtil(RBT<T> *root, int space);
@@ -69,12 +74,13 @@ template <typename T>
 void Tree<T>::add_tree(RBT<T> *&node, const T &value, RBT<T> *&parent) {
   if (node == nullptr) {
     node = create_node(value);
-    if (node != root_) {
+    if (node != parent) {
       node->parent_ = parent;
     } else {
+      root_ = node;
       node->color_ = BLACK;
     }
-    if (parent->color_ == RED) {
+    if (parent->color_ == RED) {  // возможна сега!!!
       balance(node, parent);
     }
   } else if (value < node->data_) {
@@ -165,10 +171,31 @@ RBT<T> *Tree<T>::min_node(RBT<T> *node) {
 template <typename T>
 void Tree<T>::balance(RBT<T> *node, RBT<T> *parent) {
   RBT<T> *bro_parent = get_bro(parent);
-  if (bro_parent) {
-    if (bro_parent->color_ == BLACK) {
-      //  если отец и дедушка в одной стороне поворот большой иначе маленький
-
+  if (parent->color_ == RED) {  // в рекурсии нужна проверка
+    if (bro_parent && bro_parent->color_ == RED) {  // что бы не было сеги
+      change_color(parent, bro_parent, get_father(parent));
+      if (get_father(parent) != root_) {
+        balance(get_father(parent),
+                get_father(parent)->parent_);  // рекурсивно для деда
+      }
+    } else {
+      if (parent != root_) {
+        if (get_father(parent)->left_ == parent) {  // мы слева от деда
+          if (parent->right_ == node) {  // мы справа от отца
+            small_rotate_left(node, parent);
+            big_rotate_right(parent, node);  // т.к они поменялись местами
+          } else {
+            big_rotate_right(node, parent);
+          }
+        } else {                        // мы справа от деда
+          if (parent->left_ == node) {  // мы слева от отца
+            small_rotate_right(node, parent);
+            big_rotate_left(parent, node);  // т.к они поменялись местами
+          } else {
+            big_rotate_left(node, parent);
+          }
+        }
+      }
     }
   }
 }
@@ -190,6 +217,93 @@ RBT<T> *Tree<T>::get_bro(RBT<T> *node) {
 template <typename T>
 RBT<T> *Tree<T>::get_father(RBT<T> *node) {
   return node->parent_;
+}
+
+template <typename T>
+void Tree<T>::change_color(RBT<T> *parent, RBT<T> *bro_parent,
+                           RBT<T> *grand_parent) {
+  parent->color_ = bro_parent->color_ = BLACK;
+  if (grand_parent != this->root_) {
+    grand_parent->color_ = RED;
+  }
+}
+
+template <typename T>
+void Tree<T>::small_rotate_left(RBT<T> *node, RBT<T> *parent) {
+  RBT<T> *temp = node->left_;
+  node->left_ = parent;
+  parent->right_ = temp;
+  RBT<T> *grandfather = get_father(parent);
+  if (grandfather) {
+    node->parent_ = grandfather;
+    grandfather->left_ = node;
+  }
+  parent->parent_ = node;
+}
+
+template <typename T>
+void Tree<T>::small_rotate_right(RBT<T> *node, RBT<T> *parent) {
+  RBT<T> *temp = node->right_;
+  node->right_ = parent;
+  parent->left_ = temp;
+  RBT<T> *grandfather = get_father(parent);
+  if (grandfather) {
+    node->parent_ = grandfather;
+    grandfather->right_ = node;
+  }
+  parent->parent_ = node;
+}
+
+template <typename T>
+void Tree<T>::big_rotate_left(RBT<T> *node, RBT<T> *parent) {
+  RBT<T> *grandfather = get_father(parent);
+  RBT<T> *temp = parent->left_;
+  parent->left_ = grandfather;
+  grandfather->right_ = temp;
+  if (temp) {
+    temp->parent_ = grandfather;
+  }
+  RBT<T> *great_grandfather = get_father(grandfather);
+  if (great_grandfather) {  // связка с прадедом
+    if (great_grandfather->left_ == grandfather) {
+      great_grandfather->left_ = parent;
+    } else {
+      great_grandfather->right_ = parent;
+    }
+  }
+  parent->parent_ = great_grandfather;
+  grandfather->parent_ = parent;
+  parent->color_ = BLACK;
+  grandfather->color_ = RED;
+  if (grandfather == root_) {  // если нужно менять рута
+    root_ = parent;
+  }
+}
+
+template <typename T>
+void Tree<T>::big_rotate_right(RBT<T> *node, RBT<T> *parent) {
+  RBT<T> *grandfather = get_father(parent);
+  RBT<T> *temp = parent->right_;
+  parent->right_ = grandfather;
+  grandfather->left_ = temp;
+  if (temp) {
+    temp->parent_ = grandfather;
+  }
+  RBT<T> *great_grandfather = get_father(grandfather);
+  if (great_grandfather) {  // связка с прадедом
+    if (great_grandfather->left_ == grandfather) {
+      great_grandfather->left_ = parent;
+    } else {
+      great_grandfather->right_ = parent;
+    }
+  }
+  parent->parent_ = great_grandfather;
+  grandfather->parent_ = parent;
+  parent->color_ = BLACK;
+  grandfather->color_ = RED;
+  if (grandfather == root_) {  // если нужно менять рута
+    root_ = parent;
+  }
 }
 
 //_____FUNCTIONS_FOR_PRINT_____
