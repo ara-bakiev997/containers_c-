@@ -305,10 +305,9 @@ namespace s21 {
             throw std::length_error("size > max_size");
 
         if (size > capacity_) {
-            value_type *new_arr = AllocTraits::allocate(alloc_, size);
+            value_type* new_arr = AllocTraits::allocate(alloc_, size);
             size_type i = 0;
             try {
-//        std::uninitialized_copy(this->arr_, this->arr_ + this->size_, new_arr);
                 for (; i < this->size_; ++i) {
                     AllocTraits::construct(alloc_, new_arr + i, this->arr_[i]);
                 }
@@ -327,6 +326,13 @@ namespace s21 {
                 AllocTraits::destroy(alloc_, new_arr + k);
             }
             AllocTraits::deallocate(alloc_, new_arr, size);
+
+//            for (auto k = 0; k < this->size_; ++k) {
+//                AllocTraits::destroy(alloc_, this->arr_ + k);
+//            }
+//            AllocTraits::deallocate(alloc_, this->arr_, size);
+//            this->arr_ = new_arr;
+//            capacity_ = size;
         }
     }
 
@@ -355,9 +361,8 @@ namespace s21 {
         if (this->size_ == capacity_) {
             this->reserve(capacity_ * 2);
         }
-//  this->arr_[this->size_++] = value;
         AllocTraits::construct(alloc_, this->arr_ + this->size_, value);
-        this->size_++;
+        ++this->size_;
     }
 
     template<class value_type, typename Alloc>

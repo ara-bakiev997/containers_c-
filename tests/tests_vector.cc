@@ -126,10 +126,17 @@ TEST_F(S21Vector_test, size) {
  }
 
 TEST_F(S21Vector_test, reserve) {
-  EXPECT_ANY_THROW(vector_1_.reserve(vector_1_.max_size() + 1));
-  EXPECT_EQ(vector_1_.capacity(), 5);
-  vector_1_.reserve(10);
-  EXPECT_EQ(vector_1_.capacity(), 10);
+    std::cout << vector_1_.data() << std::endl;
+    EXPECT_ANY_THROW(vector_1_.reserve(vector_1_.max_size() + 1));
+    EXPECT_EQ(vector_1_.capacity(), 5);
+    vector_1_.reserve(10);
+    EXPECT_EQ(vector_1_.capacity(), 10);
+
+    for (auto i = 0; i < vector_1_.size(); ++i) {
+        std::cout << vector_1_.at(i) << std::endl;
+    }
+    std::cout << vector_1_.capacity() << std::endl;
+    std::cout << vector_1_.data() << std::endl;
 }
 
 TEST_F(S21Vector_test, capasity) { EXPECT_EQ(vector_1_.capacity(), 5); }
@@ -145,10 +152,10 @@ TEST_F(S21Vector_test, shrink_to_fit) {
 TEST_F(S21Vector_test, push_back) {
   vector_empty.push_back(0);
   vector_1_.push_back(6);
-//  pvector.push_back(S21Point());
+  pvector.push_back(S21Point());
   EXPECT_EQ(vector_1_.at(5), 6);
-//  EXPECT_EQ( pvector.size(), 4);
-//  std::cout <<pvector.size() << std::endl;
+  EXPECT_EQ( pvector.size(), 4);
+  std::cout <<pvector.size() << std::endl;
 }
 
 TEST_F(S21Vector_test, clear) {
@@ -162,25 +169,6 @@ TEST_F(S21Vector_test, insert) {
   test.insert(test.end() - 1, 19);
   for (auto i = 0; i < vector_1_.size(); ++i)
         EXPECT_EQ(vector_1_.at(i), test.at(i));
-
-
-//  for (auto i : test2) std::cout << i << ' ';
-//  SequenceContainer<int>::iterator it2 = vector_1_.begin();
-//  std::cout << '\n' << *it2 << std::endl;
-//  std::copy(&(*it2), &(*(it2 + 4)), &(*(vector_2_.end() - 2)));
-//  std::cout << std::endl;
-//  for (auto i : vector_2_) std::cout << i << ' ';
-//
-
-  //  std::cout << "\n+++++++++++++++++++++" << std::endl;
-  //
-  //  for (auto it : vector_1_) std::cout << it << ' ';
-  //  std::cout << "\nsize = " << vector_1_.size() << std::endl;
-  //  std::cout << "capacity = " << vector_1_.capacity() << std::endl;
-  //  std::cout << "+++++++++++++++++++++" << std::endl;
-  //  for (auto it : test) std::cout << it << ' ';
-  //  std::cout << "\nsize = " << test.size() << std::endl;
-  //  std::cout << "capacity = " << test.capacity() << std::endl;
 }
 
 TEST_F(S21Vector_test, erase) {
@@ -216,48 +204,15 @@ TEST_F(S21Vector_test, swap) {
     EXPECT_EQ(vector_1_.capacity(), test.capacity());
     for (auto i = 0; i < vector_1_.size(); ++i)
         EXPECT_EQ(vector_1_.at(i), test.at(i));
-//    vector_1_.swap(vector_3_);
-//    test.swap(test3);
 }
 
 
-TEST_F(S21Vector_test, originVictorClear) {
-  //  std::cout << test.size() << std::endl;
-  //  std::cout << test.capacity() << std::endl;
-  //  test.clear();
-  //  std::cout << test.size() << std::endl;
-  //  std::cout << test.capacity() << std::endl;
-  //  for (int i = 0; i < 5; ++i) {
-  //    std::cout << test[i] << std::endl;
-  //  }
+TEST_F(S21Vector_test, emplace_back) {
+
 }
 
-TEST_F(S21Vector_test, originVictorInsert) {
-  //  test.insert(test.begin() + 8, 123);
-  //  for (int i = 0; i < test.size(); ++i) {
-  //    std::cout << test[i] << "\t";
-  //  }
-  //  std::cout << std::endl;
-  // ---- exp >>>
-  //    std::vector<std::vector<int>> vtr{{1, 2, 3}, {4, 5, 6,}, {7, 8, 9}};
-  //    for (auto it = vtr.begin(); it != vtr.end(); ++it) {
-  //      for (auto it_ = (*it).begin(); it_ != (*it).end(); ++it_ ) {
-  //        std::cout << (*it_)  << ' ';
-  //      }
-  //      std::cout << std::endl;
-  //    }
-  //  <<< exp ----
-  //  auto i = test.begin();
-  //      auto i = vtr.begin()->begin();
-  //    i++;
-  //   std::vector<int>::iterator i;
-//  auto it = test.begin();
-  //   auto a = *it;
+TEST_F(S21Vector_test, emplace) {
 
-  //  SequenceContainer<int> one;
-  //  SequenceContainer<int> two;
-  //  std::cout << *(one.begin()+1) << std::endl;
-  //  SequenceContainer<int>::Iterator a;
 }
 
 int main(int argc, char *argv[]) {
