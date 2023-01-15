@@ -42,14 +42,10 @@ namespace s21 {
 
         S21Vector(const S21Vector &other);
 
-        S21Vector(S21Vector &&v) noexcept {
-            this->size_ = v.size_, capacity_ = v.capacity_;
-            this->arr_ = v.arr_;
-            v.arr_ = nullptr;
-            v.size_ = 0;
+        S21Vector(S21Vector&& other) noexcept {
+            this->swap(other);
         }
 
-        // destructor
         ~S21Vector() = default;//{ delete[] this->arr_; }
 
         // iterators
@@ -169,7 +165,7 @@ namespace s21 {
         //  Assignment operator
         S21Vector &operator=(const S21Vector &other);
 
-        S21Vector &operator=(S21Vector &&v) noexcept;
+        S21Vector &operator=(S21Vector&& other) noexcept;
 
         size_type max_size() const noexcept;
 
@@ -186,8 +182,8 @@ namespace s21 {
         void pop_back();                       // removes the last element
 
     private:
-        size_type capacity_;
-        Alloc alloc_;
+        size_type capacity_{};
+        Alloc alloc_{};
     };
 
 //_____CONSTRUCTORS_____
@@ -212,24 +208,11 @@ namespace s21 {
         return *this;
     }
 
-// not ready
     template<class value_type, typename Alloc>
-    S21Vector<value_type, Alloc> &
-    S21Vector<value_type, Alloc>::operator=(S21Vector &&v) noexcept {
-        if (this != &v) {
-            if (this->arr_ != v.arr_) {
-                if (this->arr_ != nullptr) {
-                    alloc_.deallocate(this->arr_, this->capacity_);
-                    this->arr_ = nullptr;
-                    this->size_ = 0;
-                    this->capacity_ = 0;
-                }
-                std::swap(this->arr_, v.arr_);
-                std::swap(this->size_, v.size_);
-                std::swap(this->capacity_, v.capacity_);
-                //      std::swap(*this, v);
-            }
-        }
+    S21Vector<value_type, Alloc>&
+    S21Vector<value_type, Alloc>::operator=(S21Vector&& other) noexcept {
+        S21Vector tmp = std::move(other);
+        this->swap(tmp);
         return *this;
     }
 
@@ -425,11 +408,11 @@ namespace s21 {
 
     template<class value_type, typename Alloc>
     void S21Vector<value_type, Alloc>::swap(S21Vector &other) {
-        std::swap(*this, other);
-//        std::swap(this->size_, other.size_);
-//        std::swap(this->capacity_, other.capacity_);
-//        std::swap(this->arr_, other.arr_);
-//        std::swap(this->alloc_, other.alloc_);
+//        std::swap(*this, other);
+        std::swap(this->size_, other.size_);
+        std::swap(this->capacity_, other.capacity_);
+        std::swap(this->arr_, other.arr_);
+        std::swap(this->alloc_, other.alloc_);
 
     }
 

@@ -78,7 +78,15 @@ TEST_F(S21Vector_test, _operatorCopy) {
 }
 
 TEST_F(S21Vector_test, _operatorMove) {
-  vector_empty = std::move(vector_1_);
+    S21Vector<int> vector_7_ = {1, 2, 3, 4, 5};
+    std::vector<int> test7 = {1, 2, 3, 4, 5};
+    vector_empty = std::move(vector_7_);
+    test_empty = std::move(test7);
+    for (auto i = 0; i < vector_empty.size(); ++i) {
+        EXPECT_EQ(vector_empty.at(i), test_empty.at(i));
+    }
+//    std::cout <<test7.data() << std::endl;
+//    std::cout <<vector_7_.data() << std::endl;
 }
 
 TEST_F(S21Vector_test, at) {
