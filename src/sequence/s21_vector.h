@@ -42,7 +42,6 @@ namespace s21 {
 
         S21Vector(const S21Vector &other);
 
-
         S21Vector(S21Vector &&v) noexcept {
             this->size_ = v.size_, capacity_ = v.capacity_;
             this->arr_ = v.arr_;
@@ -168,7 +167,7 @@ namespace s21 {
         void swap(S21Vector &other); // swaps the contents
 
         //  Assignment operator
-        S21Vector &operator=(const S21Vector &v);
+        S21Vector &operator=(const S21Vector &other);
 
         S21Vector &operator=(S21Vector &&v) noexcept;
 
@@ -195,41 +194,21 @@ namespace s21 {
 
     template<class value_type, typename Alloc>
     S21Vector<value_type, Alloc>::S21Vector(
-            const std::initializer_list<value_type> &items) {
-        this->arr_ = alloc_.allocate(items.size());
+            const std::initializer_list<value_type> &items):S21Vector(items.size()) {
         std::copy(items.begin(), items.end(), this->arr_);
-        this->size_ = items.size();
-        capacity_ = items.size();
     }
 
     template<typename T, typename Alloc>
-    S21Vector<T, Alloc>::S21Vector(const S21Vector &other) {
-        this->size_ = other.size_, capacity_ = other.capacity_;
-        this->arr_ = new value_type[other.size_];
+    S21Vector<T, Alloc>::S21Vector(const S21Vector &other):S21Vector(other.size_) {
         std::copy(other.arr_, (other.arr_ + other.size_), this->arr_);
     }
 
-//_____ASSIGNMENT_OPERATORS_____
-// not ready
+//_____ASSIGNMENT_OPERATORS(copy_and_swap)_____
     template<class value_type, typename Alloc>
     S21Vector<value_type, Alloc> &
-    S21Vector<value_type, Alloc>::operator=(const S21Vector &v) {
-        bool is_not_ready_to_return = true;
-
-        if (this == &v) {
-            is_not_ready_to_return = false;
-        }
-
-        if (is_not_ready_to_return) {
-            if (this->arr_ != nullptr)
-                alloc_.deallocate(this->arr_, this->capacity_);
-            this->capacity_ = v.capacity_;
-            this->size_ = v.size_;
-            this->arr_ = alloc_.allocate(capacity_);
-            if (!this->arr_)
-                throw std::bad_alloc();
-            std::copy(v.arr_, v.arr_ + this->size_, this->arr_);
-        }
+    S21Vector<value_type, Alloc>::operator=(const S21Vector &other) {
+        S21Vector tmp = other;
+        tmp.swap(tmp);
         return *this;
     }
 
@@ -447,6 +426,11 @@ namespace s21 {
     template<class value_type, typename Alloc>
     void S21Vector<value_type, Alloc>::swap(S21Vector &other) {
         std::swap(*this, other);
+//        std::swap(this->size_, other.size_);
+//        std::swap(this->capacity_, other.capacity_);
+//        std::swap(this->arr_, other.arr_);
+//        std::swap(this->alloc_, other.alloc_);
+
     }
 
 

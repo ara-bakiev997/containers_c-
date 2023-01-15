@@ -8,6 +8,10 @@
 using namespace s21;
 
 class S21Point {
+public:
+    int get_x () const {
+        return x_;
+    }
     void set_x (int x) {
         x_ = x;
     }
@@ -23,7 +27,7 @@ class S21Vector_test : public ::testing::Test {
   S21Vector<int> vector_1_ = {1, 2, 3, 4, 5};
   S21Vector<int> vector_2_ = S21Vector<int>(10);
   S21Vector<int> vector_3_ = {5, 4, 3, 2, 1};
-//  S21Vector<S21Point> pvector{S21Point(), S21Point(), S21Point()};
+  S21Vector<S21Point> pvector{S21Point(), S21Point(), S21Point()};
   std::vector<int> test_empty;
   std::vector<int> test = {1, 2, 3, 4, 5};
   std::vector<int> test2 = {10, 20, 30, 40};
@@ -38,6 +42,21 @@ TEST_F(S21Vector_test, constructor_copy) {
     EXPECT_EQ(vector_5.size(), test5.size());
     for (auto i = 0; i < vector_5.size(); ++i)
         EXPECT_EQ(vector_5.at(i), test5.at(i));
+}
+
+TEST_F(S21Vector_test, constructor_init_list) {
+    S21Vector<int> vector_6 = {9, 8, 7, 6, 5};
+    std::vector<int> test6 = {9, 8, 7, 6, 5};
+    EXPECT_EQ(vector_6.size(), test6.size());
+    for (auto i = 0; i < vector_6.size(); ++i)
+        EXPECT_EQ(vector_6.at(i), test6.at(i));
+    EXPECT_EQ(pvector.size(), ptest.size());
+    EXPECT_EQ(pvector[1].get_x(), ptest[1].get_x());
+    ptest[1].set_x(5);
+    pvector[1].set_x(5);
+    EXPECT_EQ(pvector[1].get_x(), ptest[1].get_x());
+//    std::cout <<ptest[1].get_x() << std::endl;
+//    std::cout <<ptest[2].get_x() << std::endl;
 }
 
 TEST_F(S21Vector_test, constructor_move) {
