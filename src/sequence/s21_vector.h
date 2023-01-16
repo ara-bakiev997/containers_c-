@@ -31,22 +31,34 @@ namespace s21 {
         // default constructor (simplified syntax for assigning values to attributes)
         S21Vector() { this->size_ = 0U, capacity_ = 0U, this->arr_ = nullptr; }
 
-        explicit S21Vector(size_type n, const T& value = T(), const Alloc &alloc = Alloc()) {
-            this->size_ = n;
-            capacity_ = n;
-//            this->arr_ = n ? alloc_.allocate(n) : nullptr;
-            this->arr_ = n ? new value_type[n] : nullptr;
+        explicit S21Vector(size_type size, const T &value = T(), const Alloc &alloc = Alloc()) {
+            this->size_ = size;
+            capacity_ = size;
+            this->arr_ = AllocTraits::allocate(alloc_, size);
+            for (auto i = 0; i < this->size_; ++i) {
+                AllocTraits::construct(alloc_, this->arr_ + i, value);
+            }
+
+//            this->arr_ = size ? new value_type[size] : nullptr;
         }
 
         S21Vector(std::initializer_list<value_type> const &items);
 
         S21Vector(const S21Vector &other);
 
-        S21Vector(S21Vector&& other) noexcept {
+        S21Vector(S21Vector &&other) noexcept {
             this->swap(other);
         }
 
-        ~S21Vector() = default;//{ delete[] this->arr_; }
+//        ~S21Vector() { delete[] this->arr_; } //= default;
+        ~S21Vector() {
+//            for (auto i = 0; i < this->capacity_; ++i) {
+//                AllocTraits::destroy(alloc_, this->arr_ + i);
+//            }
+//            AllocTraits::deallocate(alloc_,this->arr_, this->capacity_);
+            remove();
+        }
+
 
         // iterators
         template<bool IsConst>
@@ -124,6 +136,14 @@ namespace s21 {
 
         using iterator = CommonIterator<true>;
         using const_iterator = CommonIterator<false>;
+
+        void remove() {
+            for (auto i = 0; i < this->capacity_; ++i) {
+                AllocTraits::destroy(alloc_, this->arr_ + i);
+            }
+            AllocTraits::deallocate(alloc_, this->arr_, this->capacity_);
+        }
+
         //  Vector Element access
 
         reference at(size_type pos); // access specified element with bounds checking
@@ -165,7 +185,7 @@ namespace s21 {
         //  Assignment operator
         S21Vector &operator=(const S21Vector &other);
 
-        S21Vector &operator=(S21Vector&& other) noexcept;
+        S21Vector &operator=(S21Vector &&other) noexcept;
 
         size_type max_size() const noexcept;
 
@@ -209,8 +229,8 @@ namespace s21 {
     }
 
     template<class value_type, typename Alloc>
-    S21Vector<value_type, Alloc>&
-    S21Vector<value_type, Alloc>::operator=(S21Vector&& other) noexcept {
+    S21Vector<value_type, Alloc> &
+    S21Vector<value_type, Alloc>::operator=(S21Vector &&other) noexcept {
         S21Vector tmp = std::move(other);
         this->swap(tmp);
         return *this;
@@ -305,7 +325,7 @@ namespace s21 {
             throw std::length_error("size > max_size");
 
         if (size > capacity_) {
-            value_type* new_arr = AllocTraits::allocate(alloc_, size);
+            value_type *new_arr = AllocTraits::allocate(alloc_, size);
             size_type i = 0;
             try {
                 for (; i < this->size_; ++i) {
@@ -319,20 +339,13 @@ namespace s21 {
                 throw;
             }
 
-            this->arr_ = new_arr;
-            capacity_ = size;
-
-            for (auto k = 0; k < this->size_; ++k) {
-                AllocTraits::destroy(alloc_, new_arr + k);
-            }
-            AllocTraits::deallocate(alloc_, new_arr, size);
-
 //            for (auto k = 0; k < this->size_; ++k) {
 //                AllocTraits::destroy(alloc_, this->arr_ + k);
 //            }
-//            AllocTraits::deallocate(alloc_, this->arr_, size);
-//            this->arr_ = new_arr;
-//            capacity_ = size;
+//            AllocTraits::deallocate(alloc_, this->arr_, this->size_);
+            remove();
+            this->arr_ = new_arr;
+            capacity_ = size;
         }
     }
 
@@ -370,6 +383,26 @@ namespace s21 {
         this->size_ = 0;
     }
 
+//    template<class value_type, typename Alloc>
+//    typename S21Vector<value_type, Alloc>::iterator
+//    S21Vector<value_type, Alloc>::insert(iterator pos, const_reference value) {
+//        size_type new_capacity = capacity_;
+//        size_type pos_index = pos - this->begin();
+//        if (this->size_ + 1 >= capacity_) {
+//            new_capacity *= 2;
+//        }
+//        auto *buff = alloc_.allocate(new_capacity);
+//        std::copy(this->begin(), (this->begin() + pos_index), buff);
+//        buff[pos_index] = value;
+//        std::copy((this->begin() + pos_index), (this->begin() + this->size_),
+//                  buff + pos_index + 1);
+//        std::swap(this->arr_, buff);
+//        ++this->size_, capacity_ = new_capacity;
+//        alloc_.deallocate(buff, capacity_);
+//
+//        return this->begin() + pos_index;
+//    }
+
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::iterator
     S21Vector<value_type, Alloc>::insert(iterator pos, const_reference value) {
@@ -378,15 +411,20 @@ namespace s21 {
         if (this->size_ + 1 >= capacity_) {
             new_capacity *= 2;
         }
-        auto *buff = alloc_.allocate(new_capacity);
+        auto *buff = AllocTraits::allocate(alloc_, new_capacity);
         std::copy(this->begin(), (this->begin() + pos_index), buff);
-        buff[pos_index] = value;
+        AllocTraits::construct(alloc_, buff + pos_index, value);
         std::copy((this->begin() + pos_index), (this->begin() + this->size_),
                   buff + pos_index + 1);
-        std::swap(this->arr_, buff);
-        ++this->size_, capacity_ = new_capacity;
-        alloc_.deallocate(buff, capacity_);
+//        std::swap(this->arr_, buff);
+//        for (auto i = 0; i < this->size_; ++i) {
+//            AllocTraits::destroy(alloc_, this->arr_ + i);
+//        }
+//        AllocTraits::deallocate(alloc_, this->arr_, capacity_);
+        remove();
+        this->arr_ = buff;
 
+        ++this->size_, capacity_ = new_capacity;
         return this->begin() + pos_index;
     }
 

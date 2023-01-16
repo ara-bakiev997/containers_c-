@@ -9,15 +9,18 @@ using namespace s21;
 
 class S21Point {
 public:
+//    ~S21Point() {
+//        vector = {"0"};
+//    }
     int get_x () const {
         return x_;
     }
     void set_x (int x) {
         x_ = x;
     }
+    std::string vector{"hello"};
 private:
     int x_{};
-    std::string vector{"hello"};
 };
 
 class S21Vector_test : public ::testing::Test {
@@ -32,7 +35,7 @@ class S21Vector_test : public ::testing::Test {
   std::vector<int> test = {1, 2, 3, 4, 5};
   std::vector<int> test2 = {10, 20, 30, 40};
   std::vector<int> test3 = {5, 4, 3, 2, 1};
-//  std::vector<int> test8(5);
+//  std::vector<int> test8 = std::vector<int>(5);
   std::vector<S21Point> ptest = {S21Point(), S21Point(), S21Point()};
 };
 
@@ -137,6 +140,15 @@ TEST_F(S21Vector_test, reserve) {
     }
     std::cout << vector_1_.capacity() << std::endl;
     std::cout << vector_1_.data() << std::endl;
+
+
+    S21Vector<S21Point> vector_test(3);
+    std::cout << vector_test.at(0).vector << std::endl;
+
+    vector_test.reserve(2);
+    std::cout << vector_test.at(0).vector << std::endl;
+    std::cout << vector_test[2].vector << std::endl;
+
 }
 
 TEST_F(S21Vector_test, capasity) { EXPECT_EQ(vector_1_.capacity(), 5); }
