@@ -50,12 +50,7 @@ namespace s21 {
             this->swap(other);
         }
 
-//        ~S21Vector() { delete[] this->arr_; } //= default;
         ~S21Vector() {
-//            for (auto i = 0; i < this->capacity_; ++i) {
-//                AllocTraits::destroy(alloc_, this->arr_ + i);
-//            }
-//            AllocTraits::deallocate(alloc_,this->arr_, this->capacity_);
             remove();
         }
 
@@ -137,12 +132,6 @@ namespace s21 {
         using iterator = CommonIterator<true>;
         using const_iterator = CommonIterator<false>;
 
-        void remove() {
-            for (auto i = 0; i < this->capacity_; ++i) {
-                AllocTraits::destroy(alloc_, this->arr_ + i);
-            }
-            AllocTraits::deallocate(alloc_, this->arr_, this->capacity_);
-        }
 
         //  Vector Element access
 
@@ -202,6 +191,7 @@ namespace s21 {
         void pop_back();                       // removes the last element
 
     private:
+        void remove();
         size_type capacity_{};
         Alloc alloc_{};
     };
@@ -338,11 +328,6 @@ namespace s21 {
                 AllocTraits::deallocate(alloc_, new_arr, size);
                 throw;
             }
-
-//            for (auto k = 0; k < this->size_; ++k) {
-//                AllocTraits::destroy(alloc_, this->arr_ + k);
-//            }
-//            AllocTraits::deallocate(alloc_, this->arr_, this->size_);
             remove();
             this->arr_ = new_arr;
             capacity_ = size;
@@ -383,26 +368,6 @@ namespace s21 {
         this->size_ = 0;
     }
 
-//    template<class value_type, typename Alloc>
-//    typename S21Vector<value_type, Alloc>::iterator
-//    S21Vector<value_type, Alloc>::insert(iterator pos, const_reference value) {
-//        size_type new_capacity = capacity_;
-//        size_type pos_index = pos - this->begin();
-//        if (this->size_ + 1 >= capacity_) {
-//            new_capacity *= 2;
-//        }
-//        auto *buff = alloc_.allocate(new_capacity);
-//        std::copy(this->begin(), (this->begin() + pos_index), buff);
-//        buff[pos_index] = value;
-//        std::copy((this->begin() + pos_index), (this->begin() + this->size_),
-//                  buff + pos_index + 1);
-//        std::swap(this->arr_, buff);
-//        ++this->size_, capacity_ = new_capacity;
-//        alloc_.deallocate(buff, capacity_);
-//
-//        return this->begin() + pos_index;
-//    }
-
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::iterator
     S21Vector<value_type, Alloc>::insert(iterator pos, const_reference value) {
@@ -416,11 +381,6 @@ namespace s21 {
         AllocTraits::construct(alloc_, buff + pos_index, value);
         std::copy((this->begin() + pos_index), (this->begin() + this->size_),
                   buff + pos_index + 1);
-//        std::swap(this->arr_, buff);
-//        for (auto i = 0; i < this->size_; ++i) {
-//            AllocTraits::destroy(alloc_, this->arr_ + i);
-//        }
-//        AllocTraits::deallocate(alloc_, this->arr_, capacity_);
         remove();
         this->arr_ = buff;
 
@@ -458,6 +418,14 @@ namespace s21 {
         std::swap(this->alloc_, other.alloc_);
 
     }
+
+    template<typename T, typename Alloc>
+    void S21Vector<T, Alloc>::remove() {
+            for (auto i = 0; i < this->capacity_; ++i) {
+                AllocTraits::destroy(alloc_, this->arr_ + i);
+            }
+            AllocTraits::deallocate(alloc_, this->arr_, this->capacity_);
+        }
 
 
 } // namespace s21
