@@ -271,7 +271,14 @@ void Tree<T>::balance_insert(RBT<T> *node, RBT<T> *parent) {
   }
 }
 
-/*условия из статьи ()*/
+/*условия из статьи (https://habr.com/ru/company/otus/blog/521034/)
+ * Сокращения:
+ * КЧ1 — родитель красный, левый ребёнок чёрный с чёрными внуками;
+ * КЧ2 — родитель красный, левый ребёнок чёрный с левым красным внуком;
+ * ЧК3 — родитель чёрный, левый сын красный, у правого внука чёрные правнуки;
+ * ЧК4 — родитель чёрный, левый сын красный, у правого внука левый правнук
+ * красный; ЧЧ5 — родитель чёрный, левый сын чёрный с правым красным внуком;
+ * ЧЧ6 — родитель чёрный, левый сын чёрный, его внуки тоже чёрные.*/
 template <typename T>
 void Tree<T>::balance_erase(RBT<T> *node) {
   if (node->color_ == RED) {
@@ -279,9 +286,53 @@ void Tree<T>::balance_erase(RBT<T> *node) {
     if (left_child && left_child->color_ == BLACK) {
       RBT<T> *grandson_left = left_child->left_;
       RBT<T> *grandson_right = left_child->right_;
-      if ((!grandson_left || grandson_left->color_ == BLACK) &&
-          (!grandson_right || grandson_right->color_ == BLACK))
-
+      if ((grandson_left && grandson_left->color_ == BLACK) &&  // КЧ1
+          (grandson_right && grandson_right->color_ == BLACK)) {
+        std::swap(node->color_, left_child->color_);
+      } else if (grandson_left && grandson_left->color_ == RED) {  // КЧ2
+        small_rotate_right(left_child, node);
+        left_child->color_ = RED;
+        grandson_left->color_ = node->color_ = BLACK;
+      }
+    }
+  } else {
+    RBT<T> *left_child = node->left_;  // сын
+    if (left_child && left_child->color_ == RED) {
+      RBT<T> *grandson_left = left_child->left_;  // внуки
+      RBT<T> *grandson_right = left_child->right_;
+      if ((grandson_left && grandson_left->color_ == BLACK) &&
+          (grandson_right && grandson_right->color_ == BLACK)) {
+        RBT<T> *great_grandson_left = grandson_right->left_;  // правнуки
+        RBT<T> *great_grandson_right = grandson_right->right_;
+        if ((great_grandson_left && great_grandson_left->color_ == BLACK) &&
+            (great_grandson_right &&
+             great_grandson_right->color_ == BLACK)) {  // ЧК3
+          small_rotate_right(left_child, node);
+          left_child->color_ = BLACK;
+          grandson_right->color_ = RED;
+        } else if (great_grandson_left &&
+                   great_grandson_left->color_ ==
+                       RED) {  // ЧК4 - какая то херня внимание на повороты
+          small_rotate_left(grandson_right, left_child);
+          big_rotate_right(left_child, grandson_right);
+          node->color_ = BLACK;
+          great_grandson_left->color_ = BLACK;
+        }
+      }
+    } else if (left_child && left_child->color_ == BLACK) {
+      RBT<T> *grandson_left = left_child->left_;  // внуки
+      RBT<T> *grandson_right = left_child->right_;
+      if (grandson_left && grandson_right &&
+          grandson_right->color_ == RED) {  // ЧЧ5
+        grandson_right->color_ = BLACK;
+        small_rotate_left(grandson_right, left_child);
+        big_rotate_right(left_child, grandson_right);
+        node->color_ = BLACK;
+      } else if ((grandson_left && grandson_left->color_ == BLACK) &&
+                 (grandson_right && grandson_right->color_ == BLACK)) {
+        left_child->color_ = RED;
+        balance_erase(node->parent_);
+      }
     }
   }
 }

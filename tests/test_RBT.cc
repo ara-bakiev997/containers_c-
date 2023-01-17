@@ -98,6 +98,7 @@ TEST_F(Tree_test, Erase) {
   tree_null_.insert_node(5);
   tree_null_.erase_node(86);
   tree_null_.erase_node(84);
+
 //  tree_null_.erase_node();
 
   tree_null_.print2D();
