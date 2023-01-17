@@ -18,7 +18,8 @@ public:
     void set_x (int x) {
         x_ = x;
     }
-    std::string vector{"hello"};
+
+    std::string vector{"hello_point"};
 private:
     int x_{};
 };
@@ -221,7 +222,22 @@ TEST_F(S21Vector_test, swap) {
 
 
 TEST_F(S21Vector_test, emplace_back) {
-
+    S21Vector<std::string> v_str = {{"hello"},
+                                    {"hello2"}};
+    std::vector<std::string> vtest_str = {{"hello"},
+                                    {"hello2"}};
+    std::string str = {"hello4"};
+    v_str.emplace_back("hello3");
+    v_str.emplace_back(str);
+    vtest_str.emplace_back("hello3");
+    vtest_str.emplace_back(str);
+    for (auto i = 0; i < v_str.size(); ++i) {
+        EXPECT_EQ(v_str.at(i), vtest_str.at(i));
+    }
+    S21Point sp;
+    pvector.emplace_back(sp);
+    ptest.emplace_back(sp);
+    std::cout<<vtest_str.at(3)<<std::endl;
 }
 
 TEST_F(S21Vector_test, emplace) {

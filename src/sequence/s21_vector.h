@@ -445,7 +445,7 @@ namespace s21 {
         if (this->size_ == capacity_) {
             this->reserve(capacity_ * 2);
         }
-        AllocTraits::construct(alloc_, this->arr_ + this->size_, args...);
+        AllocTraits::construct(alloc_, this->arr_ + this->size_, std::forward<Args>(args)...);
         ++this->size_;
     }
 
