@@ -70,7 +70,7 @@ public:
   void Insert(const T &data) {
     auto *temp = new RBT<T>;
     temp->data_ = data;
-    root_ = InsertRBT(root_, temp, root_);
+    InsertRBT(root_, temp, root_);
     if (!temp)
       delete temp;
   }
@@ -261,18 +261,6 @@ public:
         find_here->parent_ = parent;
         // если есть оба - заменить на минимальное из правого поддерева
       } else {
-        // найти минимум из правого дерева
-        //        auto *temp = new RBT<T>;
-        //        temp->data_ = FindMin(find_here->right_)->data_;
-        //        temp->left_ = find_here->left_;
-        //        temp->right_ = find_here->right_;
-        //        temp->parent_ = parent;
-        //        // удалить этот элемент
-        //        delete find_here;
-        //        find_here = nullptr;
-        //        // скопировать сюда минимум
-        //        std::swap(find_here, temp);
-
         find_here->data_ = FindMin(find_here->right_)->data_;
         // удалить минимум из правого поддерева
         auto *temp = new RBT<T>;
@@ -287,6 +275,14 @@ public:
                find_here->data_) { // искомое меньше - искать слева
       FindAndRemove(find_here->left_, remove, find_here);
     }
+  }
+
+  void RemoveIfOneChild (RBT<T> *&remove) {
+//    delete remove;
+//    remove = find_here->left_;
+//    delete find_here;
+//    find_here = remove;
+//    find_here->parent_ = parent;
   }
 
   RBT<T> *FindMin(RBT<T> *&find_here) {

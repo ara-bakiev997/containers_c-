@@ -76,12 +76,6 @@ TEST_F(Tree_test, FindMin) {
             << std::endl;
 }
 
-TEST_F(Tree_test, Remove) {
-  //  tree_int.Remove(6);
-  tree_int.print2D();
-  //  tree_int.TreePrint();
-}
-
 TEST_F(Tree_test, GetBrother) {
   tree_int.print2D();
   std::cout << tree_int.GetBrother(tree_int.GetRoot()->left_->right_)->data_
@@ -130,10 +124,10 @@ TEST_F(Tree_test, segfolt) {
   tree_left_round.Insert(80);
   tree_left_round.Insert(80);
   tree_left_round.Insert(32);
-  tree_left_round.Insert(-8);
+//  tree_left_round.Insert(-8);
   tree_left_round.Insert(16);
   tree_left_round.Insert(38);
-  tree_left_round.Insert(-19);
+//  tree_left_round.Insert(-19);
   tree_left_round.Insert(63);
   tree_left_round.Insert(18);
   tree_left_round.Insert(35);
@@ -148,7 +142,13 @@ TEST_F(Tree_test, small_left_rotation) {
   tree_null_.print2D();
 }
 
-//          GetParent(balance_RBT)->parent_ = temp->parent_; // A.p = B.p
-//          temp->parent_ = GetParent(balance_RBT); // B.p = A
-//          temp->left_ = GetParent(balance_RBT)->right_; // B.l = A.r
-//          GetParent(balance_RBT)->right_ = temp;
+TEST_F(Tree_test, Remove) {
+  tree_null_.Insert(10);
+  tree_null_.Insert(5);
+  tree_null_.Insert(7);
+
+  tree_null_.Remove(10);
+
+
+  tree_null_.print2D();
+}
