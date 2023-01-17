@@ -337,6 +337,7 @@ void Tree<T>::balance_erase(RBT<T> *node) {
   }
 }
 
+
 //_____ACCESS_FUNC____
 template <typename T>
 RBT<T> *Tree<T>::get_bro(RBT<T> *node) {
