@@ -23,24 +23,12 @@ namespace s21 {
         using value_type = typename SequenceContainer<T>::value_type;
         using reference = typename SequenceContainer<T>::reference;
         using const_reference = typename SequenceContainer<T>::const_reference;
-//        using iterator = typename SequenceContainer<T>::Iterator;
-//        using const_iterator = typename SequenceContainer<T>::const_iterator;
         using size_type = typename SequenceContainer<T>::size_type;
         using AllocTraits = std::allocator_traits<Alloc>;
 
-        // default constructor (simplified syntax for assigning values to attributes)
         S21Vector() { this->size_ = 0U, capacity_ = 0U, this->arr_ = nullptr; }
 
-        explicit S21Vector(size_type size, const T &value = T(), const Alloc &alloc = Alloc()) {
-            this->size_ = size;
-            capacity_ = size;
-            this->arr_ = AllocTraits::allocate(alloc_, size);
-            for (auto i = 0; i < this->size_; ++i) {
-                AllocTraits::construct(alloc_, this->arr_ + i, value);
-            }
-
-//            this->arr_ = size ? new value_type[size] : nullptr;
-        }
+        explicit S21Vector(size_type size, const T &value = T(), const Alloc &alloc = Alloc());
 
         S21Vector(std::initializer_list<value_type> const &items);
 
@@ -129,26 +117,28 @@ namespace s21 {
             std::conditional_t<IsConst, const value_type *, value_type *> ptr_{};
         };
 
-        using iterator = CommonIterator<true>;
-        using const_iterator = CommonIterator<false>;
+        using iterator = CommonIterator<false>;
+        using const_iterator = CommonIterator<true>;
 
+        reference at(size_type pos);
 
-        //  Vector Element access
-
-        reference at(size_type pos); // access specified element with bounds checking
         const_reference at(size_type pos) const;
 
-        reference operator[](size_type pos) noexcept;             // access specified element
-        const_reference operator[](size_type pos) const noexcept; // access specified element
+        reference operator[](size_type pos) noexcept;
 
-        reference front() noexcept; // access the first element
+        const_reference operator[](size_type pos) const noexcept;
+
+        reference front() noexcept;
+
         const_reference front() const noexcept;
 
-        reference back() noexcept;  // access the last element
+        reference back() noexcept;
+
         const_reference back() const noexcept;
 
-        T *data() noexcept;               // direct access to the underlying array
-        const T *data() const noexcept;   // direct access to the underlying array
+        T *data() noexcept;
+
+        const T *data() const noexcept;
 
         //  Vector Iterators
 
@@ -160,18 +150,14 @@ namespace s21 {
             return iterator(this->arr_ + this->size_);
         }
 
-        // Vector Capacity
-
         bool empty() const noexcept;
 
         size_type size() const noexcept;
 
         size_type capacity() const noexcept;
-        // Vector Modifiers
 
         void swap(S21Vector &other); // swaps the contents
 
-        //  Assignment operator
         S21Vector &operator=(const S21Vector &other);
 
         S21Vector &operator=(S21Vector &&other) noexcept;
@@ -179,7 +165,6 @@ namespace s21 {
         size_type max_size() const noexcept;
 
         void reserve(size_type size);
-
 
         void shrink_to_fit() noexcept;
 
@@ -192,11 +177,23 @@ namespace s21 {
 
     private:
         void remove();
+
         size_type capacity_{};
         Alloc alloc_{};
     };
 
 //_____CONSTRUCTORS_____
+
+    template<typename T, typename Alloc>
+    S21Vector<T, Alloc>::S21Vector(S21Vector::size_type size, const T &value, const Alloc &alloc) {
+        this->size_ = size;
+        capacity_ = size;
+        this->arr_ = AllocTraits::allocate(alloc_, size);
+        for (auto i = 0; i < this->size_; ++i) {
+            AllocTraits::construct(alloc_, this->arr_ + i, value);
+        }
+//            this->arr_ = size ? new value_type[size] : nullptr;
+    }
 
     template<class value_type, typename Alloc>
     S21Vector<value_type, Alloc>::S21Vector(
@@ -226,8 +223,6 @@ namespace s21 {
         return *this;
     }
 
-//_____VECTOR_ELEMENT_ACCESS_____
-
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::reference
     S21Vector<value_type, Alloc>::at(S21Vector::size_type pos) {
@@ -242,7 +237,6 @@ namespace s21 {
                                    : throw std::out_of_range("out_of_range");
     }
 
-
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::reference
     S21Vector<value_type, Alloc>::operator[](S21Vector::size_type pos) noexcept {
@@ -254,7 +248,6 @@ namespace s21 {
     S21Vector<value_type, Alloc>::operator[](S21Vector::size_type pos) const noexcept {
         return this->arr_[pos];
     }
-
 
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::reference
@@ -290,7 +283,6 @@ namespace s21 {
         return this->arr_;
     }
 
-//_____VECTOR_CAPACITY_____
     template<class value_type, typename Alloc>
     bool S21Vector<value_type, Alloc>::empty() const noexcept {
         return !this->size_;
@@ -350,7 +342,6 @@ namespace s21 {
         }
     }
 
-//_____VECTOR_MODIFIERS_____
     template<class value_type, typename Alloc>
     void S21Vector<value_type, Alloc>::push_back(const_reference value) {
         if (capacity_ == 0) {
@@ -421,12 +412,11 @@ namespace s21 {
 
     template<typename T, typename Alloc>
     void S21Vector<T, Alloc>::remove() {
-            for (auto i = 0; i < this->capacity_; ++i) {
-                AllocTraits::destroy(alloc_, this->arr_ + i);
-            }
-            AllocTraits::deallocate(alloc_, this->arr_, this->capacity_);
+        for (auto i = 0; i < this->capacity_; ++i) {
+            AllocTraits::destroy(alloc_, this->arr_ + i);
         }
-
+        AllocTraits::deallocate(alloc_, this->arr_, this->capacity_);
+    }
 
 } // namespace s21
 

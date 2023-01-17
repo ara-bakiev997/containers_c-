@@ -39,6 +39,14 @@ class S21Vector_test : public ::testing::Test {
   std::vector<S21Point> ptest = {S21Point(), S21Point(), S21Point()};
 };
 
+TEST_F(S21Vector_test, constructor_par) {
+    S21Vector<int> vector_5(5);
+    std::vector<int> test5(5);
+    EXPECT_EQ(vector_5.size(), test5.size());
+    for (auto i = 0; i < vector_5.size(); ++i)
+        EXPECT_EQ(vector_5.at(i), test5.at(i));
+}
+
 TEST_F(S21Vector_test, constructor_copy) {
     S21Vector<int> vector_5 = vector_1_;
     std::vector<int> test5 = test;
