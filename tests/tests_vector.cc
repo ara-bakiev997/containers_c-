@@ -129,26 +129,18 @@ TEST_F(S21Vector_test, size) {
  }
 
 TEST_F(S21Vector_test, reserve) {
-    std::cout << vector_1_.data() << std::endl;
     EXPECT_ANY_THROW(vector_1_.reserve(vector_1_.max_size() + 1));
     EXPECT_EQ(vector_1_.capacity(), 5);
+    EXPECT_EQ(vector_1_.capacity(), test.capacity());
+    EXPECT_EQ(vector_1_.size(), test.size());
     vector_1_.reserve(10);
+    test.reserve(10);
     EXPECT_EQ(vector_1_.capacity(), 10);
-
+    EXPECT_EQ(vector_1_.capacity(), test.capacity());
+    EXPECT_EQ(vector_1_.size(), test.size());
     for (auto i = 0; i < vector_1_.size(); ++i) {
-        std::cout << vector_1_.at(i) << std::endl;
+        EXPECT_EQ(vector_1_.at(i), test.at(i));
     }
-    std::cout << vector_1_.capacity() << std::endl;
-    std::cout << vector_1_.data() << std::endl;
-
-
-    S21Vector<S21Point> vector_test(3);
-    std::cout << vector_test.at(0).vector << std::endl;
-
-    vector_test.reserve(2);
-    std::cout << vector_test.at(0).vector << std::endl;
-    std::cout << vector_test[2].vector << std::endl;
-
 }
 
 TEST_F(S21Vector_test, capasity) { EXPECT_EQ(vector_1_.capacity(), 5); }
@@ -156,9 +148,10 @@ TEST_F(S21Vector_test, capasity) { EXPECT_EQ(vector_1_.capacity(), 5); }
 TEST_F(S21Vector_test, shrink_to_fit) {
   vector_1_.push_back(3);
   EXPECT_EQ(vector_1_.capacity(), 10);
-  vector_1_.shrink_to_fit();
-  EXPECT_EQ(vector_1_.capacity(), vector_1_.size());
   EXPECT_EQ(vector_1_.size(), 6);
+  vector_1_.shrink_to_fit();
+  EXPECT_EQ(vector_1_.size(), 6);
+  EXPECT_EQ(vector_1_.capacity(), vector_1_.size());
 }
 
 TEST_F(S21Vector_test, push_back) {
@@ -167,13 +160,14 @@ TEST_F(S21Vector_test, push_back) {
   pvector.push_back(S21Point());
   EXPECT_EQ(vector_1_.at(5), 6);
   EXPECT_EQ( pvector.size(), 4);
-  std::cout <<pvector.size() << std::endl;
 }
 
 TEST_F(S21Vector_test, clear) {
   EXPECT_EQ(vector_1_.size(), 5);
   vector_1_.clear();
   EXPECT_EQ(vector_1_.size(), 0);
+  test.clear();
+  EXPECT_EQ(test.size(), 0);
 }
 
 TEST_F(S21Vector_test, insert) {

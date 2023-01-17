@@ -391,13 +391,13 @@ namespace s21 {
     template<class value_type, typename Alloc>
     void S21Vector<value_type, Alloc>::erase(S21Vector::iterator pos) {
         if (this->end() - 1 != pos) {
-            auto *buff = alloc_.allocate(capacity_);
+            auto *buff = AllocTraits::allocate(alloc_, capacity_);
             size_type pos_index = pos - this->begin();
             std::copy(&(*this->begin()), &(*(this->begin() + pos_index)), buff);
             std::copy(&(*(this->begin() + pos_index + 1)), &(*this->end()),
                       buff + pos_index);
-            std::swap(this->arr_, buff);
-            alloc_.deallocate(buff, capacity_);
+            remove();
+            this->arr_ = buff;
         }
         --this->size_;
     }
