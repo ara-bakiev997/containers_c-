@@ -96,16 +96,22 @@ TEST_F(Tree_test, Erase) {
   tree_null_.insert_node(4);
   tree_null_.insert_node(1);
   tree_null_.insert_node(5);
-//  tree_null_.print2D();
-  std::cout << "____AFTER_CHANGE____" << std::endl;
   tree_null_.erase_node(86);
-  tree_null_.erase_node(85);
-  tree_null_.erase_node(83); // следи за цветом
-  tree_null_.erase_node(81);
-  tree_null_.erase_node(80);
-  tree_null_.erase_node(60);
-  tree_null_.erase_node(20);
+  tree_null_.erase_node(84);
+//  tree_null_.erase_node();
 
+  tree_null_.print2D();
+  std::cout << "____AFTER_CHANGE____" << std::endl;
+
+//  tree_null_.erase_node(70);
+
+
+//  tree_null_.erase_node(85);
+//  tree_null_.erase_node(83); // следи за цветом
+//  tree_null_.erase_node(81);
+//  tree_null_.erase_node(80);
+//  tree_null_.erase_node(60);
+//  tree_null_.erase_node(20);
 
   tree_null_.print2D();
 

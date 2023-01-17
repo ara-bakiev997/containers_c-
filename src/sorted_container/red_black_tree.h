@@ -31,9 +31,9 @@ class Tree {
  public:
   Tree() : root_(nullptr) {}
   ~Tree() = default;
-  //_____MODIFIERS_SIMPLE_____
+  //_____MODIFIERS_____
   void insert_node(const T &value) {
-    add_tree(this->root_, value, this->root_);
+    add_node_by_condition(this->root_, value, this->root_);
   }
   void erase_node(T value);
 
@@ -43,11 +43,11 @@ class Tree {
 
  private:
   RBT<T> *root_{};
-  //_____SUPPORT_FOR_INSERT_SIMPLE_____
-  void add_tree(RBT<T> *&node, const T &value, RBT<T> *&parent);
+  //_____SUPPORT_FOR_INSERT_____
+  void add_node_by_condition(RBT<T> *&node, const T &value, RBT<T> *&parent);
   RBT<T> *create_node(const T &value);
 
-  //_____SUPPORT_FOR_ERASE_SIMPLE_____
+  //_____SUPPORT_FOR_ERASE_____
   void del_node_by_condition(RBT<T> *node);
   void del_node_with_one_child(RBT<T> *del_node, RBT<T> *child, RBT<T> *parent);
   void del_node_without_child(RBT<T> *del_node, RBT<T> *parent);
@@ -58,9 +58,14 @@ class Tree {
   RBT<T> *max_node_for_testing(RBT<T> *node);
 
   //_____BALANCE_FUNC____
-  void balance(RBT<T> *node, RBT<T> *parent);
+  void balance_insert(RBT<T> *node, RBT<T> *parent);
+  void balance_erase(RBT<T> *node);
+
+  //_____ACCESS_FUNC____
   RBT<T> *get_bro(RBT<T> *node);
   RBT<T> *get_father(RBT<T> *node);
+  RBT<T> *get_child_left(RBT<T> *node);
+  RBT<T> *get_child_right(RBT<T> *node);
 
   //_____CHANGE_FUNC____
   void change_color(RBT<T> *parent, RBT<T> *bro_parent, RBT<T> *grand_parent);
@@ -73,9 +78,19 @@ class Tree {
   void print2DUtil(RBT<T> *root, int space);
 };
 
-//_____INSERT_SIMPLE_____
+//_____MODIFIERS_____
 template <typename T>
-void Tree<T>::add_tree(RBT<T> *&node, const T &value, RBT<T> *&parent) {
+void Tree<T>::erase_node(T value) {
+  RBT<T> *find = find_node(this->root_, value);
+  if (find != nullptr) {
+    del_node_by_condition(find);
+  }
+}
+
+//_____SUPPORT_FOR_INSERT_____
+template <typename T>
+void Tree<T>::add_node_by_condition(RBT<T> *&node, const T &value,
+                                    RBT<T> *&parent) {
   if (node == nullptr) {
     node = create_node(value);
     if (node != parent) {
@@ -85,12 +100,12 @@ void Tree<T>::add_tree(RBT<T> *&node, const T &value, RBT<T> *&parent) {
       node->color_ = BLACK;
     }
     if (parent->color_ == RED) {  // возможна сега!!!
-      balance(node, parent);
+      balance_insert(node, parent);
     }
   } else if (value < node->data_) {
-    add_tree(node->left_, value, node);
+    add_node_by_condition(node->left_, value, node);
   } else if (node->data_ < value) {
-    add_tree(node->right_, value, node);
+    add_node_by_condition(node->right_, value, node);
   }
 }
 
@@ -102,15 +117,7 @@ RBT<T> *Tree<T>::create_node(const T &value) {
   return temp;
 }
 
-//_____ERASE_SIMPLE_____
-template <typename T>
-void Tree<T>::erase_node(T value) {
-  RBT<T> *find = find_node(this->root_, value);
-  if (find != nullptr) {
-    del_node_by_condition(find);
-  }
-}
-
+//_____SUPPORT_FOR_ERASE_____
 template <typename T>
 void Tree<T>::del_node_by_condition(RBT<T> *node) {
   if (node->left_ && node->right_) {
@@ -121,12 +128,10 @@ void Tree<T>::del_node_by_condition(RBT<T> *node) {
     if (node->color_ == BLACK) {
       del_node_with_one_child(node, node->left_, node->parent_);
     }
-
   } else if (!node->left_ && node->right_) {  // есть один правый ребенок
     if (node->color_ == BLACK) {
       del_node_with_one_child(node, node->right_, node->parent_);
     }
-
   } else {  // лист
     if (node->color_ == RED) {
       del_node_without_child(node, node->parent_);
@@ -135,7 +140,7 @@ void Tree<T>::del_node_by_condition(RBT<T> *node) {
       del_node_without_child(node, node->parent_);
       // требует доработки так как красит не верно
       if (parent != root_) {
-        balance(parent, parent->parent_);
+        balance_erase(parent);
       }
     }
   }
@@ -235,14 +240,14 @@ RBT<T> *Tree<T>::max_node_for_testing(RBT<T> *node) {
 
 //_____BALANCE_FUNC____
 template <typename T>
-void Tree<T>::balance(RBT<T> *node, RBT<T> *parent) {
+void Tree<T>::balance_insert(RBT<T> *node, RBT<T> *parent) {
   RBT<T> *bro_parent = get_bro(parent);
   if (parent->color_ == RED) {  // в рекурсии нужна проверка
     if (bro_parent && bro_parent->color_ == RED) {  // что бы не было сеги
       change_color(parent, bro_parent, get_father(parent));
       if (get_father(parent) != root_) {
-        balance(get_father(parent),
-                get_father(parent)->parent_);  // рекурсивно для деда
+        balance_insert(get_father(parent),
+                       get_father(parent)->parent_);  // рекурсивно для деда
       }
     } else {
       if (parent != root_) {
@@ -266,6 +271,22 @@ void Tree<T>::balance(RBT<T> *node, RBT<T> *parent) {
   }
 }
 
+/*условия из статьи ()*/
+template <typename T>
+void Tree<T>::balance_erase(RBT<T> *node) {
+  if (node->color_ == RED) {
+    RBT<T> *left_child = node->left_;
+    if (left_child && left_child->color_ == BLACK) {
+      RBT<T> *grandson_left = left_child->left_;
+      RBT<T> *grandson_right = left_child->right_;
+      if ((!grandson_left || grandson_left->color_ == BLACK) &&
+          (!grandson_right || grandson_right->color_ == BLACK))
+
+    }
+  }
+}
+
+//_____ACCESS_FUNC____
 template <typename T>
 RBT<T> *Tree<T>::get_bro(RBT<T> *node) {
   RBT<T> *parent = node->parent_;
@@ -286,6 +307,16 @@ RBT<T> *Tree<T>::get_father(RBT<T> *node) {
 }
 
 template <typename T>
+RBT<T> *Tree<T>::get_child_left(RBT<T> *node) {
+  return node->left_;
+}
+
+template <typename T>
+RBT<T> *Tree<T>::get_child_right(RBT<T> *node) {
+  return node->right_;
+}
+
+template <typename T>
 void Tree<T>::change_color(RBT<T> *parent, RBT<T> *bro_parent,
                            RBT<T> *grand_parent) {
   parent->color_ = bro_parent->color_ = BLACK;
@@ -294,6 +325,7 @@ void Tree<T>::change_color(RBT<T> *parent, RBT<T> *bro_parent,
   }
 }
 
+//_____CHANGE_FUNC____
 template <typename T>
 void Tree<T>::small_rotate_left(RBT<T> *node, RBT<T> *parent) {
   RBT<T> *temp = node->left_;
@@ -419,274 +451,3 @@ void Tree<T>::RBTPrint(RBT<T> *&node) {
 }  // namespace s21
 
 #endif  // S21_CONTAINERS_SRC_SORTED_CONTAINER_RED_BLACK_TREE_H_
-
-/*То что написал Саша ---->>>> */
-
-// Tree &operator=(const Tree &other) {
-//   if (this != &other) this->root_ = other.root_;
-//   return *this;
-// }
-/**
- * рекурсивно идет по дереву и вставляет элемент больше вправо меньше влево
- * @param paste_here попробовать вставить сюда НОДУ
- * @param data НОДА с новой датой
- * @param parent родитель, при первой передаче передается рут
- * @return не реализовано
- */
-//  RBT<T> *InsertRBT(RBT<T> *&paste_here, RBT<T> *&data, RBT<T> *&parent) {
-//    if (paste_here == nullptr) {  // если нул можно добавить сюда
-//      if (paste_here != parent) {  // проверка рута
-//        data->parent_ = parent;    // добавить родителя
-//      } else {
-//        data->color_ = BLACK;  // рут черный
-//      }
-//      std::swap(paste_here, data);  // добавление элемента
-//
-//      if (paste_here->parent_ != nullptr) {  // проверка рута
-//        BalanceInsert(paste_here);  // пишем в дату новый рут или нулл
-//      }
-//
-//    } else if (data->data_ > paste_here->data_) {
-//      InsertRBT(paste_here->right_, data, paste_here);
-//    } else if (data->data_ < paste_here->data_) {
-//      InsertRBT(paste_here->left_, data, paste_here);
-//    }
-//    return paste_here;
-//  }
-//
-//  void Insert(const T &data) {
-//    auto *temp = new RBT<T>;
-//    temp->data_ = data;
-//    root_ = InsertRBT(root_, temp, root_);
-//    if (!temp) delete temp;
-//  }
-//
-//  void BalanceInsert(RBT<T> *&balance_RBT) {
-//    if (GetParent(balance_RBT) == nullptr) return;
-//
-//    if (GetParent(balance_RBT)->color_ == RED) {  // балансируем
-//
-//      // first r-r-B-r -> r-b-R-b if B -root B -> B
-//      if (GetParent(balance_RBT)->color_ ==
-//          GetBrotherColor(GetParent(balance_RBT))) {  // red == red
-//        GetParent(balance_RBT)->color_ = BLACK;
-//        GetBrother(GetParent(balance_RBT))->color_ = BLACK;
-//
-//        if (!IsRoot(GetGrandParent(balance_RBT))) {  // not root
-//          GetGrandParent(balance_RBT)->color_ = RED;
-//          BalanceInsert(GetGrandParent(balance_RBT));  // балансируем выше
-//        }
-//        // second r-r-B-b -> r-B-r-b / if B root -> change root
-//      } else {  // parent and uncle is red and black
-//
-//        if (GetParent(balance_RBT) == GetGrandParent(balance_RBT)->left_) {
-//          // вставка влево поворачиваем вправо
-//          // проверка на рут деда
-//          if (balance_RBT->parent_->parent_->parent_ != nullptr) {  // не рут
-//            // замена указателя главного родителя
-//            if (balance_RBT->parent_->parent_->parent_->left_ ==
-//                balance_RBT->parent_->parent_) {
-//              balance_RBT->parent_->parent_->parent_->left_ =
-//                  balance_RBT->parent_;
-//            } else {
-//              balance_RBT->parent_->parent_->parent_->right_ =
-//                  balance_RBT->parent_;
-//            }
-//
-//          } else {  // рут/ как заменить рут
-//                    // замена указателя главного родителя
-//            auto temp_root = new RBT<T>;
-//            temp_root = balance_RBT->parent_->parent_;
-//            this->root_ = balance_RBT->parent_;
-//          }
-//          auto temp = new RBT<T>;
-//          temp->parent_ = balance_RBT->parent_->parent_;
-//          balance_RBT->parent_->parent_ =
-//              balance_RBT->parent_->parent_->parent_;
-//          temp->right_ = balance_RBT->parent_->right_;
-//          balance_RBT->parent_->right_ = temp->parent_;
-//          balance_RBT->parent_->right_->parent_ = balance_RBT->parent_;
-//          balance_RBT->parent_->right_->left_ = temp->right_;
-//          temp->parent_ = temp->right_ = temp->left_ = nullptr;
-//          delete temp;
-//          balance_RBT->parent_->color_ = BLACK;
-//          balance_RBT->parent_->right_->color_ = RED;
-//        } else {
-//          // вставка вправо поворачиваем влево
-//          // проверка на рут деда
-//          if (balance_RBT->parent_->parent_->parent_ != nullptr) {  // не рут
-//
-//            // замена указателя главного родителя
-//            if (balance_RBT->parent_->parent_->parent_->left_ ==
-//                balance_RBT->parent_->parent_) {
-//              balance_RBT->parent_->parent_->parent_->left_ =
-//                  balance_RBT->parent_;
-//            } else {
-//              balance_RBT->parent_->parent_->parent_->right_ =
-//                  balance_RBT->parent_;
-//            }
-//
-//          } else {  // рут/ как заменить рут?
-//            // замена указателя главного родителя
-//            this->root_ = balance_RBT->parent_;
-//          }
-//          auto temp = new RBT<T>;
-//          temp->parent_ = balance_RBT->parent_->parent_;
-//          balance_RBT->parent_->parent_ =
-//              balance_RBT->parent_->parent_->parent_;
-//          temp->left_ = balance_RBT->parent_->left_;
-//          balance_RBT->parent_->left_ = temp->parent_;
-//          balance_RBT->parent_->left_->parent_ = balance_RBT->parent_;
-//          balance_RBT->parent_->left_->right_ = temp->left_;
-//          temp->parent_ = temp->right_ = temp->left_ = nullptr;
-//          delete temp;
-//          balance_RBT->parent_->color_ = BLACK;
-//          balance_RBT->parent_->left_->color_ = RED;
-//        }
-//      }
-//    }
-//  }
-//
-//  RBT<T> *&GetParent(RBT<T> *&node) { return node->parent_; }
-//
-//  //  RBT<T> *GetGrandParent(RBT<T> *&node) {
-//  //    if (GetParent(node) != nullptr)
-//  //    return GetParent(node)->parent_;
-//  //    else return nullptr;
-//  //  }
-//
-//  RBT<T> *&GetGrandParent(RBT<T> *&node) { return GetParent(node)->parent_; }
-//
-//  RBT<T> *GetBrother(RBT<T> *&node) {
-//    if (node->parent_ == nullptr) {
-//      return nullptr;
-//    } else {
-//      if (node == node->parent_->left_)
-//        return node->parent_->right_;
-//      else
-//        return node->parent_->left_;
-//    }
-//  }
-//
-//  RBT_colors GetBrotherColor(RBT<T> *&node) {
-//    if (GetBrother(node) == nullptr) {
-//      return BLACK;
-//    } else
-//      return GetBrother(node)->color_;
-//  }
-//
-//  bool IsRoot(RBT<T> *&node) {
-//    if (node->parent_ == nullptr)
-//      return true;
-//    else
-//      return false;
-//  }
-//
-//  //  bool IsRoot (RBT<T> *node) {
-//  //    if (node->parent_ == nullptr) return true;
-//  //    else return false;
-//  //  }
-//
-//  void Remove(const T &data) {
-//    auto *temp = new RBT<T>;
-//    temp->data_ = data;
-//    FindAndRemove(root_, temp, root_);
-//    delete temp;
-//  }
-//
-//  void FindAndRemove(RBT<T> *&find_here, RBT<T> *&remove, RBT<T> *&parent) {
-//    if (find_here == nullptr) {  // пустое дерево
-//      return;
-//    } else if (find_here->data_ == remove->data_) {  // найден элемент
-//      if (find_here->right_ == nullptr &&
-//          find_here->left_ == nullptr) {  // нет детей
-//        delete find_here;
-//        find_here = nullptr;
-//      } else if (find_here->right_ == nullptr) {  // только левый
-//        delete remove;
-//        remove = find_here->left_;
-//        delete find_here;
-//        find_here = remove;
-//        find_here->parent_ = parent;
-//      } else if (find_here->left_ == nullptr) {  // только правый
-//        delete remove;
-//        remove = find_here->right_;
-//        delete find_here;
-//        find_here = remove;
-//        find_here->parent_ = parent;
-//        // если есть оба - заменить на минимальное из правого поддерева
-//      } else {
-//        // найти минимум из правого дерева
-//        //        auto *temp = new RBT<T>;
-//        //        temp->data_ = FindMin(find_here->right_)->data_;
-//        //        temp->left_ = find_here->left_;
-//        //        temp->right_ = find_here->right_;
-//        //        temp->parent_ = parent;
-//        //        // удалить этот элемент
-//        //        delete find_here;
-//        //        find_here = nullptr;
-//        //        // скопировать сюда минимум
-//        //        std::swap(find_here, temp);
-//
-//        find_here->data_ = FindMin(find_here->right_)->data_;
-//        // удалить минимум из правого поддерева
-//        auto *temp = new RBT<T>;
-//        temp->data_ = find_here->data_;
-//        FindAndRemove(find_here->right_, temp, find_here);
-//        delete temp;
-//      }
-//    } else if (remove->data_ >
-//               find_here->data_) {  // искомое больше - искать справа
-//      FindAndRemove(find_here->right_, remove, find_here);
-//    } else if (remove->data_ <
-//               find_here->data_) {  // искомое меньше - искать слева
-//      FindAndRemove(find_here->left_, remove, find_here);
-//    }
-//  }
-//
-//  RBT<T> *FindMin(RBT<T> *&find_here) {
-//    if (find_here->left_ == nullptr)
-//      return find_here;
-//    else
-//      return FindMin(find_here->left_);
-//  }
-//
-//  void WalkInWidth() {
-//    std::queue<RBT<T> *> queue;
-//    queue.push(this->root_);
-//    int count = 0;
-//    int sons = 1;
-//    RBT<T> *fake;
-//
-//    while (!queue.empty()) {
-//      RBT<T> *temp;
-//      temp = queue.front();
-//      queue.pop();
-//      if (temp != fake) {
-//        std::cout << temp->data_ << " ";
-//      } else {
-//        std::cout << "null"
-//                  << " ";
-//      }
-//      ++count;
-//      if (count == sons) {
-//        std::cout << std::endl;
-//        count = 0;
-//        sons *= 2;
-//      }
-//
-//      if (temp != fake) {
-//        if (temp->left_ != nullptr) {
-//          queue.push(temp->left_);
-//        } else {
-//          queue.push(fake);
-//        }
-//
-//        if (temp->right_ != nullptr) {
-//          queue.push(temp->right_);
-//        } else {
-//          queue.push(fake);
-//        }
-//      }
-//    }
-//  }
