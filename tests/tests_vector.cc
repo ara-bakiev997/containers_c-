@@ -35,7 +35,6 @@ class S21Vector_test : public ::testing::Test {
   std::vector<int> test = {1, 2, 3, 4, 5};
   std::vector<int> test2 = {10, 20, 30, 40};
   std::vector<int> test3 = {5, 4, 3, 2, 1};
-//  std::vector<int> test8 = std::vector<int>(5);
   std::vector<S21Point> ptest = {S21Point(), S21Point(), S21Point()};
 };
 

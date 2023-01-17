@@ -156,7 +156,7 @@ namespace s21 {
 
         size_type capacity() const noexcept;
 
-        void swap(S21Vector &other); // swaps the contents
+        void swap(S21Vector &other);
 
         S21Vector &operator=(const S21Vector &other);
 
@@ -168,12 +168,18 @@ namespace s21 {
 
         void shrink_to_fit() noexcept;
 
-        void clear() noexcept; // clears the contents
+        void clear() noexcept;
         iterator insert(iterator pos, const_reference value);
 
-        void erase(iterator pos);              // erases element at pos
-        void push_back(const_reference value); // adds an element to the end
-        void pop_back();                       // removes the last element
+        void erase(iterator pos);
+        void push_back(const_reference value);
+        void push_back(value_type&& value);
+        void pop_back();
+
+        template<typename... Args>
+        void emplace_back(Args&&... args);
+//        template<typename... Args>
+//        iterator emplace(const_iterator pos, Args&&... args);
 
     private:
         void remove();
@@ -311,7 +317,7 @@ namespace s21 {
             size_type i = 0;
             try {
                 for (; i < this->size_; ++i) {
-                    AllocTraits::construct(alloc_, new_arr + i, this->arr_[i]);
+                    AllocTraits::construct(alloc_, new_arr + i, std::move(this->arr_[i]));
                 }
             } catch (...) {
                 for (auto j = 0; j < i; ++j) {
@@ -351,6 +357,18 @@ namespace s21 {
             this->reserve(capacity_ * 2);
         }
         AllocTraits::construct(alloc_, this->arr_ + this->size_, value);
+        ++this->size_;
+    }
+
+    template<typename T, typename Alloc>
+    void S21Vector<T, Alloc>::push_back(value_type&& value) {
+        if (capacity_ == 0) {
+            this->reserve(1);
+        }
+        if (this->size_ == capacity_) {
+            this->reserve(capacity_ * 2);
+        }
+        AllocTraits::construct(alloc_, this->arr_ + this->size_, std::move(value));
         ++this->size_;
     }
 
@@ -417,6 +435,20 @@ namespace s21 {
         }
         AllocTraits::deallocate(alloc_, this->arr_, this->capacity_);
     }
+
+    template<typename T, typename Alloc>
+    template<typename... Args>
+    void S21Vector<T, Alloc>::emplace_back(Args &&... args) {
+        if (capacity_ == 0) {
+            this->reserve(1);
+        }
+        if (this->size_ == capacity_) {
+            this->reserve(capacity_ * 2);
+        }
+        AllocTraits::construct(alloc_, this->arr_ + this->size_, args...);
+        ++this->size_;
+    }
+
 
 } // namespace s21
 
