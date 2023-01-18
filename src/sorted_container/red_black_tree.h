@@ -11,7 +11,6 @@
 #include <queue>
 #include <utility>
 #include <valarray>
-#include <windows.h>
 
 namespace s21 {
 

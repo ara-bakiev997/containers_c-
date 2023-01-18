@@ -143,12 +143,22 @@ TEST_F(Tree_test, small_left_rotation) {
 }
 
 TEST_F(Tree_test, Remove) {
-  tree_null_.Insert(10);
+
+  tree_null_.Insert(6);
+  tree_null_.Insert(20);
+  tree_null_.Insert(4);
+  tree_null_.Insert(1);
   tree_null_.Insert(5);
-  tree_null_.Insert(7);
+  tree_null_.Insert(-4);
+  tree_null_.Insert(80);
+  tree_null_.Insert(32);
+  tree_null_.Insert(16);
+  tree_null_.Insert(38);
+  tree_null_.Insert(63);
+  tree_null_.Insert(18);
+  tree_null_.Insert(35);
 
-  tree_null_.Remove(10);
-
+  tree_null_.Remove(5);
 
   tree_null_.print2D();
 }
