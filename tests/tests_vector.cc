@@ -9,9 +9,6 @@ using namespace s21;
 
 class S21Point {
 public:
-//    ~S21Point() {
-//        vector = {"0"};
-//    }
     int get_x () const {
         return x_;
     }
@@ -19,7 +16,7 @@ public:
         x_ = x;
     }
 
-    std::string vector{"hello_point"};
+    std::string vector{"hello"};
 private:
     int x_{};
 };
@@ -55,6 +52,8 @@ class S21Vector_test : public ::testing::Test {
 TEST_F(S21Vector_test, constructor_par) {
     S21Vector<int> vector_5(5);
     std::vector<int> test5(5);
+    vector_5.insert(vector_5.begin(),50);
+    test5.insert(test5.begin(),50);
     EXPECT_EQ(vector_5.size(), test5.size());
     for (auto i = 0; i < vector_5.size(); ++i)
         EXPECT_EQ(vector_5.at(i), test5.at(i));
@@ -145,8 +144,6 @@ TEST_F(S21Vector_test, size) {
 
  TEST_F(S21Vector_test, max_size) {
    EXPECT_EQ(test.max_size(), vector_1_.max_size());
-   std::cout << test.max_size() << std::endl;
-   std::cout << vector_1_.max_size() << std::endl;
  }
 
 TEST_F(S21Vector_test, reserve) {
@@ -240,6 +237,7 @@ TEST_F(S21Vector_test, emplace_back) {
     std::vector<std::string> vtest_str = {{"hello"},
                                     {"hello2"}};
     std::string str = {"hello4"};
+
     v_str.emplace_back("hello3");
     v_str.emplace_back(str);
     vtest_str.emplace_back("hello3");
@@ -254,14 +252,25 @@ TEST_F(S21Vector_test, emplace_back) {
     std::vector<President> std_elections;
     std_elections.emplace_back("Nelson Mandela", "South Africa", 1994);
 
-    for (President const& president: elections) {
+    for (auto const& president: elections) {
         EXPECT_EQ(elections[0].name, std_elections[0].name);
         EXPECT_EQ(elections[0].country, std_elections[0].country);
         EXPECT_EQ(elections[0].year, std_elections[0].year);
     }
 }
 
+
 TEST_F(S21Vector_test, emplace) {
+    S21Vector<President> elections1;
+    elections1.emplace(elections1.end(), "Nelson Mandelaaaa", "South Africa", 1994);
+
+    std::vector<President> std_elections1;
+    std_elections1.emplace(std_elections1.end(),"Nelson Mandela", "South Africa", 1994);
+    for (President const& president: elections1) {
+        std::cout << president.name << " was elected president of "
+                  << president.country << " in " << president.year << ".\n";
+    }
+
 
 }
 

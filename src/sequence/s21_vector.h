@@ -11,6 +11,7 @@
 #include <utility>
 #include <valarray>
 #include <type_traits>
+#include <iterator>
 
 #include "sequence_container.h"
 
@@ -117,8 +118,8 @@ namespace s21 {
             std::conditional_t<IsConst, const value_type *, value_type *> ptr_{};
         };
 
-        using iterator = CommonIterator<false>;
         using const_iterator = CommonIterator<true>;
+        using iterator = CommonIterator<false>;
 
         reference at(size_type pos);
 
@@ -150,6 +151,14 @@ namespace s21 {
             return iterator(this->arr_ + this->size_);
         }
 
+//        const_iterator begin() {
+//            return iterator(this->arr_);
+//        }
+//
+//        const_iterator end() {
+//            return iterator(this->arr_ + this->size_);
+//        }
+
         bool empty() const noexcept;
 
         size_type size() const noexcept;
@@ -178,8 +187,12 @@ namespace s21 {
 
         template<typename... Args>
         void emplace_back(Args&&... args);
+
+        template<typename... Args>
+        iterator emplace(const_iterator pos, Args&&... args);
+
 //        template<typename... Args>
-//        iterator emplace(const_iterator pos, Args&&... args);
+//        iterator emplace(iterator pos, Args&&... args);
 
     private:
         void remove();
@@ -436,18 +449,54 @@ namespace s21 {
         AllocTraits::deallocate(alloc_, this->arr_, this->capacity_);
     }
 
+//    template<typename T, typename Alloc>
+//    template<typename... Args>
+//    void S21Vector<T, Alloc>::emplace_back(Args &&... args) {
+//        if (capacity_ == 0) {
+//            this->reserve(1);
+//        }
+//        if (this->size_ == capacity_) {
+//            this->reserve(capacity_ * 2);
+//        }
+//        AllocTraits::construct(alloc_, this->arr_ + this->size_, std::forward<Args>(args)...);
+//        ++this->size_;
+//    }
+
     template<typename T, typename Alloc>
     template<typename... Args>
     void S21Vector<T, Alloc>::emplace_back(Args &&... args) {
-        if (capacity_ == 0) {
-            this->reserve(1);
-        }
-        if (this->size_ == capacity_) {
-            this->reserve(capacity_ * 2);
-        }
-        AllocTraits::construct(alloc_, this->arr_ + this->size_, std::forward<Args>(args)...);
-        ++this->size_;
+        push_back(value_type (std::forward<Args>(args)...));
     }
+
+//    template<typename T, typename Alloc>
+//    template<typename... Args>
+//    typename S21Vector<T, Alloc>::iterator
+//    S21Vector<T, Alloc>::emplace(S21Vector::const_iterator pos, Args &&... args) {
+//        size_type new_capacity = capacity_;
+//        size_type pos_index = std::distance(pos,this->begin());
+//        if (this->size_ + 1 >= capacity_) {
+//            new_capacity *= 2;
+//        }
+//        auto *buff = AllocTraits::allocate(alloc_, new_capacity);
+//        std::copy(this->begin(), (this->begin() + pos_index), buff);
+//        AllocTraits::construct(alloc_, buff + pos_index, std::forward<Args>(args)...);
+//        std::copy((this->begin() + pos_index), (this->begin() + this->size_),
+//                  buff + pos_index + 1);
+//        remove();
+//        this->arr_ = buff;
+//
+//        ++this->size_, capacity_ = new_capacity;
+//        return this->begin() + pos_index;
+//    }
+
+    template<typename T, typename Alloc>
+    template<typename... Args>
+    typename S21Vector<T, Alloc>::iterator
+    S21Vector<T, Alloc>::emplace(S21Vector::const_iterator pos, Args &&... args) {
+       return  insert(pos, const_reference   (std::forward<Args>(args)...));
+    }
+
+
 
 
 } // namespace s21
