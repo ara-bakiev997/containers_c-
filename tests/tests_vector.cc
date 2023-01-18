@@ -24,6 +24,25 @@ private:
     int x_{};
 };
 
+struct President
+{
+    std::string name;
+    std::string country;
+    int year;
+
+    President(std::string p_name, std::string p_country, int p_year)
+            : name(std::move(p_name)), country(std::move(p_country)), year(p_year)
+    {
+        std::cout << "I am being constructed.\n";
+    }
+    President(President&& other)
+            : name(std::move(other.name)), country(std::move(other.country)), year(other.year)
+    {
+        std::cout << "I am being moved.\n";
+    }
+    President& operator=(const President& other) = default;
+};
+
 class S21Vector_test : public ::testing::Test {
  protected:
   void SetUp() override {}
@@ -234,10 +253,18 @@ TEST_F(S21Vector_test, emplace_back) {
     for (auto i = 0; i < v_str.size(); ++i) {
         EXPECT_EQ(v_str.at(i), vtest_str.at(i));
     }
-    S21Point sp;
-    pvector.emplace_back(sp);
-    ptest.emplace_back(sp);
-    std::cout<<vtest_str.at(3)<<std::endl;
+
+    S21Vector<President> elections;
+    elections.emplace_back("Nelson Mandela", "South Africa", 1994);
+
+    std::vector<President> std_elections;
+    std_elections.emplace_back("Nelson Mandela", "South Africa", 1994);
+
+    for (President const& president: elections) {
+        EXPECT_EQ(elections[0].name, std_elections[0].name);
+        EXPECT_EQ(elections[0].country, std_elections[0].country);
+        EXPECT_EQ(elections[0].year, std_elections[0].year);
+    }
 }
 
 TEST_F(S21Vector_test, emplace) {
