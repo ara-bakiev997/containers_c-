@@ -31,15 +31,9 @@ struct President
     int year;
 
     President(std::string p_name, std::string p_country, int p_year)
-            : name(std::move(p_name)), country(std::move(p_country)), year(p_year)
-    {
-        std::cout << "I am being constructed.\n";
-    }
+            : name(std::move(p_name)), country(std::move(p_country)), year(p_year){}
     President(President&& other)
-            : name(std::move(other.name)), country(std::move(other.country)), year(other.year)
-    {
-        std::cout << "I am being moved.\n";
-    }
+            : name(std::move(other.name)), country(std::move(other.country)), year(other.year){}
     President& operator=(const President& other) = default;
 };
 
