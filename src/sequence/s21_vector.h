@@ -262,15 +262,21 @@ namespace s21 {
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::reference
     S21Vector<value_type, Alloc>::at(S21Vector::size_type pos) {
-        return (pos < this->size_) ? this->arr_[pos]
-                                   : throw std::out_of_range("out_of_range");
+        if (pos >= this->size_) {
+            throw std::out_of_range("out_of_range");
+        } else {
+            return this->arr_[pos];
+        }
     }
 
     template<class value_type, typename Alloc>
     typename S21Vector<value_type, Alloc>::const_reference
     S21Vector<value_type, Alloc>::at(S21Vector::size_type pos) const {
-        return (pos < this->size_) ? this->arr_[pos]
-                                   : throw std::out_of_range("out_of_range");
+        if (pos >= this->size_) {
+            throw std::out_of_range("out_of_range");
+        } else {
+            return this->arr_[pos];
+        }
     }
 
     template<class value_type, typename Alloc>
@@ -415,10 +421,10 @@ namespace s21 {
         if (this->size_ + 1 >= capacity_) {
             new_capacity *= 2;
         }
-        auto *buff = AllocTraits::allocate(alloc_, new_capacity);
-        std::copy(this->begin(), (this->begin() + pos_index), buff);
+        auto buff = AllocTraits::allocate(alloc_, new_capacity);
+        std::copy(&(*this->begin()), &(*(this->begin() + pos_index)), buff);
         AllocTraits::construct(alloc_, buff + pos_index, value);
-        std::copy((this->begin() + pos_index), (this->begin() + this->size_),
+        std::copy(&(*(this->begin() + pos_index)), &(*(this->begin() + this->size_)),
                   buff + pos_index + 1);
         remove();
         this->arr_ = buff;
@@ -443,8 +449,9 @@ namespace s21 {
 
     template<class value_type, typename Alloc>
     void S21Vector<value_type, Alloc>::pop_back() {
-
-        AllocTraits::destroy(alloc_, this->arr_ + (this->size_ - 1));
+        if (this->size_) {
+            AllocTraits::destroy(alloc_, this->arr_ + (this->size_ - 1));           
+        }
         --this->size_;
     }
 
@@ -460,8 +467,11 @@ namespace s21 {
 
     template<typename T, typename Alloc>
     void S21Vector<T, Alloc>::remove() {
-        for (auto i = 0; i < this->capacity_; ++i) {
-            AllocTraits::destroy(alloc_, this->arr_ + i);
+        std::cout << "here" << this->arr_ << std::endl;
+        if ((this->size_ + 1) != 0) {
+            for (auto i = 0; i < this->size_; ++i) {
+                AllocTraits::destroy(alloc_, this->arr_ + i);
+            }
         }
         AllocTraits::deallocate(alloc_, this->arr_, this->capacity_);
     }
@@ -489,22 +499,25 @@ namespace s21 {
     template<typename... Args>
     typename S21Vector<T, Alloc>::iterator
     S21Vector<T, Alloc>::emplace(const_iterator pos, Args &&... args) {
+   
         auto it = pos;
         size_type new_capacity = capacity_;
         size_type pos_index = it - this->begin();
         if (this->size_ + 1 >= capacity_) {
             new_capacity *= 2;
         }
-        auto *buff = AllocTraits::allocate(alloc_, new_capacity);
-        std::copy(this->begin(), (this->begin() + pos_index), buff);
+        auto buff = AllocTraits::allocate(alloc_, new_capacity);
+        std::copy(&(*this->begin()), &(*(this->begin() + pos_index)), buff);
         AllocTraits::construct(alloc_, buff + pos_index, std::forward<Args>(args)...);
-        std::copy((this->begin() + pos_index), (this->begin() + this->size_),
+        std::copy(&(*(this->begin() + pos_index)), &(*(this->begin() + this->size_)),
                   buff + pos_index + 1);
-        remove();
+        if (this->size_) {
+            remove();
+        }        
         this->arr_ = buff;
-
-        ++this->size_, capacity_ = new_capacity;
-        return this->begin() + pos_index;
+        ++this->size_;
+        // capacity_ = new_capacity;
+        // return this->begin() + pos_index;
     }
 
 //    template<typename T, typename Alloc>
