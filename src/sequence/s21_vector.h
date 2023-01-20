@@ -23,6 +23,9 @@ namespace s21 {
     public:
         using value_type = typename SequenceContainer<T>::value_type;
         using reference = typename SequenceContainer<T>::reference;
+        using iterator = typename SequenceContainer<T>::Iterator;
+        using const_iterator = typename SequenceContainer<T>::const_iterator;
+
         using const_reference = typename SequenceContainer<T>::const_reference;
         using size_type = typename SequenceContainer<T>::size_type;
         using AllocTraits = std::allocator_traits<Alloc>;
@@ -45,81 +48,92 @@ namespace s21 {
 
 
         // iterators
-        template<bool IsConst>
-        class CommonIterator {
-        public:
+//        template<bool IsConst>
+//        class CommonIterator {
+//        public:
+//
+//            CommonIterator() = default;
+//            explicit CommonIterator(value_type *ptr) : ptr_(ptr) {
+//                std::cout<<"constr_it"<<"\n";
+//            }
+//
+//            CommonIterator(const CommonIterator &other) : ptr_(other.ptr_) {}
+//
+//            CommonIterator &operator=(const CommonIterator &other) {
+//                this->ptr_ = other.ptr_;
+//                return *this;
+//            }
+//            ~CommonIterator() = default;
+//
+//
+//
+//            std::conditional_t<IsConst, const value_type &, value_type &> operator*() {
+//                return *ptr_;
+//            }
+//
+//            std::conditional_t<IsConst, const value_type *, value_type *> operator->() {
+//                return ptr_;
+//            }
+//
+//            CommonIterator &operator++() {
+//                ++ptr_;
+//                return *this;
+//            }
+//
+//            CommonIterator operator++(int) {
+//                CommonIterator tmp(*this);
+//                ++ptr_;
+//                return tmp;
+//            }
+//
+//            CommonIterator &operator--() {
+//                --ptr_;
+//                return *this;
+//            }
+//
+//            CommonIterator operator--(int) {
+//                CommonIterator tmp(*this);
+//                --ptr_;
+//                return tmp;
+//            }
+//
+//            CommonIterator operator+(size_type n) {
+//                CommonIterator tmp(*this);
+//                tmp.ptr_ += n;
+//                return tmp;
+//            }
+//
+//            CommonIterator operator-(size_type n) {
+//                CommonIterator tmp(*this);
+//                tmp.ptr_ -= n;
+//                return tmp;
+//            }
+//
+//            ptrdiff_t operator-(CommonIterator &value) { return this->ptr_ - value.ptr_; }
+//
+//            ptrdiff_t operator-(const CommonIterator &value) { return this->ptr_ - value.ptr_; }
+//
+//            bool operator==(const CommonIterator &other) {
+//                return this->ptr_ == other.ptr_;
+//            }
+//
+//            bool operator!=(const CommonIterator &other) {
+//                return this->ptr_ != other.ptr_;
+//            }
+//
+//
+////            T* base() const { return ptr_; }
+//
+//        private:
+//
+//            std::conditional_t<IsConst, const value_type *, value_type *> ptr_{};
+//        };
+//
+//        using const_iterator = CommonIterator<true>;
+//        using iterator = CommonIterator<false>;
+//
+//        operator CommonIterator<true>()  { return CommonIterator<false>(this->arr_); }
 
-            explicit CommonIterator(value_type *ptr) : ptr_(ptr) {}
-
-            CommonIterator(const CommonIterator &other) : ptr_(other.ptr_) {}
-
-            CommonIterator &operator=(const CommonIterator &other) {
-                this->ptr_ = other.ptr_;
-                return *this;
-            }
-
-            ~CommonIterator() = default;
-
-            std::conditional_t<IsConst, const value_type &, value_type &> operator*() {
-                return *ptr_;
-            }
-
-            std::conditional_t<IsConst, const value_type *, value_type *> operator->() {
-                return ptr_;
-            }
-
-            CommonIterator &operator++() {
-                ++ptr_;
-                return *this;
-            }
-
-            CommonIterator operator++(int) {
-                CommonIterator tmp(*this);
-                ++ptr_;
-                return tmp;
-            }
-
-            CommonIterator &operator--() {
-                --ptr_;
-                return *this;
-            }
-
-            CommonIterator operator--(int) {
-                CommonIterator tmp(*this);
-                --ptr_;
-                return tmp;
-            }
-
-            CommonIterator operator+(size_type n) {
-                CommonIterator tmp(*this);
-                tmp.ptr_ += n;
-                return tmp;
-            }
-
-            CommonIterator operator-(size_type n) {
-                CommonIterator tmp(*this);
-                tmp.ptr_ -= n;
-                return tmp;
-            }
-
-            ptrdiff_t operator-(CommonIterator &value) { return this->ptr_ - value.ptr_; }
-
-            ptrdiff_t operator-(const CommonIterator &value) { return this->ptr_ - value.ptr_; }
-
-            bool operator==(const CommonIterator &other) {
-                return this->ptr_ == other.ptr_;
-            }
-
-            bool operator!=(const CommonIterator &other) {
-                return this->ptr_ != other.ptr_;
-            }
-
-        private:
-            std::conditional_t<IsConst, const value_type *, value_type *> ptr_{};
-        };
-
-        using const_iterator = CommonIterator<true>;
-        using iterator = CommonIterator<false>;
 
         reference at(size_type pos);
 
@@ -178,21 +192,23 @@ namespace s21 {
         void shrink_to_fit() noexcept;
 
         void clear() noexcept;
+
         iterator insert(iterator pos, const_reference value);
 
         void erase(iterator pos);
+
         void push_back(const_reference value);
-        void push_back(value_type&& value);
+
+        void push_back(value_type &&value);
+
         void pop_back();
 
         template<typename... Args>
-        void emplace_back(Args&&... args);
+        void emplace_back(Args &&... args);
 
         template<typename... Args>
-        iterator emplace(const_iterator pos, Args&&... args);
+        iterator emplace(const_iterator pos, Args &&... args);
 
-//        template<typename... Args>
-//        iterator emplace(iterator pos, Args&&... args);
 
     private:
         void remove();
@@ -200,6 +216,7 @@ namespace s21 {
         size_type capacity_{};
         Alloc alloc_{};
     };
+
 
 //_____CONSTRUCTORS_____
 
@@ -374,7 +391,7 @@ namespace s21 {
     }
 
     template<typename T, typename Alloc>
-    void S21Vector<T, Alloc>::push_back(value_type&& value) {
+    void S21Vector<T, Alloc>::push_back(value_type &&value) {
         if (capacity_ == 0) {
             this->reserve(1);
         }
@@ -465,36 +482,38 @@ namespace s21 {
     template<typename T, typename Alloc>
     template<typename... Args>
     void S21Vector<T, Alloc>::emplace_back(Args &&... args) {
-        push_back(value_type (std::forward<Args>(args)...));
+        push_back(value_type(std::forward<Args>(args)...));
+    }
+
+    template<typename T, typename Alloc>
+    template<typename... Args>
+    typename S21Vector<T, Alloc>::iterator
+    S21Vector<T, Alloc>::emplace(const_iterator pos, Args &&... args) {
+        auto it = pos;
+        size_type new_capacity = capacity_;
+        size_type pos_index = it - this->begin();
+        if (this->size_ + 1 >= capacity_) {
+            new_capacity *= 2;
+        }
+        auto *buff = AllocTraits::allocate(alloc_, new_capacity);
+        std::copy(this->begin(), (this->begin() + pos_index), buff);
+        AllocTraits::construct(alloc_, buff + pos_index, std::forward<Args>(args)...);
+        std::copy((this->begin() + pos_index), (this->begin() + this->size_),
+                  buff + pos_index + 1);
+        remove();
+        this->arr_ = buff;
+
+        ++this->size_, capacity_ = new_capacity;
+        return this->begin() + pos_index;
     }
 
 //    template<typename T, typename Alloc>
 //    template<typename... Args>
 //    typename S21Vector<T, Alloc>::iterator
-//    S21Vector<T, Alloc>::emplace(S21Vector::const_iterator pos, Args &&... args) {
-//        size_type new_capacity = capacity_;
-//        size_type pos_index = std::distance(pos,this->begin());
-//        if (this->size_ + 1 >= capacity_) {
-//            new_capacity *= 2;
-//        }
-//        auto *buff = AllocTraits::allocate(alloc_, new_capacity);
-//        std::copy(this->begin(), (this->begin() + pos_index), buff);
-//        AllocTraits::construct(alloc_, buff + pos_index, std::forward<Args>(args)...);
-//        std::copy((this->begin() + pos_index), (this->begin() + this->size_),
-//                  buff + pos_index + 1);
-//        remove();
-//        this->arr_ = buff;
-//
-//        ++this->size_, capacity_ = new_capacity;
-//        return this->begin() + pos_index;
+//    S21Vector<T, Alloc>::emplace(const_iterator pos, Args &&... args) {
+//    auto it = pos;
+//       return  insert(it, std::forward<Args>(args)...);
 //    }
-
-    template<typename T, typename Alloc>
-    template<typename... Args>
-    typename S21Vector<T, Alloc>::iterator
-    S21Vector<T, Alloc>::emplace(S21Vector::const_iterator pos, Args &&... args) {
-       return  insert(pos, const_reference   (std::forward<Args>(args)...));
-    }
 
 
 

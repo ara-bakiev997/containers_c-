@@ -259,7 +259,6 @@ TEST_F(S21Vector_test, emplace_back) {
     }
 }
 
-
 TEST_F(S21Vector_test, emplace) {
     S21Vector<President> elections1;
     elections1.emplace(elections1.end(), "Nelson Mandelaaaa", "South Africa", 1994);
