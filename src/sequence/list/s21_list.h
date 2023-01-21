@@ -12,7 +12,7 @@
 #include <utility>
 #include <valarray>
 
-#include "../sequence_container.h"
+//#include "../sequence_container.h"
 
 namespace s21 {
 template<typename T>
@@ -27,12 +27,12 @@ struct Node {
 };
 
 template<typename T, typename Alloc = std::allocator<T>>
-class S21List : public SequenceContainer<T> {
+class S21List  {
  public:
-  using value_type = typename SequenceContainer<T>::value_type;
-  using reference = typename SequenceContainer<T>::reference;
-  using const_reference = typename SequenceContainer<T>::const_reference;
-  using size_type = typename SequenceContainer<T>::size_type;
+  using value_type = T;
+  using reference = T &;
+  using const_reference = const T &;
+  using size_type = std::size_t;
   using ValueTypeAlloc = Alloc;
   using NodeAlloc = typename std::allocator_traits<Alloc>::template rebind_alloc<Node<T>>;
 
@@ -43,7 +43,7 @@ class S21List : public SequenceContainer<T> {
 	ConstIterator() : node_(nullptr) {}
 	explicit ConstIterator(Node<value_type> *pt) : node_(pt) {}
 	ConstIterator(const ConstIterator &other) : node_(other.node_) {}
-	const_reference operator*() const { return node_->value_; }
+	const_reference operator*() const { return *(node_->value_); }
 	bool operator!=(const ConstIterator &other) const {
 	  return node_ != other.node_;
 	}
@@ -122,6 +122,7 @@ class S21List : public SequenceContainer<T> {
 
  private:
   Node<T> *fake_{};
+  size_type size_{};
   NodeAlloc node_alloc_{};
   ValueTypeAlloc value_type_alloc_{};
   // Support func
