@@ -78,7 +78,7 @@ namespace s21 {
     template<class T, size_t N>
     S21Array<T, N>::S21Array() {
         this->size_ = N;
-        this->arr_ = arr_stat;
+        if (this->size_) this->arr_ = arr_stat;
     }
 
     template<class value_type, size_t N>
