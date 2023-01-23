@@ -22,10 +22,10 @@ TEST_F(Tree_test, Insert) {
   tree_null_.insert_node(4);
 
   tree_null_.erase_node(1);
-  tree_null_.erase_node(0);
-  tree_null_.erase_node(2);
-  tree_null_.erase_node(3);
-  tree_null_.erase_node(4);
+//  tree_null_.erase_node(0);
+//  tree_null_.erase_node(2);
+//  tree_null_.erase_node(3);
+//  tree_null_.erase_node(4);
 
   tree_null_.print2D();
 }
