@@ -311,6 +311,7 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
             SmallRotateLeft(child);
           }
           child->color_ = BLACK;
+
           grandson_right->color_ = RED;
         } else if (great_grandson_left &&
                    great_grandson_left->color_ ==
