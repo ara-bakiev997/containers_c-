@@ -194,5 +194,9 @@ TEST_F(Tree_test, EraseARA) {
   tree_null_.erase_node(80);
   tree_null_.erase_node(16);
 
-  tree_null_.print2D();
+}
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
