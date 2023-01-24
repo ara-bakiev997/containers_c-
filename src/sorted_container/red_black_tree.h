@@ -68,7 +68,9 @@ class Tree {
   RBT<T> *GetChildRight(RBT<T> *node);
 
   //_____CHANGE_FUNC____
-  void ChangeColor(RBT<T> *parent, RBT<T> *bro_parent, RBT<T> *grand_parent);
+  void ChangeColorIfUncleRed(RBT<T> *parent, RBT<T> *bro_parent,
+                             RBT<T> *grand_parent);
+  void ChangeColorAfterBigRotate(RBT<T> *parent, RBT<T> *grandfather);
   void SmallRotateLeft(RBT<T> *node);
   void SmallRotateRight(RBT<T> *node);
   void BigRotateLeft(RBT<T> *node);
@@ -139,7 +141,7 @@ void Tree<T>::DelNodeByCondition(RBT<T> *node) {
       RBT<T> *brother_of_remote = GetBro(node);
       DelNodeWithoutChild(node, node->parent_);
       // требует доработки так как красит не верно
-      if (parent) {
+      if (parent && brother_of_remote) {
         BalanceErase(parent, brother_of_remote);
       }
     }
@@ -159,7 +161,7 @@ void Tree<T>::DelNodeWithOneChild(RBT<T> *del_node, RBT<T> *child,
     root_ = child;
   }
   child->parent_ = parent;
-  std::swap(del_node->color_, child->color_);
+  child->color_ = BLACK;
   delete del_node;
 }
 
@@ -244,7 +246,7 @@ void Tree<T>::BalanceInsert(RBT<T> *node, RBT<T> *parent) {
   RBT<T> *bro_parent = GetBro(parent);
   if (parent->color_ == RED) {  // в рекурсии нужна проверка
     if (bro_parent && bro_parent->color_ == RED) {  // что бы не было сеги
-      ChangeColor(parent, bro_parent, GetFather(parent));
+      ChangeColorIfUncleRed(parent, bro_parent, GetFather(parent));
       if (GetFather(parent) != root_) {
         BalanceInsert(GetFather(parent),
                       GetFather(parent)->parent_);  // рекурсивно для деда
@@ -255,15 +257,19 @@ void Tree<T>::BalanceInsert(RBT<T> *node, RBT<T> *parent) {
           if (parent->right_ == node) {  // мы справа от отца
             SmallRotateLeft(node);
             BigRotateRight(parent);  // т.к они поменялись местами
+            ChangeColorAfterBigRotate(node, node->right_);
           } else {
             BigRotateRight(node);
+            ChangeColorAfterBigRotate(parent, parent->right_);
           }
         } else {                        // мы справа от деда
           if (parent->left_ == node) {  // мы слева от отца
             SmallRotateRight(node);
             BigRotateLeft(parent);  // т.к они поменялись местами
+            ChangeColorAfterBigRotate(node, node->left_);
           } else {
             BigRotateLeft(node);
+            ChangeColorAfterBigRotate(parent, parent->left_);
           }
         }
       }
@@ -279,77 +285,86 @@ void Tree<T>::BalanceInsert(RBT<T> *node, RBT<T> *parent) {
  * ЧК4 — родитель чёрный, левый сын красный, у правого внука левый правнук
  * красный; ЧЧ5 — родитель чёрный, левый сын чёрный с правым красным внуком;
  * ЧЧ6 — родитель чёрный, левый сын чёрный, его внуки тоже чёрные.*/
+// template <typename T>
+// void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
+//   if (parent->color_ == RED) {
+//     if (child && child->color_ == BLACK) {
+//       RBT<T> *grandson_left = child->left_;
+//       RBT<T> *grandson_right = child->right_;
+//       if ((grandson_left && grandson_left->color_ == BLACK) &&  // КЧ1
+//           (grandson_right && grandson_right->color_ == BLACK)) {
+//         std::swap(parent->color_, child->color_);
+//       } else if (grandson_left && grandson_left->color_ == RED) {  // КЧ2
+//         SmallRotateRight(child);
+//         child->color_ = RED;
+//         grandson_left->color_ = parent->color_ = BLACK;
+//       }
+//     }
+//   } else {
+//     if (child && child->color_ == RED) {
+//       RBT<T> *grandson_left = GetChildLeft(child);  // внуки
+//       RBT<T> *grandson_right = GetChildRight(child);
+//       if ((grandson_left && grandson_left->color_ == BLACK) &&
+//           (grandson_right && grandson_right->color_ == BLACK)) {
+//         RBT<T> *great_grandson_left = grandson_right->left_;  // правнуки
+//         RBT<T> *great_grandson_right = grandson_right->right_;
+//         if ((great_grandson_left && great_grandson_left->color_ == BLACK) &&
+//             (great_grandson_right &&
+//              great_grandson_right->color_ == BLACK)) {  // ЧК3
+//           if (parent->left_ == child) {
+//             SmallRotateRight(child);
+//           } else {
+//             SmallRotateLeft(child);
+//           }
+//           child->color_ = BLACK;
+//
+//           grandson_right->color_ = RED;
+//         } else if (great_grandson_left &&
+//                    great_grandson_left->color_ ==
+//                        RED) {  // ЧК4 - какая то херня внимание на повороты
+//           SmallRotateLeft(grandson_right);
+//           BigRotateRight(child);
+//           parent->color_ = BLACK;
+//           great_grandson_left->color_ = BLACK;
+//         } else if (great_grandson_right &&
+//                    great_grandson_right->color_ == RED) {
+//           SmallRotateRight(grandson_left);
+//           BigRotateRight(child);
+//           parent->color_ = BLACK;
+//           great_grandson_right->color_ = BLACK;
+//         }
+//       }
+//     } else if (child && child->color_ == BLACK) {
+//       RBT<T> *grandson_left = child->left_;  // внуки
+//       RBT<T> *grandson_right = child->right_;
+//       if (grandson_right && grandson_right->color_ == RED) {  // ЧЧ5
+//         grandson_right->color_ = BLACK;
+//         SmallRotateLeft(grandson_right);
+//         BigRotateRight(child);
+//         parent->color_ = BLACK;
+//       } else if (grandson_left && grandson_left->color_ == RED) {  // ЧЧ5
+//         grandson_left->color_ = BLACK;
+//         SmallRotateRight(grandson_left);
+//         BigRotateLeft(child);
+//         parent->color_ = BLACK;
+//       } else if ((grandson_left && grandson_left->color_ == BLACK) &&
+//                  (grandson_right && grandson_right->color_ == BLACK)) {
+//         child->color_ = RED;
+//         if (parent->parent_ != root_) {
+//           BalanceErase(parent->parent_, parent);
+//         }
+//       }
+//     }
+//   }
+// }
+
 template <typename T>
 void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
-  if (parent->color_ == RED) {
-    if (child && child->color_ == BLACK) {
-      RBT<T> *grandson_left = child->left_;
-      RBT<T> *grandson_right = child->right_;
-      if ((grandson_left && grandson_left->color_ == BLACK) &&  // КЧ1
-          (grandson_right && grandson_right->color_ == BLACK)) {
-        std::swap(parent->color_, child->color_);
-      } else if (grandson_left && grandson_left->color_ == RED) {  // КЧ2
-        SmallRotateRight(child);
-        child->color_ = RED;
-        grandson_left->color_ = parent->color_ = BLACK;
-      }
-    }
-  } else {
-    if (child && child->color_ == RED) {
-      RBT<T> *grandson_left = GetChildLeft(child);  // внуки
-      RBT<T> *grandson_right = GetChildRight(child);
-      if ((grandson_left && grandson_left->color_ == BLACK) &&
-          (grandson_right && grandson_right->color_ == BLACK)) {
-        RBT<T> *great_grandson_left = grandson_right->left_;  // правнуки
-        RBT<T> *great_grandson_right = grandson_right->right_;
-        if ((great_grandson_left && great_grandson_left->color_ == BLACK) &&
-            (great_grandson_right &&
-             great_grandson_right->color_ == BLACK)) {  // ЧК3
-          if (parent->left_ == child) {
-            SmallRotateRight(child);
-          } else {
-            SmallRotateLeft(child);
-          }
-          child->color_ = BLACK;
 
-          grandson_right->color_ = RED;
-        } else if (great_grandson_left &&
-                   great_grandson_left->color_ ==
-                       RED) {  // ЧК4 - какая то херня внимание на повороты
-          SmallRotateLeft(grandson_right);
-          BigRotateRight(child);
-          parent->color_ = BLACK;
-          great_grandson_left->color_ = BLACK;
-        } else if (great_grandson_right &&
-                   great_grandson_right->color_ == RED) {
-          SmallRotateRight(grandson_left);
-          BigRotateRight(child);
-          parent->color_ = BLACK;
-          great_grandson_right->color_ = BLACK;
-        }
-      }
-    } else if (child && child->color_ == BLACK) {
-      RBT<T> *grandson_left = child->left_;  // внуки
-      RBT<T> *grandson_right = child->right_;
-      if (grandson_right && grandson_right->color_ == RED) {  // ЧЧ5
-        grandson_right->color_ = BLACK;
-        SmallRotateLeft(grandson_right);
-        BigRotateRight(child);
-        parent->color_ = BLACK;
-      } else if (grandson_left && grandson_left->color_ == RED) {  // ЧЧ5
-        grandson_left->color_ = BLACK;
-        SmallRotateRight(grandson_left);
-        BigRotateLeft(child);
-        parent->color_ = BLACK;
-      } else if ((grandson_left && grandson_left->color_ == BLACK) &&
-                 (grandson_right && grandson_right->color_ == BLACK)) {
-        child->color_ = RED;
-        if (parent->parent_ != root_) {
-          BalanceErase(parent->parent_, parent);
-        }
-      }
-    }
-  }
+
+
+
+
 }
 
 //_____ACCESS_FUNC____
@@ -383,12 +398,18 @@ RBT<T> *Tree<T>::GetChildRight(RBT<T> *node) {
 }
 
 template <typename T>
-void Tree<T>::ChangeColor(RBT<T> *parent, RBT<T> *bro_parent,
-                          RBT<T> *grand_parent) {
+void Tree<T>::ChangeColorIfUncleRed(RBT<T> *parent, RBT<T> *bro_parent,
+                                    RBT<T> *grand_parent) {
   parent->color_ = bro_parent->color_ = BLACK;
   if (grand_parent != this->root_) {
     grand_parent->color_ = RED;
   }
+}
+
+template <typename T>
+void Tree<T>::ChangeColorAfterBigRotate(RBT<T> *parent, RBT<T> *grandfather) {
+  if (parent) parent->color_ = BLACK;
+  if (grandfather) grandfather->color_ = RED;
 }
 
 //_____CHANGE_FUNC____
@@ -440,8 +461,6 @@ void Tree<T>::BigRotateLeft(RBT<T> *node) {
   }
   parent->parent_ = great_grandfather;
   grandfather->parent_ = parent;
-  parent->color_ = BLACK;
-  grandfather->color_ = RED;
   if (grandfather == root_) {  // если нужно поменять рута
     root_ = parent;
   }
@@ -467,8 +486,6 @@ void Tree<T>::BigRotateRight(RBT<T> *node) {
   }
   parent->parent_ = great_grandfather;
   grandfather->parent_ = parent;
-  parent->color_ = BLACK;
-  grandfather->color_ = RED;
   if (grandfather == root_) {  // если нужно поменять рута
     root_ = parent;
   }
