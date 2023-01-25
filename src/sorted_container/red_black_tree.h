@@ -411,6 +411,16 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
             grandsonLeft->color_ = RED;
             great_grandsonRed->color_ = BLACK;
           }
+        } else { // 2.2.1.2 когда нет красного правнука
+          if (parent->left_ == child) {
+            BigRotateRight(grandsonLeft); // внимание
+            child->color_ = BLACK;
+            grandsonLeft->color_ = RED;
+          } else {
+            BigRotateLeft(grandsonLeft);
+            child->color_ = BLACK;
+            grandsonLeft->color_ = RED;
+          }
         }
       } else if (grandsonRight && grandsonRight->color_ == BLACK) {  // внук черный
         RBT<T> *great_grandsonRed = GetRedChild(grandsonRight);
@@ -425,7 +435,16 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
             grandsonRight->color_ = RED;
             great_grandsonRed->color_ = BLACK;
           }
-
+        } else { // 2.2.1.2 когда нет красного правнука
+          if (parent->left_ == child) {
+            BigRotateRight(grandsonRight); // внимание
+            child->color_ = BLACK;
+            grandsonRight->color_ = RED;
+          } else {
+            BigRotateLeft(grandsonRight);
+            child->color_ = BLACK;
+            grandsonRight->color_ = RED;
+          }
         }
       }
 
