@@ -60,6 +60,7 @@ TEST_F(Tree_test, rotate) {
   tree_null_.insert_node(70);
   tree_null_.insert_node(75);
 
+  // збс проходит, так же как и в визуализации
   tree_null_.erase_node(50);
   tree_null_.erase_node(60);
   tree_null_.erase_node(32);
@@ -74,14 +75,13 @@ TEST_F(Tree_test, rotate) {
   tree_null_.erase_node(18);
   tree_null_.erase_node(65);
   tree_null_.erase_node(15);
-//  tree_null_.erase_node(45);
-//  tree_null_.erase_node(50);
-//  tree_null_.erase_node(55);
-//  tree_null_.erase_node(53);
-//  tree_null_.erase_node(60);
-//  tree_null_.erase_node(65);
-//  tree_null_.erase_node(70);
-//  tree_null_.erase_node(75);
+  tree_null_.erase_node(5);
+  tree_null_.erase_node(6);
+  tree_null_.erase_node(7);
+  tree_null_.erase_node(10);
+  tree_null_.erase_node(45);
+  tree_null_.erase_node(30);
+  tree_null_.erase_node(16);
 
   tree_null_.print2D();
 }

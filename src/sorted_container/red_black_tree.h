@@ -519,12 +519,39 @@ RBT<T> *Tree<T>::GetChildRight(RBT<T> *node) {
 }
 
 template <typename T>
-RBT<T> *Tree<T>::GetRedChild(RBT<T> *node) {
+RBT<T> *Tree<T>::GetRedChild(RBT<T> *node) { // нужно упростить может быть не нужна проверка с дедушкой
+  RBT<T> *patent = node->parent_;
+  RBT<T> *grandFather = node->parent_->parent_;
   RBT<T> *ret = nullptr;
-  if (node->right_ && node->right_->color_ == RED) {
-    ret = node->right_;
-  } else if (node->left_ && node->left_->color_ == RED) {
-    ret = node->left_;
+
+  if (grandFather && grandFather->left_ == patent) { // мы слева от дедушки
+    if (patent->left_ == node) { // мы слева от отца
+      if (node->left_ && node->left_->color_ == RED) {
+        ret = node->left_;
+      } else if (node->right_ && node->right_->color_ == RED) {
+        ret = node->right_;
+      }
+    } else { // мы справа от отца
+      if (node->right_ && node->right_->color_ == RED) {
+        ret = node->right_;
+      } else if (node->left_ && node->left_->color_ == RED) {
+        ret = node->left_;
+      }
+    }
+  } else { // мы справа от дедушки
+    if (patent->right_ == node) { // мы справа от отца
+      if (node->right_ && node->right_->color_ == RED) {
+        ret = node->right_;
+      } else if (node->left_ && node->left_->color_ == RED) {
+        ret = node->left_;
+      }
+    } else { // мы слева от отца
+      if (node->left_ && node->left_->color_ == RED) {
+        ret = node->left_;
+      } else if (node->right_ && node->right_->color_ == RED) {
+        ret = node->right_;
+      }
+    }
   }
   return ret;
 }
