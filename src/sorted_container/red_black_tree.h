@@ -394,7 +394,42 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
       std::swap(parent->color_, child->color_);
     }
   } else { // 2.2. Отец удаленной ноды черный
+    if (child->color_ == RED) { // 2.2.1. Брат удаленной ноды красный
+      RBT<T> *grandsonLeft = GetChildLeft(child); // внуки
+      RBT<T> *grandsonRight = GetChildRight(child);
 
+      if (grandsonLeft && grandsonLeft->color_ == BLACK) { // внук черный
+        RBT<T> *great_grandsonRed = GetRedChild(grandsonLeft); // правнуки
+        if (great_grandsonRed) { // 2.2.1.1. есть красный правнук
+          if (parent->right_ == child) { // мы справа от отца
+            SmallRotateRight(grandsonLeft);
+            BigRotateLeft(child);
+            great_grandsonRed->color_ = BLACK;
+          } else {
+            BigRotateLeft(grandsonLeft);
+            child->color_ = BLACK;
+            grandsonLeft->color_ = RED;
+            great_grandsonRed->color_ = BLACK;
+          }
+        }
+      } else if (grandsonRight && grandsonRight->color_ == BLACK) {  // внук черный
+        RBT<T> *great_grandsonRed = GetRedChild(grandsonRight);
+        if (great_grandsonRed) { // 2.2.1.1. есть красный правнук
+          if (parent->left_ == child) { // мы слева от отца
+            SmallRotateLeft(grandsonRight);
+            BigRotateRight(child);
+            great_grandsonRed->color_ = BLACK;
+          } else {
+            BigRotateRight(grandsonRight);
+            child->color_ = BLACK;
+            grandsonRight->color_ = RED;
+            great_grandsonRed->color_ = BLACK;
+          }
+
+        }
+      }
+
+    }
   }
 
 
