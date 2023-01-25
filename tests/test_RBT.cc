@@ -106,13 +106,14 @@ TEST_F(Tree_test, Sasha_tests) {
   tree_null_.insert_node(1);
   tree_null_.insert_node(5);
 
+  // збс проходит, так же как и в визуализации
   tree_null_.erase_node(40);
   tree_null_.erase_node(30);
   tree_null_.erase_node(20);
   tree_null_.erase_node(50);
   tree_null_.erase_node(75);
   tree_null_.erase_node(60);
-  tree_null_.erase_node(70);
+  tree_null_.erase_node(4);
   tree_null_.erase_node(80);
   tree_null_.erase_node(83);
   tree_null_.erase_node(81);
@@ -121,7 +122,7 @@ TEST_F(Tree_test, Sasha_tests) {
   tree_null_.erase_node(82);
   tree_null_.erase_node(6);
   tree_null_.erase_node(86);
-  tree_null_.erase_node(4);
+  tree_null_.erase_node(70);
   tree_null_.erase_node(1);
   tree_null_.erase_node(5);
 
