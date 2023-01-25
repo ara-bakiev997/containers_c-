@@ -66,6 +66,7 @@ class Tree {
   RBT<T> *GetFather(RBT<T> *node);
   RBT<T> *GetChildLeft(RBT<T> *node);
   RBT<T> *GetChildRight(RBT<T> *node);
+  RBT<T> *GetRedChild(RBT<T>* node);
 
   //_____CHANGE_FUNC____
   void ChangeColorIfUncleRed(RBT<T> *parent, RBT<T> *bro_parent,
@@ -358,9 +359,43 @@ void Tree<T>::BalanceInsert(RBT<T> *node, RBT<T> *parent) {
 //   }
 // }
 
+// Источник: https://www.youtube.com/watch?v=T70nn4EyTrs
 template <typename T>
 void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
+  if (parent->color_ == RED) { // 2.1. Отец удаленной ноды красный
+    RBT<T> *grandsonRed = GetRedChild(child);
+    if (grandsonRed) { // 2.1.1  // Брат удаленной ноды красный
+      if (parent->left_ == child) { // мы слева от деда
+        if (child->right_ == grandsonRed) { // мы справа от отца
+          SmallRotateLeft(grandsonRed);
+          BigRotateRight(child);
+          parent->color_ = BLACK;
+          child->color_ = BLACK;
+        } else {
+          BigRotateRight(grandsonRed);
+          parent->color_ = BLACK;
+          child->color_ = RED;
+          grandsonRed->color_ = BLACK;
+        }
+      } else { // мы справа от деда
+        if (child->left_ == grandsonRed) { // мы слева от отца
+          SmallRotateRight(grandsonRed);
+          BigRotateLeft(child);
+          parent->color_ = BLACK;
+          child->color_ = BLACK;
+        } else {
+          BigRotateLeft(grandsonRed);
+          parent->color_ = BLACK;
+          child->color_ = RED;
+          grandsonRed->color_ = BLACK;
+        }
+      }
+    } else { // 2.1.2  // Брат удаленной ноды не красный
+      std::swap(parent->color_, child->color_);
+    }
+  } else { // 2.2. Отец удаленной ноды черный
 
+  }
 
 
 
@@ -395,6 +430,17 @@ RBT<T> *Tree<T>::GetChildLeft(RBT<T> *node) {
 template <typename T>
 RBT<T> *Tree<T>::GetChildRight(RBT<T> *node) {
   return node->right_;
+}
+
+template <typename T>
+RBT<T> *Tree<T>::GetRedChild(RBT<T> *node) {
+  RBT<T> *ret = nullptr;
+  if (node->left_ && node->left_->color_ == RED) {
+    ret = node->left_;
+  } else if (node->right_ && node->right_->color_ == RED) {
+    ret = node->right_;
+  }
+  return ret;
 }
 
 template <typename T>
