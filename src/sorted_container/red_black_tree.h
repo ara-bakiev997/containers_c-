@@ -415,11 +415,12 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
           if (parent->left_ == child) {
             BigRotateRight(grandsonLeft); // внимание
             child->color_ = BLACK;
-            grandsonLeft->color_ = RED;
+//            grandsonLeft->color_ = RED;
+            grandsonRight->color_ = RED;
           } else {
             BigRotateLeft(grandsonLeft);
             child->color_ = BLACK;
-            grandsonLeft->color_ = RED;
+//            grandsonLeft->color_ = RED;
           }
         }
       } else if (grandsonRight && grandsonRight->color_ == BLACK) {  // внук черный
@@ -447,10 +448,41 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
           }
         }
       }
-
+    } else { // 2.2.2. Брат удаленной ноды черный
+      RBT<T> *grandsonRed = GetRedChild(child);
+      if (grandsonRed) { // 2.2.2.1 у брата удаленной ноды есть красные дети
+        if (parent->left_ == child) { // мы слева от деда
+          if (child->right_ == grandsonRed) { // мы справа от отца
+            SmallRotateLeft(grandsonRed);
+            BigRotateRight(child);
+            grandsonRed->color_ = BLACK;
+          } else {
+            BigRotateRight(grandsonRed);
+            grandsonRed->color_ = BLACK;
+          }
+        } else { // мы справа от деда
+          if (child->left_ == grandsonRed) { // мы слева от отца
+            SmallRotateRight(grandsonRed);
+            BigRotateLeft(child);
+            grandsonRed->color_ = BLACK;
+          } else {
+            BigRotateLeft(grandsonRed);
+            grandsonRed->color_ = BLACK;
+          }
+        }
+      } else {  // 2.2.2.2 у брата удаленной ноды нет красныех детей
+        child->color_ = RED;
+        // рекурсивно вверх
+        if (parent != root_) { // рекурсивно к деду
+          RBT<T> *grandfather = GetFather(parent);
+          RBT<T> *brother_of_parent = GetBro(parent);
+          if (grandfather && brother_of_parent) {
+            BalanceErase(grandfather, brother_of_parent);
+          }
+        }
+      }
     }
   }
-
 
 
 
@@ -489,10 +521,10 @@ RBT<T> *Tree<T>::GetChildRight(RBT<T> *node) {
 template <typename T>
 RBT<T> *Tree<T>::GetRedChild(RBT<T> *node) {
   RBT<T> *ret = nullptr;
-  if (node->left_ && node->left_->color_ == RED) {
-    ret = node->left_;
-  } else if (node->right_ && node->right_->color_ == RED) {
+  if (node->right_ && node->right_->color_ == RED) {
     ret = node->right_;
+  } else if (node->left_ && node->left_->color_ == RED) {
+    ret = node->left_;
   }
   return ret;
 }
