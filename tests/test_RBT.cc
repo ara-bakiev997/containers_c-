@@ -171,7 +171,7 @@ TEST_F(Tree_test, Erase) {
 
   tree_null_.print2D();
 }
-
+// test 5
 TEST_F(Tree_test, EraseARA) {
   tree_null_.insert_node(6);
   tree_null_.insert_node(20);
@@ -187,9 +187,8 @@ TEST_F(Tree_test, EraseARA) {
   tree_null_.insert_node(18);
   tree_null_.insert_node(35);
 
-  tree_null_.erase_node(6);
   tree_null_.erase_node(5);
-  tree_null_.erase_node(32);
+  tree_null_.erase_node(80);
   tree_null_.erase_node(1);
   tree_null_.erase_node(4);
   tree_null_.erase_node(18);
@@ -198,9 +197,10 @@ TEST_F(Tree_test, EraseARA) {
   tree_null_.erase_node(20);
   tree_null_.erase_node(-4);
   tree_null_.erase_node(63);
-  tree_null_.erase_node(80);
+  tree_null_.erase_node(6);
   tree_null_.erase_node(16);
-
+  tree_null_.erase_node(32);
+  tree_null_.print2D();
 }
 
 int main(int argc, char *argv[]) {
