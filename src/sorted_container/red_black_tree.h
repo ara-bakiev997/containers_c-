@@ -432,7 +432,7 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
 //            grandsonLeft->color_ = RED;
           }
         }
-      } else if (grandsonRight && grandsonRight->color_ == BLACK) {  // внук черный
+      } else if (grandsonRight && grandsonRight->color_ == BLACK) {  // внук черный  // скорее всего не нужно когда мы работаем с max в левом поддереве
         RBT<T> *great_grandsonRed = GetRedChild(grandsonRight);
         if (great_grandsonRed) { // 2.2.1.1. есть красный правнук
           if (parent->left_ == child) { // мы слева от отца
