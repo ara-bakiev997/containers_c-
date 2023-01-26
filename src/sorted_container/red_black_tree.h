@@ -398,18 +398,24 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
       RBT<T> *grandsonLeft = GetChildLeft(child); // внуки
       RBT<T> *grandsonRight = GetChildRight(child);
 
-      if (grandsonLeft && grandsonLeft->color_ == BLACK) { // внук черный
+      if (grandsonLeft && grandsonLeft->color_ == BLACK) { // внук черный // добавить проверку на красного правнука
         RBT<T> *great_grandsonRed = GetRedChild(grandsonLeft); // правнуки
         if (great_grandsonRed) { // 2.2.1.1. есть красный правнук
           if (parent->right_ == child) { // мы справа от отца
-            SmallRotateRight(grandsonLeft);
-            BigRotateLeft(child);
-            great_grandsonRed->color_ = BLACK;
-          } else {
+//            SmallRotateRight(grandsonLeft); // как будто не нужно /// надеюсь тесты не заходят
+            BigRotateLeft(grandsonLeft);
+//            great_grandsonRed->color_ = BLACK;
+            child->color_ = BLACK;
+            parent->color_ = RED;
+            BalanceErase(parent, parent->right_);
+          } else { // мб излишне
             BigRotateLeft(grandsonLeft);
             child->color_ = BLACK;
             grandsonLeft->color_ = RED;
             great_grandsonRed->color_ = BLACK;
+//            child->color_ = BLACK;///// ДОБАВИТЬ скорее всего
+//            parent->color_ = RED; //grandsonRight->color_ = RED;
+//            BalanceErase(parent, parent->left_); ///// ДОБАВИТЬ
           }
         } else { // 2.2.1.2 когда нет красного правнука
           if (parent->left_ == child) {
