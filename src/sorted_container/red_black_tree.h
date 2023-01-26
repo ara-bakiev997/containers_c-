@@ -416,10 +416,13 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
             BigRotateRight(grandsonLeft); // внимание
             child->color_ = BLACK;
 //            grandsonLeft->color_ = RED;
-            grandsonRight->color_ = RED;
+            parent->color_ = RED; //grandsonRight->color_ = RED;
+            BalanceErase(parent, parent->left_);
           } else {
             BigRotateLeft(grandsonLeft);
             child->color_ = BLACK;
+            parent->color_ = RED;
+            BalanceErase(parent, parent->right_);
 //            grandsonLeft->color_ = RED;
           }
         }

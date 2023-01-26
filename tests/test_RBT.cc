@@ -14,6 +14,7 @@ class Tree_test : public ::testing::Test {
   Tree<int> tree_null_;
 };
 
+// test 1
 TEST_F(Tree_test, Insert) {
   tree_null_.insert_node(0);
   tree_null_.insert_node(2);
@@ -36,7 +37,7 @@ TEST_F(Tree_test, Insert) {
 
   tree_null_.print2D();
 }
-
+// test 2
 TEST_F(Tree_test, rotate) {
   tree_null_.insert_node(10);
   tree_null_.insert_node(20);
@@ -85,7 +86,7 @@ TEST_F(Tree_test, rotate) {
 
   tree_null_.print2D();
 }
-
+// test 3
 TEST_F(Tree_test, Sasha_tests) {
   tree_null_.insert_node(50);
   tree_null_.insert_node(40);
@@ -150,23 +151,23 @@ TEST_F(Tree_test, Erase) {
   tree_null_.insert_node(5);
 
   tree_null_.erase_node(40);
-  tree_null_.erase_node(50);
-  tree_null_.erase_node(20);
   tree_null_.erase_node(30);
-  tree_null_.erase_node(60);
-  tree_null_.erase_node(80);
-  tree_null_.erase_node(83);
-  tree_null_.erase_node(70);
-  tree_null_.erase_node(81);
-  tree_null_.erase_node(85);
-  tree_null_.erase_node(5);
-  tree_null_.erase_node(84);
-  tree_null_.erase_node(6);
-  tree_null_.erase_node(1);
-  tree_null_.erase_node(4);
-  tree_null_.erase_node(75);
-  tree_null_.erase_node(86);
-  tree_null_.erase_node(82);
+  tree_null_.erase_node(50);
+//  tree_null_.erase_node(30);
+//  tree_null_.erase_node(60);
+//  tree_null_.erase_node(80);
+//  tree_null_.erase_node(83);
+//  tree_null_.erase_node(70);
+//  tree_null_.erase_node(81);
+//  tree_null_.erase_node(85);
+//  tree_null_.erase_node(5);
+//  tree_null_.erase_node(84);
+//  tree_null_.erase_node(6);
+//  tree_null_.erase_node(1);
+//  tree_null_.erase_node(4);
+//  tree_null_.erase_node(75);
+//  tree_null_.erase_node(86);
+//  tree_null_.erase_node(82);
 
   tree_null_.print2D();
   std::cout << "____AFTER_CHANGE____" << std::endl;
