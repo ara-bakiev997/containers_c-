@@ -38,13 +38,19 @@ namespace s21 {
 
         S21Map() {}
 
+        S21Map(std::pair<key_type, mapped_type> data) {
+            createNode(data);
+        }
+
         S21Map(std::initializer_list<value_type> const &items);
 
         S21Map(const S21Map &other);
 
         S21Map(const S21Map &&other) noexcept;
 
-        ~S21Map() {}
+        ~S21Map() {
+            removeNode();
+        }
 
         S21Map &operator=(const S21Map &other);
 
@@ -88,7 +94,7 @@ namespace s21 {
         AllocTraits  alloc_{};
         AllocNode anode_{};
         Node<Key, Value>* node_{};
-        size_type size_;
+        size_type size_{};
 
         template<typename... Args>
         Node<Key, Value>* createNode(Args&& ...args);
@@ -165,10 +171,9 @@ namespace s21 {
 
         AllocTraits::destroy(anode_, node);
         AllocTraits::deallocate(anode_, node, 1);
-
     }
 
-    }
+
 
 
 }
