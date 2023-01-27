@@ -93,6 +93,8 @@ namespace s21 {
         template<typename... Args>
         Node<Key, Value>* createNode(Args&& ...args);
 
+        void removeNode(Node<key_type , mapped_type>* node);
+
 
     };
 
@@ -154,6 +156,18 @@ namespace s21 {
             AllocTraits::deallocate(alloc_, new_node->data, 1);
         }
         return new_node;
+    }
+
+    template<typename Key, typename Value, typename Compare, typename Alloc>
+    void S21Map<Key, Value, Compare, Alloc>::removeNode(Node<key_type, mapped_type> *node) {
+        AllocTraits::destroy(alloc_, node->data);
+        AllocTraits::deallocate(alloc_, node->data, 1);
+
+        AllocTraits::destroy(anode_, node);
+        AllocTraits::deallocate(anode_, node, 1);
+
+    }
+
     }
 
 
