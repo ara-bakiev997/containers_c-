@@ -308,7 +308,7 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
             parent->color_ = RED;
             BalanceErase(parent, parent->right_);
           } else { // мб излишне
-            BigRotate(grandsonLeft, LEFT);
+            BigRotate(grandsonLeft, RIGHT);
             child->color_ = BLACK;
             grandsonLeft->color_ = RED;
             great_grandsonRed->color_ = BLACK;
