@@ -589,7 +589,7 @@ void Tree<Key, T>::RBTPrint(RBT<Key, T> *&node) {
 template <typename Key, typename T>
 void Tree<Key, T>::ClearRBT() {
   clearUtil(root_);
-//  delete root_;
+  root_ = nullptr;
 }
 template <typename Key, typename T>
 void Tree<Key, T>::clearUtil(RBT<Key, T> *node) {
