@@ -18,6 +18,8 @@ FetchContent_MakeAvailable(googletest)
 add_executable(Google_Tests_run tests_map.cc ../src/sorted_container/associative_container/s21_map.h )
 #add_executable(Google_Tests_run tests_array.cc ../src/sequence/s21_array.cc ../src/sequence/s21_array.h)
 #add_executable(Google_Tests_run tests_array.cc )
+#add_executable(Google_Tests_run test_RBT.cc)
+
 
 #target_link_libraries(Google_Tests_run for_testing pair)
 
