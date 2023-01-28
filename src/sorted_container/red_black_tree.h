@@ -34,11 +34,13 @@ struct RBT {
 
 };
 
-template <typename Key, typename T>
+template <typename Key, typename T = int>
 class Tree {
- public:
+ protected:
   Tree() : root_(nullptr) {}
-  ~Tree() = default;
+  ~Tree() {
+      ClearRBT();
+  };
   //_____MODIFIERS_____
   void insert_node(const Key &key,  T value = 0) {
     AddNodeByCondition(this->root_, key, value, this->root_);
@@ -47,10 +49,12 @@ class Tree {
 
   void print2D();
   void RBTPrint(RBT<Key, T> *&node);
+  void ClearRBT();
+  void clearUtil(RBT<Key, T> *node);
   void TreePrint() { RBTPrint(this->root_); };
+  RBT<Key, T> *root_{};
 
  private:
-  RBT<Key, T> *root_{};
   //_____SUPPORT_FOR_INSERT_____
   void AddNodeByCondition(RBT<Key, T> *&node, const Key &key,  T value, RBT<Key, T> *&parent);
   RBT<Key, T> *CreateNode(const Key &key,  T value);
@@ -557,10 +561,10 @@ void Tree<Key, T>::print2DUtil(RBT<Key, T> *root, int space) {
   for (int i = 5; i < space; i++) std::cout << " ";
   if (root->parent_ == nullptr) std::cout << "#";
   if (root->color_ == BLACK) {
-    std::cout << root->data_->first << "_B"
+    std::cout << root->data_->first << "_B" << " " << root->data_->second
               << "\n";
   } else {
-    std::cout << root->data_->first << "_R"
+    std::cout << root->data_->first << "_R" << " " << root->data_->second
               << "\n";
   }
 
@@ -581,6 +585,19 @@ void Tree<Key, T>::RBTPrint(RBT<Key, T> *&node) {
   RBTPrint(node->left_);
   std::cout << node->data_->first << std::endl;
   RBTPrint(node->right_);
+}
+template <typename Key, typename T>
+void Tree<Key, T>::ClearRBT() {
+  clearUtil(root_);
+//  delete root_;
+}
+template <typename Key, typename T>
+void Tree<Key, T>::clearUtil(RBT<Key, T> *node) {
+  if (node == nullptr) return;
+  clearUtil(node->left_);
+  auto tmp = node->right_;
+  delete node;
+  clearUtil(tmp);
 }
 
 }  // namespace s21
