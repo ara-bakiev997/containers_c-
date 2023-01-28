@@ -11,11 +11,12 @@
 #include <queue>
 #include <utility>
 #include <valarray>
-//#include <windows.h>
 
 namespace s21 {
 
 enum RBT_colors { RED, BLACK };
+
+enum DirectionOfRotation { LEFT, RIGHT };
 
 template <class T>
 struct RBT {
@@ -72,10 +73,8 @@ class Tree {
   void ChangeColorIfUncleRed(RBT<T> *parent, RBT<T> *bro_parent,
                              RBT<T> *grand_parent);
   void ChangeColorAfterBigRotate(RBT<T> *parent, RBT<T> *grandfather);
-  void SmallRotateLeft(RBT<T> *node);
-  void SmallRotateRight(RBT<T> *node);
-  void BigRotateLeft(RBT<T> *node);
-  void BigRotateRight(RBT<T> *node);
+  void SmallRotate(RBT<T> *node, DirectionOfRotation direction);
+  void BigRotate(RBT<T> *node, DirectionOfRotation direction);
 
   //_____SUPPORT_FOR_PRINT_____
   void print2DUtil(RBT<T> *root, int space);
@@ -123,6 +122,8 @@ RBT<T> *Tree<T>::CreateNode(const T &value) {
 template <typename T>
 void Tree<T>::DelNodeByCondition(RBT<T> *node) {
   if (node->left_ && node->right_) {
+//    RBT<T> *change = MinNode(node->right_);  // node->right_ ранее
+
     RBT<T> *change = MaxNodeForTesting(node->left_);  // node->right_ ранее
     std::swap(change->data_, node->data_);
     DelNodeByCondition(change);
@@ -137,11 +138,10 @@ void Tree<T>::DelNodeByCondition(RBT<T> *node) {
   } else {  // лист
     if (node->color_ == RED) {
       DelNodeWithoutChild(node, node->parent_);
-    } else {  // если лист черный то ппц
+    } else {
       RBT<T> *parent = GetFather(node);
       RBT<T> *brother_of_remote = GetBro(node);
       DelNodeWithoutChild(node, node->parent_);
-      // требует доработки так как красит не верно
       if (parent && brother_of_remote) {
         BalanceErase(parent, brother_of_remote);
       }
@@ -179,27 +179,6 @@ void Tree<T>::DelNodeWithoutChild(RBT<T> *del_node, RBT<T> *parent) {
   }
   delete del_node;
 }
-
-//_____БЕЗ__БАЛАНСА_____
-// template <typename T>
-// void Tree<T>::DelNodeByCondition(RBT<T> *node) {
-//  if (!node->right_ && !node->left_) {  // удаление листа
-//    if (node->parent_->left_ == node) {
-//      node->parent_->left_ = nullptr;
-//    } else {
-//      node->parent_->right_ = nullptr;
-//    }
-//    delete node;
-//  } else if (node->left_ && !node->right_) {
-//    DelNodeWithOneChild(node, node->left_, node->parent_);
-//  } else if (!node->left_ && node->right_) {
-//    DelNodeWithOneChild(node, node->right_, node->parent_);
-//  } else if (node->left_ && node->right_) {
-//    RBT<T> *change = MinNode(node->right_);  // find min node in node->right_
-//    std::swap(change->data_, node->data_);
-//    DelNodeByCondition(change);
-//  }
-//}
 
 //_____FIND_NODE_____
 template <typename T>
@@ -256,20 +235,20 @@ void Tree<T>::BalanceInsert(RBT<T> *node, RBT<T> *parent) {
       if (parent != root_) {
         if (GetFather(parent)->left_ == parent) {  // мы слева от деда
           if (parent->right_ == node) {  // мы справа от отца
-            SmallRotateLeft(node);
-            BigRotateRight(parent);  // т.к они поменялись местами
+            SmallRotate(node, LEFT);
+            BigRotate(parent, RIGHT);  // т.к они поменялись местами
             ChangeColorAfterBigRotate(node, node->right_);
           } else {
-            BigRotateRight(node);
+            BigRotate(node, RIGHT);
             ChangeColorAfterBigRotate(parent, parent->right_);
           }
         } else {                        // мы справа от деда
           if (parent->left_ == node) {  // мы слева от отца
-            SmallRotateRight(node);
-            BigRotateLeft(parent);  // т.к они поменялись местами
+            SmallRotate(node, RIGHT);
+            BigRotate(parent, LEFT);  // т.к они поменялись местами
             ChangeColorAfterBigRotate(node, node->left_);
           } else {
-            BigRotateLeft(node);
+            BigRotate(node, LEFT);
             ChangeColorAfterBigRotate(parent, parent->left_);
           }
         }
@@ -277,87 +256,6 @@ void Tree<T>::BalanceInsert(RBT<T> *node, RBT<T> *parent) {
     }
   }
 }
-
-/*условия из статьи (https://habr.com/ru/company/otus/blog/521034/)
- * Сокращения:
- * КЧ1 — родитель красный, левый ребёнок чёрный с чёрными внуками;
- * КЧ2 — родитель красный, левый ребёнок чёрный с левым красным внуком;
- * ЧК3 — родитель чёрный, левый сын красный, у правого внука чёрные правнуки;
- * ЧК4 — родитель чёрный, левый сын красный, у правого внука левый правнук
- * красный; ЧЧ5 — родитель чёрный, левый сын чёрный с правым красным внуком;
- * ЧЧ6 — родитель чёрный, левый сын чёрный, его внуки тоже чёрные.*/
-// template <typename T>
-// void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
-//   if (parent->color_ == RED) {
-//     if (child && child->color_ == BLACK) {
-//       RBT<T> *grandson_left = child->left_;
-//       RBT<T> *grandson_right = child->right_;
-//       if ((grandson_left && grandson_left->color_ == BLACK) &&  // КЧ1
-//           (grandson_right && grandson_right->color_ == BLACK)) {
-//         std::swap(parent->color_, child->color_);
-//       } else if (grandson_left && grandson_left->color_ == RED) {  // КЧ2
-//         SmallRotateRight(child);
-//         child->color_ = RED;
-//         grandson_left->color_ = parent->color_ = BLACK;
-//       }
-//     }
-//   } else {
-//     if (child && child->color_ == RED) {
-//       RBT<T> *grandson_left = GetChildLeft(child);  // внуки
-//       RBT<T> *grandson_right = GetChildRight(child);
-//       if ((grandson_left && grandson_left->color_ == BLACK) &&
-//           (grandson_right && grandson_right->color_ == BLACK)) {
-//         RBT<T> *great_grandson_left = grandson_right->left_;  // правнуки
-//         RBT<T> *great_grandson_right = grandson_right->right_;
-//         if ((great_grandson_left && great_grandson_left->color_ == BLACK) &&
-//             (great_grandson_right &&
-//              great_grandson_right->color_ == BLACK)) {  // ЧК3
-//           if (parent->left_ == child) {
-//             SmallRotateRight(child);
-//           } else {
-//             SmallRotateLeft(child);
-//           }
-//           child->color_ = BLACK;
-//
-//           grandson_right->color_ = RED;
-//         } else if (great_grandson_left &&
-//                    great_grandson_left->color_ ==
-//                        RED) {  // ЧК4 - какая то херня внимание на повороты
-//           SmallRotateLeft(grandson_right);
-//           BigRotateRight(child);
-//           parent->color_ = BLACK;
-//           great_grandson_left->color_ = BLACK;
-//         } else if (great_grandson_right &&
-//                    great_grandson_right->color_ == RED) {
-//           SmallRotateRight(grandson_left);
-//           BigRotateRight(child);
-//           parent->color_ = BLACK;
-//           great_grandson_right->color_ = BLACK;
-//         }
-//       }
-//     } else if (child && child->color_ == BLACK) {
-//       RBT<T> *grandson_left = child->left_;  // внуки
-//       RBT<T> *grandson_right = child->right_;
-//       if (grandson_right && grandson_right->color_ == RED) {  // ЧЧ5
-//         grandson_right->color_ = BLACK;
-//         SmallRotateLeft(grandson_right);
-//         BigRotateRight(child);
-//         parent->color_ = BLACK;
-//       } else if (grandson_left && grandson_left->color_ == RED) {  // ЧЧ5
-//         grandson_left->color_ = BLACK;
-//         SmallRotateRight(grandson_left);
-//         BigRotateLeft(child);
-//         parent->color_ = BLACK;
-//       } else if ((grandson_left && grandson_left->color_ == BLACK) &&
-//                  (grandson_right && grandson_right->color_ == BLACK)) {
-//         child->color_ = RED;
-//         if (parent->parent_ != root_) {
-//           BalanceErase(parent->parent_, parent);
-//         }
-//       }
-//     }
-//   }
-// }
 
 // Источник: https://www.youtube.com/watch?v=T70nn4EyTrs
 template <typename T>
@@ -367,24 +265,24 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
     if (grandsonRed) { // 2.1.1  // Брат удаленной ноды красный
       if (parent->left_ == child) { // мы слева от деда
         if (child->right_ == grandsonRed) { // мы справа от отца
-          SmallRotateLeft(grandsonRed);
-          BigRotateRight(child);
+          SmallRotate(grandsonRed, LEFT);
+          BigRotate(child, RIGHT);
           parent->color_ = BLACK;
           child->color_ = BLACK;
         } else {
-          BigRotateRight(grandsonRed);
+          BigRotate(grandsonRed, RIGHT);
           parent->color_ = BLACK;
           child->color_ = RED;
           grandsonRed->color_ = BLACK;
         }
       } else { // мы справа от деда
         if (child->left_ == grandsonRed) { // мы слева от отца
-          SmallRotateRight(grandsonRed);
-          BigRotateLeft(child);
+          SmallRotate(grandsonRed, RIGHT);
+          BigRotate(child, LEFT);
           parent->color_ = BLACK;
           child->color_ = BLACK;
         } else {
-          BigRotateLeft(grandsonRed);
+          BigRotate(grandsonRed, LEFT);
           parent->color_ = BLACK;
           child->color_ = RED;
           grandsonRed->color_ = BLACK;
@@ -403,13 +301,13 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
         if (great_grandsonRed) { // 2.2.1.1. есть красный правнук
           if (parent->right_ == child) { // мы справа от отца
 //            SmallRotateRight(grandsonLeft); // как будто не нужно /// надеюсь тесты не заходят
-            BigRotateLeft(grandsonLeft);
+            BigRotate(grandsonLeft, LEFT);
 //            great_grandsonRed->color_ = BLACK;
             child->color_ = BLACK;
             parent->color_ = RED;
             BalanceErase(parent, parent->right_);
           } else { // мб излишне
-            BigRotateLeft(grandsonLeft);
+            BigRotate(grandsonLeft, LEFT);
             child->color_ = BLACK;
             grandsonLeft->color_ = RED;
             great_grandsonRed->color_ = BLACK;
@@ -419,13 +317,13 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
           }
         } else { // 2.2.1.2 когда нет красного правнука
           if (parent->left_ == child) {
-            BigRotateRight(grandsonLeft); // внимание
+            BigRotate(grandsonLeft, RIGHT); // внимание
             child->color_ = BLACK;
 //            grandsonLeft->color_ = RED;
             parent->color_ = RED; //grandsonRight->color_ = RED;
             BalanceErase(parent, parent->left_);
           } else {
-            BigRotateLeft(grandsonLeft);
+            BigRotate(grandsonLeft, LEFT);
             child->color_ = BLACK;
             parent->color_ = RED;
             BalanceErase(parent, parent->right_);
@@ -436,22 +334,22 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
         RBT<T> *great_grandsonRed = GetRedChild(grandsonRight);
         if (great_grandsonRed) { // 2.2.1.1. есть красный правнук
           if (parent->left_ == child) { // мы слева от отца
-            SmallRotateLeft(grandsonRight);
-            BigRotateRight(child);
+            SmallRotate(grandsonRight, LEFT);
+            BigRotate(child, RIGHT);
             great_grandsonRed->color_ = BLACK;
           } else {
-            BigRotateRight(grandsonRight);
+            BigRotate(grandsonRight, RIGHT);
             child->color_ = BLACK;
             grandsonRight->color_ = RED;
             great_grandsonRed->color_ = BLACK;
           }
         } else { // 2.2.1.2 когда нет красного правнука
           if (parent->left_ == child) {
-            BigRotateRight(grandsonRight); // внимание
+            BigRotate(grandsonRight, RIGHT); // внимание
             child->color_ = BLACK;
             grandsonRight->color_ = RED;
           } else {
-            BigRotateLeft(grandsonRight);
+            BigRotate(grandsonRight, LEFT);
             child->color_ = BLACK;
             grandsonRight->color_ = RED;
           }
@@ -462,20 +360,20 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
       if (grandsonRed) { // 2.2.2.1 у брата удаленной ноды есть красные дети
         if (parent->left_ == child) { // мы слева от деда
           if (child->right_ == grandsonRed) { // мы справа от отца
-            SmallRotateLeft(grandsonRed);
-            BigRotateRight(child);
+            SmallRotate(grandsonRed, LEFT);
+            BigRotate(child, RIGHT);
             grandsonRed->color_ = BLACK;
           } else {
-            BigRotateRight(grandsonRed);
+            BigRotate(grandsonRed, RIGHT);
             grandsonRed->color_ = BLACK;
           }
         } else { // мы справа от деда
           if (child->left_ == grandsonRed) { // мы слева от отца
-            SmallRotateRight(grandsonRed);
-            BigRotateLeft(child);
+            SmallRotate(grandsonRed, RIGHT);
+            BigRotate(child, LEFT);
             grandsonRed->color_ = BLACK;
           } else {
-            BigRotateLeft(grandsonRed);
+            BigRotate(grandsonRed, LEFT);
             grandsonRed->color_ = BLACK;
           }
         }
@@ -492,9 +390,6 @@ void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
       }
     }
   }
-
-
-
 }
 
 //_____ACCESS_FUNC____
@@ -582,65 +477,40 @@ void Tree<T>::ChangeColorAfterBigRotate(RBT<T> *parent, RBT<T> *grandfather) {
 
 //_____CHANGE_FUNC____
 template <typename T>
-void Tree<T>::SmallRotateLeft(RBT<T> *node) {
-  RBT<T> *temp = node->left_;
+void Tree<T>::SmallRotate(RBT<T> *node, DirectionOfRotation direction) {
+  RBT<T> *temp = (direction == RIGHT) ? node->right_ : node->left_;
   RBT<T> *parent = node->parent_;
-  node->left_ = parent;
-  parent->right_ = temp;
+  if (direction == RIGHT) {
+    node->right_ = parent;
+    parent->left_ = temp;
+  } else {
+    node->left_ = parent;
+    parent->right_ = temp;
+  }
   RBT<T> *grandfather = GetFather(parent);
   if (grandfather) {
     node->parent_ = grandfather;
-    grandfather->left_ = node;
-  }
-  parent->parent_ = node;
-}
-
-template <typename T>
-void Tree<T>::SmallRotateRight(RBT<T> *node) {
-  RBT<T> *temp = node->right_;
-  RBT<T> *parent = node->parent_;
-  node->right_ = parent;
-  parent->left_ = temp;
-  RBT<T> *grandfather = GetFather(parent);
-  if (grandfather) {
-    node->parent_ = grandfather;
-    grandfather->right_ = node;
-  }
-  parent->parent_ = node;
-}
-
-template <typename T>
-void Tree<T>::BigRotateLeft(RBT<T> *node) {
-  RBT<T> *parent = node->parent_;
-  RBT<T> *grandfather = GetFather(parent);
-  RBT<T> *temp = parent->left_;
-  parent->left_ = grandfather;
-  grandfather->right_ = temp;
-  if (temp) {
-    temp->parent_ = grandfather;
-  }
-  RBT<T> *great_grandfather = GetFather(grandfather);
-  if (great_grandfather) {  // связка с прадедом
-    if (great_grandfather->left_ == grandfather) {
-      great_grandfather->left_ = parent;
+    if (direction == RIGHT) {
+      grandfather->right_ = node;
     } else {
-      great_grandfather->right_ = parent;
+      grandfather->left_ = node;
     }
   }
-  parent->parent_ = great_grandfather;
-  grandfather->parent_ = parent;
-  if (grandfather == root_) {  // если нужно поменять рута
-    root_ = parent;
-  }
+  parent->parent_ = node;
 }
 
 template <typename T>
-void Tree<T>::BigRotateRight(RBT<T> *node) {
+void Tree<T>::BigRotate(RBT<T> *node, DirectionOfRotation direction) {
   RBT<T> *parent = node->parent_;
   RBT<T> *grandfather = GetFather(parent);
-  RBT<T> *temp = parent->right_;
-  parent->right_ = grandfather;
-  grandfather->left_ = temp;
+  RBT<T> *temp = (direction == RIGHT) ? parent->right_ : parent->left_;
+  if (direction == RIGHT) {
+    parent->right_ = grandfather;
+    grandfather->left_ = temp;
+  } else {
+    parent->left_ = grandfather;
+    grandfather->right_ = temp;
+  }
   if (temp) {
     temp->parent_ = grandfather;
   }
