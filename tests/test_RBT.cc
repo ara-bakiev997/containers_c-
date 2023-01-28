@@ -269,6 +269,55 @@ TEST_F(Tree_test, randomizer) {
   tree_null_.print2D();
 }
 
+// test 7 randomizer
+TEST_F(Tree_test, randomizerTest2) {
+  tree_null_.insert_node(92);
+  tree_null_.insert_node(103);
+  tree_null_.insert_node(120);
+  tree_null_.insert_node(2);
+  tree_null_.insert_node(139);
+  tree_null_.insert_node(91);
+  tree_null_.insert_node(56);
+  tree_null_.insert_node(94);
+  tree_null_.insert_node(126);
+  tree_null_.insert_node(104);
+  tree_null_.insert_node(21);
+  tree_null_.insert_node(97);
+  tree_null_.insert_node(54);
+  tree_null_.insert_node(12);
+  tree_null_.insert_node(142);
+  tree_null_.insert_node(93);
+  tree_null_.insert_node(77);
+  tree_null_.insert_node(113);
+  tree_null_.insert_node(107);
+  tree_null_.insert_node(25);
+  tree_null_.insert_node(3);
+
+  tree_null_.erase_node(103);
+  tree_null_.erase_node(97);
+  tree_null_.erase_node(77);
+  tree_null_.erase_node(92);
+  tree_null_.erase_node(113);
+  tree_null_.erase_node(126);
+  tree_null_.erase_node(142);
+  tree_null_.erase_node(107);
+  tree_null_.erase_node(54);
+  tree_null_.erase_node(2);
+  tree_null_.erase_node(94);
+  tree_null_.erase_node(25);
+  tree_null_.erase_node(56);
+  tree_null_.erase_node(104);
+  tree_null_.erase_node(12);
+  tree_null_.erase_node(91);
+  tree_null_.erase_node(120);
+  tree_null_.erase_node(93);
+  tree_null_.erase_node(21);
+  tree_null_.erase_node(139);
+  tree_null_.erase_node(3);
+
+  tree_null_.print2D();
+}
+
 
 
 int main(int argc, char *argv[]) {

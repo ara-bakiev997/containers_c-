@@ -258,6 +258,7 @@ void Tree<T>::BalanceInsert(RBT<T> *node, RBT<T> *parent) {
 }
 
 // Источник: https://www.youtube.com/watch?v=T70nn4EyTrs
+// Визуализация: https://www.cs.usfca.edu/~galles/visualization/RedBlack.html
 template <typename T>
 void Tree<T>::BalanceErase(RBT<T> *parent, RBT<T> *child) {
   if (parent->color_ == RED) { // 2.1. Отец удаленной ноды красный
@@ -495,6 +496,9 @@ void Tree<T>::SmallRotate(RBT<T> *node, DirectionOfRotation direction) {
     } else {
       grandfather->left_ = node;
     }
+  }
+  if (temp) {
+    temp->parent_ = parent;
   }
   parent->parent_ = node;
 }
