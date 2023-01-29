@@ -36,23 +36,75 @@ struct RBT {
 
 template <typename Key, typename T = int>
 class Tree {
- protected:
+ public:
+  void insert_node(const Key &key,  T value = 0) {
+	AddNodeByCondition(this->root_, key, value, this->root_);
+  }
+
+  void erase_node(T value);
+
   Tree() : root_(nullptr) {}
   ~Tree() {
-      ClearRBT();
+	ClearRBT();
   };
+
+
   //_____MODIFIERS_____
-  void insert_node(const Key &key,  T value = 0) {
-    AddNodeByCondition(this->root_, key, value, this->root_);
-  }
-  void erase_node(T value);
+
 
   void print2D();
   void RBTPrint(RBT<Key, T> *&node);
   void ClearRBT();
   void clearUtil(RBT<Key, T> *node);
   void TreePrint() { RBTPrint(this->root_); };
+
+
+  class ConstIterator {
+   public:
+	friend Tree; // need for access node in list
+	ConstIterator() : node_(nullptr) {}
+	explicit ConstIterator(RBT<Key, T> *pt) : node_(pt) {}
+	ConstIterator(const ConstIterator &other) : node_(other.node_) {}
+	std::pair<const Key, T> * operator*() const { return *(this->node_->data_); }
+	bool operator!=(const ConstIterator &other) const {
+	  return node_ != other.node_;
+	}
+	bool operator==(const ConstIterator &other) const {
+	  return node_ == other.node_;
+	}
+
+   protected:
+	RBT<Key, T> *node_{};
+
+  };
+
+  class Iterator : public ConstIterator {
+   public:
+	Iterator() { this->node_ = nullptr; }
+	explicit Iterator(RBT<Key, T> *pt) { this->node_ = pt; }
+	Iterator(const Iterator &other) : ConstIterator(other) {}
+	Iterator &operator++();
+	Iterator operator++(int);
+	Iterator &operator--();
+	Iterator operator--(int);
+	std::pair<const Key, T> * operator*() { return  *(this->node_->data_); }
+	Iterator &operator=(const Iterator &other);
+  };
+
+  using iterator = Iterator;
+  using const_iterator = const ConstIterator;
+
+  iterator begin();
+  iterator end();
+
+
+
+ protected:
+
   RBT<Key, T> *root_{};
+  RBT<Key, T> *begin_{};
+  RBT<Key, T> *end_{};
+  int size;
 
  private:
   //_____SUPPORT_FOR_INSERT_____
@@ -90,6 +142,20 @@ class Tree {
   //_____SUPPORT_FOR_PRINT_____
   void print2DUtil(RBT<Key, T> *root, int space);
 };
+template<typename Key, typename T>
+typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
+
+  if (!this->node_->right_) {
+	this->node_ = this->node_->parent_;
+  }
+
+
+
+
+
+
+  return *this;
+}
 
 //_____MODIFIERS_____
 template <typename Key, typename T>
@@ -110,10 +176,14 @@ void Tree<Key, T>::AddNodeByCondition(RBT<Key, T> *&node, const Key &key,  T val
       node->parent_ = parent;
     } else {
       node->color_ = BLACK;
+//	  begin_ = node;
     }
     if (parent && parent->color_ == RED) {
       BalanceInsert(node, parent);
     }
+//	if (node->data_->first < begin_->data_->first) {
+//	  begin_ = node;
+//	}
   } else if (key < node->data_->first) {
     AddNodeByCondition(node->left_, key, value, node);
   } else if (node->data_->first < key) {
@@ -598,6 +668,11 @@ void Tree<Key, T>::clearUtil(RBT<Key, T> *node) {
   auto tmp = node->right_;
   delete node;
   clearUtil(tmp);
+}
+template<typename Key, typename T>
+typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
+  begin_ = MinNode(root_);
+  return s21::Tree<Key, T>::iterator(begin_);
 }
 
 }  // namespace s21
