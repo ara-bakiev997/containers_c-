@@ -75,16 +75,16 @@ class Tree {
 
   class Iterator : public ConstIterator {
    public:
-	friend Tree; // need for access node in tree
-	Iterator() { this->node_ = nullptr; }
-	explicit Iterator(RBT<Key, T> *pt) { this->node_ = pt; }
-	Iterator(const Iterator &other) : ConstIterator(other) {}
-	Iterator &operator++();
-	const Iterator operator++(int);
-	Iterator &operator--();
-	const Iterator operator--(int);
-	std::pair<const Key, T> & operator*();
-	Iterator &operator=(const Iterator &other);
+    friend Tree;  // need for access node in tree
+    Iterator() { this->node_ = nullptr; }
+    explicit Iterator(RBT<Key, T> *pt) { this->node_ = pt; }
+    Iterator(const Iterator &other) : ConstIterator(other) {}
+    Iterator &operator++();
+    const Iterator operator++(int);
+    Iterator &operator--();
+    const Iterator operator--(int);
+    std::pair<const Key, T> &operator*();
+    Iterator &operator=(const Iterator &other);
   };
 
   using iterator = Iterator;
@@ -148,25 +148,22 @@ typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
   return *this;
 }
 
-template<typename Key, typename T>
+template <typename Key, typename T>
 const typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator++(int) {
   return Tree::Iterator();
 }
 
-
-
-template<typename Key, typename T>
+template <typename Key, typename T>
 typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator--() {
   return (s21::Tree<Key, T>::iterator(this->node_->parent_));
 }
 
-template<typename Key, typename T>
+template <typename Key, typename T>
 const typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator--(int) {
   return Tree::Iterator();
 }
 
-
-template<typename Key, typename T>
+template <typename Key, typename T>
 std::pair<const Key, T> &Tree<Key, T>::Iterator::operator*() {
   return *this->node_->data_;
 }
@@ -403,41 +400,31 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
       RBT<Key, T> *grandsonLeft = GetChildLeft(child);  // внуки
       RBT<Key, T> *grandsonRight = GetChildRight(child);
 
-      if (grandsonLeft &&
-          grandsonLeft->color_ ==
-              BLACK) {  // внук черный // добавить проверку на красного правнука
+      if (grandsonLeft && grandsonLeft->color_ == BLACK) {
         RBT<Key, T> *great_grandsonRed = GetRedChild(grandsonLeft);  // правнуки
         if (great_grandsonRed) {  // 2.2.1.1. есть красный правнук
           if (parent->right_ == child) {  // мы справа от отца
-            //            SmallRotateRight(grandsonLeft); // как будто не нужно
-            //            /// надеюсь тесты не заходят
             BigRotate(grandsonLeft, LEFT);
-            //            great_grandsonRed->color_ = BLACK;
             child->color_ = BLACK;
             parent->color_ = RED;
             BalanceErase(parent, parent->right_);
-          } else {  // мб излишне
+          } else {
             BigRotate(grandsonLeft, RIGHT);
             child->color_ = BLACK;
-            grandsonLeft->color_ = RED;
-            great_grandsonRed->color_ = BLACK;
-            //            child->color_ = BLACK;///// ДОБАВИТЬ скорее всего
-            //            parent->color_ = RED; //grandsonRight->color_ = RED;
-            //            BalanceErase(parent, parent->left_); ///// ДОБАВИТЬ
+            parent->color_ = RED;
+            BalanceErase(parent, parent->left_);
           }
         } else {  // 2.2.1.2 когда нет красного правнука
           if (parent->left_ == child) {
             BigRotate(grandsonLeft, RIGHT);  // внимание
             child->color_ = BLACK;
-            //            grandsonLeft->color_ = RED;
-            parent->color_ = RED;  // grandsonRight->color_ = RED;
+            parent->color_ = RED;
             BalanceErase(parent, parent->left_);
           } else {
             BigRotate(grandsonLeft, LEFT);
             child->color_ = BLACK;
             parent->color_ = RED;
             BalanceErase(parent, parent->right_);
-            //            grandsonLeft->color_ = RED;
           }
         }
       } else if (grandsonRight &&
@@ -715,13 +702,13 @@ void Tree<Key, T>::clearUtil(RBT<Key, T> *node) {
 template <typename Key, typename T>
 typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
   fake_->parent_ = nullptr;
-  if (!root_) return s21::Tree<Key, T>::iterator(fake_);
+  if (!root_)
+    return s21::Tree<Key, T>::iterator(fake_);
   else {
     return s21::Tree<Key, T>::iterator(MinNode(root_));
   }
-
 }
-template<typename Key, typename T>
+template <typename Key, typename T>
 typename Tree<Key, T>::iterator Tree<Key, T>::end() {
   fake_->parent_ = nullptr;
   if (!root_) fake_->parent_ = MaxNodeForTesting(root_);
