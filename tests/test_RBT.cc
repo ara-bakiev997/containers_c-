@@ -23,42 +23,79 @@ struct node {
 
 // test 1
 TEST_F(Tree_test, Insert) {
-  tree_null_.insert_node(0);
-  tree_null_.insert_node(2);
-  tree_null_.insert_node(1);
-  tree_null_.insert_node(3);
-  tree_null_.insert_node(4);
-  tree_null_.insert_node(6);
-  tree_null_.insert_node(5);
-  tree_null_.insert_node(8);
-// збс проходит, так же как и в визуализации
-  tree_null_.erase_node(2); // 2.1.2
-  tree_null_.erase_node(4);
-  tree_null_.erase_node(0);
-  tree_null_.erase_node(1);
-  tree_null_.erase_node(8);
-  tree_null_.erase_node(6);
-  tree_null_.erase_node(5);
-  tree_null_.erase_node(3);
+//  tree_null_.insert_node(5);
 
-  tree_null_.print2D();
+  auto it = tree_null_.begin();
+  std::cout << (*it).first << std::endl;
+
+//  tree_null_.insert_node(2);
+//  tree_null_.insert_node(1);
+//  tree_null_.insert_node(3);
+//  tree_null_.insert_node(4);
+//  tree_null_.insert_node(6);
+//  tree_null_.insert_node(0);
+//  tree_null_.insert_node(8);
+//
+//  std::cout << &(*it).first << std::endl;
+//
+//  std::cout << &(*tree_null_.begin()).first << std::endl;
+
+
+// збс проходит, так же как и в визуализации
+//  tree_null_.erase_node(2); // 2.1.2
+//  tree_null_.erase_node(4);
+//  tree_null_.erase_node(0);
+//  tree_null_.erase_node(1);
+//  tree_null_.erase_node(8);
+//  tree_null_.erase_node(6);
+//  tree_null_.erase_node(5);
+//  tree_null_.erase_node(3);
+
+//  tree_null_.print2D();
 }
 // test 2
 TEST_F(Tree_test, rotate) {
-  tree_null_.insert_node(10);
-  tree_null_.insert_node(20);
-  tree_null_.insert_node(5);
-  tree_null_.insert_node(7);
-  tree_null_.insert_node(6);
-  tree_null_.insert_node(15);
-  tree_null_.insert_node(16);
-  tree_null_.insert_node(18);
-  tree_null_.insert_node(17);
-  tree_null_.insert_node(30);
-  tree_null_.insert_node(35);
-  tree_null_.insert_node(32);
-  tree_null_.insert_node(33);
-  tree_null_.insert_node(45);
+
+
+
+  map_null.insert(std::make_pair(5,1));
+
+  auto it = map_null.begin();
+
+  std::cout << &(*it).first << std::endl;
+
+  map_null.insert(std::make_pair(2,1));
+  map_null.insert(std::make_pair(3,1));
+  map_null.insert(std::make_pair(4,1));
+  map_null.insert(std::make_pair(1,1));
+  map_null.insert(std::make_pair(6,1));
+  map_null.insert(std::make_pair(7,1));
+  map_null.insert(std::make_pair(8,1));
+
+
+
+
+  std::cout << &(*it).first << std::endl;
+
+  std::cout << (*(map_null.begin())).first << std::endl;
+
+
+
+
+  //  tree_null_.insert_node(10);
+//  tree_null_.insert_node(20);
+//  tree_null_.insert_node(5);
+//  tree_null_.insert_node(7);
+//  tree_null_.insert_node(6);
+//  tree_null_.insert_node(15);
+//  tree_null_.insert_node(16);
+//  tree_null_.insert_node(18);
+//  tree_null_.insert_node(17);
+//  tree_null_.insert_node(30);
+//  tree_null_.insert_node(35);
+//  tree_null_.insert_node(32);
+//  tree_null_.insert_node(33);
+//  tree_null_.insert_node(45);
 //  tree_null_.insert_node(50);
 //  tree_null_.insert_node(55);
 //  tree_null_.insert_node(53);

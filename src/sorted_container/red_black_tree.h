@@ -306,7 +306,7 @@ RBT<Key, T> *Tree<Key, T>::MinNode(RBT<Key, T> *node) {
   RBT<Key, T> *ret = nullptr;
   if (node != fake_) {
     ret = node;
-    if (node->left_) {
+    if (node->left_ != fake_) {
       ret = MinNode(node->left_);
     }
   }
