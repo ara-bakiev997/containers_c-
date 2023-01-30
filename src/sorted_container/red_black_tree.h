@@ -289,7 +289,7 @@ void Tree<Key, T>::DelNodeWithoutChild(RBT<Key, T> *del_node,
 template <typename Key, typename T>
 RBT<Key, T> *Tree<Key, T>::FindNode(RBT<Key, T> *node, T &value) {
   RBT<Key, T> *ret = nullptr;
-  if (node != nullptr) {
+  if (node != fake_) {
     if (node->data_->first == value) {
       ret = node;
     } else if (value < node->data_->first) {
@@ -318,7 +318,7 @@ RBT<Key, T> *Tree<Key, T>::MaxNodeForTesting(RBT<Key, T> *node) {
   RBT<Key, T> *ret = nullptr;
   if (node != fake_) {
     ret = node;
-    if (node->right_) {
+    if (node->right_ != fake_) {
       ret = MaxNodeForTesting(node->right_);
     }
   }
