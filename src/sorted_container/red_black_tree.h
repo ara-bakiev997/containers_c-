@@ -21,84 +21,71 @@ enum DirectionOfRotation { LEFT, RIGHT };
 template <typename Key, typename T>
 struct RBT {
   RBT() = default;
-  RBT(const Key &key,  T value) {
+  RBT(const Key &key, T value) {
     data_ = new std::pair<const Key, T>(key, value);
   }
-  ~RBT() {
-    delete data_;
-  }
+  ~RBT() { delete data_; }
   RBT<Key, T> *parent_{};
   RBT<Key, T> *left_{};
   RBT<Key, T> *right_{};
   enum RBT_colors color_ = RED;
   std::pair<const Key, T> *data_{};
-
 };
 
 template <typename Key, typename T = int>
 class Tree {
  public:
-  void insert_node(const Key &key,  T value = 0) {
-	AddNodeByCondition(this->root_, key, value, this->root_);
+  void insert_node(const Key &key, T value = 0) {
+    AddNodeByCondition(this->root_, key, value, this->root_);
   }
 
   void erase_node(T value);
 
-  Tree() : root_(nullptr) {
-	fake_ = new RBT<Key, T>();
-	fake_->data_ = new std::pair<const Key, T>();
-	begin_ = fake_;
-	end_ = fake_;
-  }
+  Tree() : root_(nullptr) { InitFakeNode(); }
   ~Tree() {
-	ClearRBT();
-	delete fake_->data_;
+    clearUtil(root_);
+    root_ = nullptr;
+    //    delete fake_->data_;
+    //    delete fake_;
   };
 
-
-  //_____MODIFIERS_____
-
-
+  //_____MODIFIERS____
   void print2D();
   void RBTPrint(RBT<Key, T> *&node);
-  void ClearRBT();
   void clearUtil(RBT<Key, T> *node);
   void TreePrint() { RBTPrint(this->root_); };
 
-
   class ConstIterator {
    public:
-	friend Tree; // need for access node in tree
-	ConstIterator() : node_(nullptr) {}
-	explicit ConstIterator(RBT<Key, T> *pt) : node_(pt) {}
-	ConstIterator(const ConstIterator &other) : node_(other.node_) {}
-	std::pair<const Key, T> & operator*() const { return *this->node_->data_; }
-	bool operator!=(const ConstIterator &other) const {
-	  return node_ != other.node_;
-	}
-	bool operator==(const ConstIterator &other) const {
-	  return node_ == other.node_;
-	}
+    friend Tree;  // need for access node in tree
+    ConstIterator() : node_(nullptr) {}
+    explicit ConstIterator(RBT<Key, T> *pt) : node_(pt) {}
+    ConstIterator(const ConstIterator &other) : node_(other.node_) {}
+    std::pair<const Key, T> &operator*() const { return *this->node_->data_; }
+    bool operator!=(const ConstIterator &other) const {
+      return node_ != other.node_;
+    }
+    bool operator==(const ConstIterator &other) const {
+      return node_ == other.node_;
+    }
 
    protected:
-	RBT<Key, T> *node_{};
-
+    RBT<Key, T> *node_{};
   };
 
   class Iterator : public ConstIterator {
    public:
-	friend Tree; // need for access node in tree
-	Iterator() { this->node_ = nullptr; }
-	explicit Iterator(RBT<Key, T> *pt) { this->node_ = pt; }
-	Iterator(const Iterator &other) : ConstIterator(other) {}
-	Iterator &operator++();
-	Iterator operator++(int);
-	Iterator &operator--();
-	Iterator operator--(int);
-	std::pair<const Key, T> & operator*();
-	Iterator &operator=(const Iterator &other);
+    friend Tree;  // need for access node in tree
+    Iterator() { this->node_ = nullptr; }
+    explicit Iterator(RBT<Key, T> *pt) { this->node_ = pt; }
+    Iterator(const Iterator &other) : ConstIterator(other) {}
+    Iterator &operator++();
+    Iterator operator++(int);
+    Iterator &operator--();
+    Iterator operator--(int);
+    std::pair<const Key, T> &operator*();
+    Iterator &operator=(const Iterator &other);
   };
-
 
   using iterator = Iterator;
   using const_iterator = const ConstIterator;
@@ -107,21 +94,23 @@ class Tree {
   iterator end();
 
  protected:
-
   RBT<Key, T> *root_{};
+  RBT<Key, T> *fake_{};
   RBT<Key, T> *begin_{};
   RBT<Key, T> *end_{};
   int size;
 
-  RBT<Key, T> *fake_{};
  private:
   //_____SUPPORT_FOR_INSERT_____
-  void AddNodeByCondition(RBT<Key, T> *&node, const Key &key,  T value, RBT<Key, T> *&parent);
-  RBT<Key, T> *CreateNode(const Key &key,  T value);
+  void AddNodeByCondition(RBT<Key, T> *&node, const Key &key, T value,
+                          RBT<Key, T> *&parent);
+  void InitFakeNode();
+  RBT<Key, T> *CreateNode(const Key &key, T value);
 
   //_____SUPPORT_FOR_ERASE_____
   void DelNodeByCondition(RBT<Key, T> *node);
-  void DelNodeWithOneChild(RBT<Key, T> *del_node, RBT<Key, T> *child, RBT<Key, T> *parent);
+  void DelNodeWithOneChild(RBT<Key, T> *del_node, RBT<Key, T> *child,
+                           RBT<Key, T> *parent);
   void DelNodeWithoutChild(RBT<Key, T> *del_node, RBT<Key, T> *parent);
 
   //_____FIND_NODE_____
@@ -138,7 +127,7 @@ class Tree {
   RBT<Key, T> *GetFather(RBT<Key, T> *node);
   RBT<Key, T> *GetChildLeft(RBT<Key, T> *node);
   RBT<Key, T> *GetChildRight(RBT<Key, T> *node);
-  RBT<Key, T> *GetRedChild(RBT<Key, T>* node);
+  RBT<Key, T> *GetRedChild(RBT<Key, T> *node);
 
   //_____CHANGE_FUNC____
   void ChangeColorIfUncleRed(RBT<Key, T> *parent, RBT<Key, T> *bro_parent,
@@ -150,19 +139,17 @@ class Tree {
   //_____SUPPORT_FOR_PRINT_____
   void print2DUtil(RBT<Key, T> *root, int space);
 };
-template<typename Key, typename T>
+template <typename Key, typename T>
 typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
-
   if (!this->node_->right_) {
-	this->node_ = this->node_->parent_;
+    this->node_ = this->node_->parent_;
   }
-
 
   return *this;
 }
-template<typename Key, typename T>
+template <typename Key, typename T>
 std::pair<const Key, T> &Tree<Key, T>::Iterator::operator*() {
-	return *this->node_->data_;
+  return *this->node_->data_;
 }
 
 //_____MODIFIERS_____
@@ -176,22 +163,22 @@ void Tree<Key, T>::erase_node(T value) {
 
 //_____SUPPORT_FOR_INSERT_____
 template <typename Key, typename T>
-void Tree<Key, T>::AddNodeByCondition(RBT<Key, T> *&node, const Key &key,  T value,
-                                 RBT<Key, T> *&parent) {
-  if (node == nullptr) {
+void Tree<Key, T>::AddNodeByCondition(RBT<Key, T> *&node, const Key &key,
+                                      T value, RBT<Key, T> *&parent) {
+  if (node == fake_ || root_ == nullptr) {
     node = CreateNode(key, value);
     if (node != parent) {
       node->parent_ = parent;
     } else {
       node->color_ = BLACK;
-//	  begin_ = node;
+      //	  begin_ = node;
     }
     if (parent && parent->color_ == RED) {
       BalanceInsert(node, parent);
     }
-//	if (node->data_->first < begin_->data_->first) {
-//	  begin_ = node;
-//	}
+    //	if (node->data_->first < begin_->data_->first) {
+    //	  begin_ = node;
+    //	}
   } else if (key < node->data_->first) {
     AddNodeByCondition(node->left_, key, value, node);
   } else if (node->data_->first < key) {
@@ -200,26 +187,35 @@ void Tree<Key, T>::AddNodeByCondition(RBT<Key, T> *&node, const Key &key,  T val
 }
 
 template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::CreateNode(const Key &key,  T value) {
+void Tree<Key, T>::InitFakeNode() {
+  fake_ = new RBT<Key, T>();
+  fake_->data_ = new std::pair<const Key, T>();
+  begin_ = fake_;
+  end_ = fake_;
+}
+
+template <typename Key, typename T>
+RBT<Key, T> *Tree<Key, T>::CreateNode(const Key &key, T value) {
   auto temp = new RBT<Key, T>(key, value);
-  temp->left_ = temp->right_ = temp->parent_ = nullptr;
+  temp->parent_ = nullptr;
+  temp->left_ = temp->right_ = fake_;
   return temp;
 }
 
 //_____SUPPORT_FOR_ERASE_____
 template <typename Key, typename T>
 void Tree<Key, T>::DelNodeByCondition(RBT<Key, T> *node) {
-  if (node->left_ && node->right_) {
-//    RBT<Key, T> *change = MinNode(node->right_);  // node->right_ ранее
+  if (node->left_ != fake_ && node->right_ != fake_) {
+    //    RBT<Key, T> *change = MinNode(node->right_);  // node->right_ ранее
 
     RBT<Key, T> *change = MaxNodeForTesting(node->left_);  // node->right_ ранее
     std::swap(change->data_, node->data_);
     DelNodeByCondition(change);
-  } else if (node->left_) {  // есть один левый ребенок
+  } else if (node->left_ != fake_) {  // есть один левый ребенок
     //    if (node->color_ == BLACK) {
     DelNodeWithOneChild(node, node->left_, node->parent_);
     //    }
-  } else if (node->right_) {  // есть один правый ребенок
+  } else if (node->right_ != fake_) {  // есть один правый ребенок
     //    if (node->color_ == BLACK) {
     DelNodeWithOneChild(node, node->right_, node->parent_);
     //    }
@@ -238,8 +234,9 @@ void Tree<Key, T>::DelNodeByCondition(RBT<Key, T> *node) {
 }
 
 template <typename Key, typename T>
-void Tree<Key, T>::DelNodeWithOneChild(RBT<Key, T> *del_node, RBT<Key, T> *child,
-                                  RBT<Key, T> *parent) {
+void Tree<Key, T>::DelNodeWithOneChild(RBT<Key, T> *del_node,
+                                       RBT<Key, T> *child,
+                                       RBT<Key, T> *parent) {
   if (del_node != root_) {
     if (parent->left_ == del_node) {
       parent->left_ = child;
@@ -255,12 +252,13 @@ void Tree<Key, T>::DelNodeWithOneChild(RBT<Key, T> *del_node, RBT<Key, T> *child
 }
 
 template <typename Key, typename T>
-void Tree<Key, T>::DelNodeWithoutChild(RBT<Key, T> *del_node, RBT<Key, T> *parent) {
+void Tree<Key, T>::DelNodeWithoutChild(RBT<Key, T> *del_node,
+                                       RBT<Key, T> *parent) {
   if (del_node != root_) {
     if (parent->left_ == del_node) {
-      parent->left_ = nullptr;
+      parent->left_ = fake_;
     } else {
-      parent->right_ = nullptr;
+      parent->right_ = fake_;
     }
   } else {
     root_ = nullptr;
@@ -287,7 +285,7 @@ RBT<Key, T> *Tree<Key, T>::FindNode(RBT<Key, T> *node, T &value) {
 template <typename Key, typename T>
 RBT<Key, T> *Tree<Key, T>::MinNode(RBT<Key, T> *node) {
   RBT<Key, T> *ret = nullptr;
-  if (node != nullptr) {
+  if (node != fake_) {
     ret = node;
     if (node->left_) {
       ret = MinNode(node->left_);
@@ -299,7 +297,7 @@ RBT<Key, T> *Tree<Key, T>::MinNode(RBT<Key, T> *node) {
 template <typename Key, typename T>
 RBT<Key, T> *Tree<Key, T>::MaxNodeForTesting(RBT<Key, T> *node) {
   RBT<Key, T> *ret = nullptr;
-  if (node != nullptr) {
+  if (node != fake_) {
     ret = node;
     if (node->right_) {
       ret = MaxNodeForTesting(node->right_);
@@ -313,7 +311,7 @@ template <typename Key, typename T>
 void Tree<Key, T>::BalanceInsert(RBT<Key, T> *node, RBT<Key, T> *parent) {
   RBT<Key, T> *bro_parent = GetBro(parent);
   if (parent->color_ == RED) {  // в рекурсии нужна проверка
-    if (bro_parent && bro_parent->color_ == RED) {  // что бы не было сеги
+    if (bro_parent != fake_ && bro_parent->color_ == RED) {
       ChangeColorIfUncleRed(parent, bro_parent, GetFather(parent));
       if (GetFather(parent) != root_) {
         BalanceInsert(GetFather(parent),
@@ -321,7 +319,8 @@ void Tree<Key, T>::BalanceInsert(RBT<Key, T> *node, RBT<Key, T> *parent) {
       }
     } else {
       if (parent != root_) {
-        if (GetFather(parent)->left_ == parent) {  // мы слева от деда
+        if (GetFather(parent) &&
+            GetFather(parent)->left_ == parent) {  // мы слева от деда
           if (parent->right_ == node) {  // мы справа от отца
             SmallRotate(node, LEFT);
             BigRotate(parent, RIGHT);  // т.к они поменялись местами
@@ -349,11 +348,11 @@ void Tree<Key, T>::BalanceInsert(RBT<Key, T> *node, RBT<Key, T> *parent) {
 // Визуализация: https://www.cs.usfca.edu/~galles/visualization/RedBlack.html
 template <typename Key, typename T>
 void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
-  if (parent->color_ == RED) { // 2.1. Отец удаленной ноды красный
+  if (parent->color_ == RED) {  // 2.1. Отец удаленной ноды красный
     RBT<Key, T> *grandsonRed = GetRedChild(child);
-    if (grandsonRed) { // 2.1.1  // Брат удаленной ноды красный
-      if (parent->left_ == child) { // мы слева от деда
-        if (child->right_ == grandsonRed) { // мы справа от отца
+    if (grandsonRed) {  // 2.1.1  // Брат удаленной ноды красный
+      if (parent->left_ == child) {          // мы слева от деда
+        if (child->right_ == grandsonRed) {  // мы справа от отца
           SmallRotate(grandsonRed, LEFT);
           BigRotate(child, RIGHT);
           parent->color_ = BLACK;
@@ -364,8 +363,8 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
           child->color_ = RED;
           grandsonRed->color_ = BLACK;
         }
-      } else { // мы справа от деда
-        if (child->left_ == grandsonRed) { // мы слева от отца
+      } else {                              // мы справа от деда
+        if (child->left_ == grandsonRed) {  // мы слева от отца
           SmallRotate(grandsonRed, RIGHT);
           BigRotate(child, LEFT);
           parent->color_ = BLACK;
@@ -377,52 +376,58 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
           grandsonRed->color_ = BLACK;
         }
       }
-    } else { // 2.1.2  // Брат удаленной ноды не красный
+    } else {  // 2.1.2  // Брат удаленной ноды не красный
       std::swap(parent->color_, child->color_);
     }
-  } else { // 2.2. Отец удаленной ноды черный
-    if (child->color_ == RED) { // 2.2.1. Брат удаленной ноды красный
-      RBT<Key, T> *grandsonLeft = GetChildLeft(child); // внуки
+  } else {  // 2.2. Отец удаленной ноды черный
+    if (child->color_ == RED) {  // 2.2.1. Брат удаленной ноды красный
+      RBT<Key, T> *grandsonLeft = GetChildLeft(child);  // внуки
       RBT<Key, T> *grandsonRight = GetChildRight(child);
 
-      if (grandsonLeft && grandsonLeft->color_ == BLACK) { // внук черный // добавить проверку на красного правнука
-        RBT<Key, T> *great_grandsonRed = GetRedChild(grandsonLeft); // правнуки
-        if (great_grandsonRed) { // 2.2.1.1. есть красный правнук
-          if (parent->right_ == child) { // мы справа от отца
-//            SmallRotateRight(grandsonLeft); // как будто не нужно /// надеюсь тесты не заходят
+      if (grandsonLeft &&
+          grandsonLeft->color_ ==
+              BLACK) {  // внук черный // добавить проверку на красного правнука
+        RBT<Key, T> *great_grandsonRed = GetRedChild(grandsonLeft);  // правнуки
+        if (great_grandsonRed) {  // 2.2.1.1. есть красный правнук
+          if (parent->right_ == child) {  // мы справа от отца
+            //            SmallRotateRight(grandsonLeft); // как будто не нужно
+            //            /// надеюсь тесты не заходят
             BigRotate(grandsonLeft, LEFT);
-//            great_grandsonRed->color_ = BLACK;
+            //            great_grandsonRed->color_ = BLACK;
             child->color_ = BLACK;
             parent->color_ = RED;
             BalanceErase(parent, parent->right_);
-          } else { // мб излишне
+          } else {  // мб излишне
             BigRotate(grandsonLeft, RIGHT);
             child->color_ = BLACK;
             grandsonLeft->color_ = RED;
             great_grandsonRed->color_ = BLACK;
-//            child->color_ = BLACK;///// ДОБАВИТЬ скорее всего
-//            parent->color_ = RED; //grandsonRight->color_ = RED;
-//            BalanceErase(parent, parent->left_); ///// ДОБАВИТЬ
+            //            child->color_ = BLACK;///// ДОБАВИТЬ скорее всего
+            //            parent->color_ = RED; //grandsonRight->color_ = RED;
+            //            BalanceErase(parent, parent->left_); ///// ДОБАВИТЬ
           }
-        } else { // 2.2.1.2 когда нет красного правнука
+        } else {  // 2.2.1.2 когда нет красного правнука
           if (parent->left_ == child) {
-            BigRotate(grandsonLeft, RIGHT); // внимание
+            BigRotate(grandsonLeft, RIGHT);  // внимание
             child->color_ = BLACK;
-//            grandsonLeft->color_ = RED;
-            parent->color_ = RED; //grandsonRight->color_ = RED;
+            //            grandsonLeft->color_ = RED;
+            parent->color_ = RED;  // grandsonRight->color_ = RED;
             BalanceErase(parent, parent->left_);
           } else {
             BigRotate(grandsonLeft, LEFT);
             child->color_ = BLACK;
             parent->color_ = RED;
             BalanceErase(parent, parent->right_);
-//            grandsonLeft->color_ = RED;
+            //            grandsonLeft->color_ = RED;
           }
         }
-      } else if (grandsonRight && grandsonRight->color_ == BLACK) {  // внук черный  // скорее всего не нужно когда мы работаем с max в левом поддереве
+      } else if (grandsonRight &&
+                 grandsonRight->color_ ==
+                     BLACK) {  // внук черный  // скорее всего не нужно когда мы
+                               // работаем с max в левом поддереве
         RBT<Key, T> *great_grandsonRed = GetRedChild(grandsonRight);
-        if (great_grandsonRed) { // 2.2.1.1. есть красный правнук
-          if (parent->left_ == child) { // мы слева от отца
+        if (great_grandsonRed) {  // 2.2.1.1. есть красный правнук
+          if (parent->left_ == child) {  // мы слева от отца
             SmallRotate(grandsonRight, LEFT);
             BigRotate(child, RIGHT);
             great_grandsonRed->color_ = BLACK;
@@ -432,9 +437,9 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
             grandsonRight->color_ = RED;
             great_grandsonRed->color_ = BLACK;
           }
-        } else { // 2.2.1.2 когда нет красного правнука
+        } else {  // 2.2.1.2 когда нет красного правнука
           if (parent->left_ == child) {
-            BigRotate(grandsonRight, RIGHT); // внимание
+            BigRotate(grandsonRight, RIGHT);  // внимание
             child->color_ = BLACK;
             grandsonRight->color_ = RED;
           } else {
@@ -444,11 +449,11 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
           }
         }
       }
-    } else { // 2.2.2. Брат удаленной ноды черный
+    } else {  // 2.2.2. Брат удаленной ноды черный
       RBT<Key, T> *grandsonRed = GetRedChild(child);
-      if (grandsonRed) { // 2.2.2.1 у брата удаленной ноды есть красные дети
-        if (parent->left_ == child) { // мы слева от деда
-          if (child->right_ == grandsonRed) { // мы справа от отца
+      if (grandsonRed) {  // 2.2.2.1 у брата удаленной ноды есть красные дети
+        if (parent->left_ == child) {          // мы слева от деда
+          if (child->right_ == grandsonRed) {  // мы справа от отца
             SmallRotate(grandsonRed, LEFT);
             BigRotate(child, RIGHT);
             grandsonRed->color_ = BLACK;
@@ -456,8 +461,8 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
             BigRotate(grandsonRed, RIGHT);
             grandsonRed->color_ = BLACK;
           }
-        } else { // мы справа от деда
-          if (child->left_ == grandsonRed) { // мы слева от отца
+        } else {                              // мы справа от деда
+          if (child->left_ == grandsonRed) {  // мы слева от отца
             SmallRotate(grandsonRed, RIGHT);
             BigRotate(child, LEFT);
             grandsonRed->color_ = BLACK;
@@ -469,7 +474,7 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
       } else {  // 2.2.2.2 у брата удаленной ноды нет красныех детей
         child->color_ = RED;
         // рекурсивно вверх
-        if (parent != root_) { // рекурсивно к деду
+        if (parent != root_) {  // рекурсивно к деду
           RBT<Key, T> *grandfather = GetFather(parent);
           RBT<Key, T> *brother_of_parent = GetBro(parent);
           if (grandfather && brother_of_parent) {
@@ -512,36 +517,37 @@ RBT<Key, T> *Tree<Key, T>::GetChildRight(RBT<Key, T> *node) {
 }
 
 template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::GetRedChild(RBT<Key, T> *node) { // нужно упростить может быть не нужна проверка с дедушкой
+RBT<Key, T> *Tree<Key, T>::GetRedChild(
+    RBT<Key, T> *node) {  //м.б. не нужна пров с дед
   RBT<Key, T> *patent = node->parent_;
   RBT<Key, T> *grandFather = node->parent_->parent_;
   RBT<Key, T> *ret = nullptr;
 
-  if (grandFather && grandFather->left_ == patent) { // мы слева от дедушки
-    if (patent->left_ == node) { // мы слева от отца
-      if (node->left_ && node->left_->color_ == RED) {
+  if (grandFather && grandFather->left_ == patent) {  // мы слева от дедушки
+    if (patent->left_ == node) {  // мы слева от отца
+      if (node->left_ != fake_ && node->left_->color_ == RED) {
         ret = node->left_;
-      } else if (node->right_ && node->right_->color_ == RED) {
+      } else if (node->right_ != fake_ && node->right_->color_ == RED) {
         ret = node->right_;
       }
-    } else { // мы справа от отца
-      if (node->right_ && node->right_->color_ == RED) {
+    } else {  // мы справа от отца
+      if (node->right_ != fake_ && node->right_->color_ == RED) {
         ret = node->right_;
-      } else if (node->left_ && node->left_->color_ == RED) {
+      } else if (node->left_ != fake_ && node->left_->color_ == RED) {
         ret = node->left_;
       }
     }
-  } else { // мы справа от дедушки
-    if (patent->right_ == node) { // мы справа от отца
-      if (node->right_ && node->right_->color_ == RED) {
+  } else {                         // мы справа от дедушки
+    if (patent->right_ == node) {  // мы справа от отца
+      if (node->right_ != fake_ && node->right_->color_ == RED) {
         ret = node->right_;
-      } else if (node->left_ && node->left_->color_ == RED) {
+      } else if (node->left_ != fake_ && node->left_->color_ == RED) {
         ret = node->left_;
       }
-    } else { // мы слева от отца
-      if (node->left_ && node->left_->color_ == RED) {
+    } else {  // мы слева от отца
+      if (node->left_ != fake_ && node->left_->color_ == RED) {
         ret = node->left_;
-      } else if (node->right_ && node->right_->color_ == RED) {
+      } else if (node->right_ != fake_ && node->right_->color_ == RED) {
         ret = node->right_;
       }
     }
@@ -550,8 +556,9 @@ RBT<Key, T> *Tree<Key, T>::GetRedChild(RBT<Key, T> *node) { // нужно упр
 }
 
 template <typename Key, typename T>
-void Tree<Key, T>::ChangeColorIfUncleRed(RBT<Key, T> *parent, RBT<Key, T> *bro_parent,
-                                    RBT<Key, T> *grand_parent) {
+void Tree<Key, T>::ChangeColorIfUncleRed(RBT<Key, T> *parent,
+                                         RBT<Key, T> *bro_parent,
+                                         RBT<Key, T> *grand_parent) {
   parent->color_ = bro_parent->color_ = BLACK;
   if (grand_parent != this->root_) {
     grand_parent->color_ = RED;
@@ -559,14 +566,16 @@ void Tree<Key, T>::ChangeColorIfUncleRed(RBT<Key, T> *parent, RBT<Key, T> *bro_p
 }
 
 template <typename Key, typename T>
-void Tree<Key, T>::ChangeColorAfterBigRotate(RBT<Key, T> *parent, RBT<Key, T> *grandfather) {
+void Tree<Key, T>::ChangeColorAfterBigRotate(RBT<Key, T> *parent,
+                                             RBT<Key, T> *grandfather) {
   if (parent) parent->color_ = BLACK;
   if (grandfather) grandfather->color_ = RED;
 }
 
 //_____CHANGE_FUNC____
 template <typename Key, typename T>
-void Tree<Key, T>::SmallRotate(RBT<Key, T> *node, DirectionOfRotation direction) {
+void Tree<Key, T>::SmallRotate(RBT<Key, T> *node,
+                               DirectionOfRotation direction) {
   RBT<Key, T> *temp = (direction == RIGHT) ? node->right_ : node->left_;
   RBT<Key, T> *parent = node->parent_;
   if (direction == RIGHT) {
@@ -625,7 +634,7 @@ void Tree<Key, T>::BigRotate(RBT<Key, T> *node, DirectionOfRotation direction) {
 template <typename Key, typename T>
 void Tree<Key, T>::print2DUtil(RBT<Key, T> *root, int space) {
   // Base case
-  if (root == nullptr) return;
+  if (root == nullptr || root == fake_) return;
 
   // Increase distance between levels
   space += 5;
@@ -639,18 +648,22 @@ void Tree<Key, T>::print2DUtil(RBT<Key, T> *root, int space) {
   for (int i = 5; i < space; i++) std::cout << " ";
   if (root->parent_ == nullptr) std::cout << "#";
   if (root->color_ == BLACK) {
-    std::cout << root->data_->first << "_B" << " " << "\n";
+    std::cout << root->data_->first << "_B"
+              << " "
+              << "\n";
   } else {
-    std::cout << root->data_->first << "_R" << " " << "\n";
+    std::cout << root->data_->first << "_R"
+              << " "
+              << "\n";
   }
 
-//  if (root->color_ == BLACK) {
-//	std::cout << root->data_->first << "_B" << " " << root->data_->second
-//			  << "\n";
-//  } else {
-//	std::cout << root->data_->first << "_R" << " " << root->data_->second
-//			  << "\n";
-//  }
+  //  if (root->color_ == BLACK) {
+  //	std::cout << root->data_->first << "_B" << " " << root->data_->second
+  //			  << "\n";
+  //  } else {
+  //	std::cout << root->data_->first << "_R" << " " << root->data_->second
+  //			  << "\n";
+  //  }
 
   // Process left child
   print2DUtil(root->left_, space);
@@ -670,24 +683,22 @@ void Tree<Key, T>::RBTPrint(RBT<Key, T> *&node) {
   std::cout << node->data_->first << std::endl;
   RBTPrint(node->right_);
 }
-template <typename Key, typename T>
-void Tree<Key, T>::ClearRBT() {
-  clearUtil(root_);
-  root_ = nullptr;
-}
+
 template <typename Key, typename T>
 void Tree<Key, T>::clearUtil(RBT<Key, T> *node) {
-  if (node == nullptr) return;
+  if (node == nullptr || node == fake_) return;
   clearUtil(node->left_);
   auto tmp = node->right_;
   delete node;
   clearUtil(tmp);
 }
-template<typename Key, typename T>
-typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
 
-  if (!root_) return s21::Tree<Key, T>::iterator(fake_);
-  else return s21::Tree<Key, T>::iterator(MinNode(root_));
+template <typename Key, typename T>
+typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
+  if (!root_)
+    return s21::Tree<Key, T>::iterator(fake_);
+  else
+    return s21::Tree<Key, T>::iterator(MinNode(root_));
 }
 
 }  // namespace s21

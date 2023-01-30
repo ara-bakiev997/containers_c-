@@ -32,33 +32,33 @@ TEST_F(Tree_test, Insert) {
   tree_null_.insert_node(5);
   tree_null_.insert_node(8);
 // збс проходит, так же как и в визуализации
-//  tree_null_.erase_node(2); // 2.1.2
-//  tree_null_.erase_node(4);
-//  tree_null_.erase_node(0);
-//  tree_null_.erase_node(1);
-//  tree_null_.erase_node(8);
-//  tree_null_.erase_node(6);
-//  tree_null_.erase_node(5);
-//  tree_null_.erase_node(3);
+  tree_null_.erase_node(2); // 2.1.2
+  tree_null_.erase_node(4);
+  tree_null_.erase_node(0);
+  tree_null_.erase_node(1);
+  tree_null_.erase_node(8);
+  tree_null_.erase_node(6);
+  tree_null_.erase_node(5);
+  tree_null_.erase_node(3);
 
   tree_null_.print2D();
 }
-//// test 2
-//TEST_F(Tree_test, rotate) {
-//  tree_null_.insert_node(10);
-//  tree_null_.insert_node(20);
-//  tree_null_.insert_node(5);
-//  tree_null_.insert_node(7);
-//  tree_null_.insert_node(6);
-//  tree_null_.insert_node(15);
-//  tree_null_.insert_node(16);
-//  tree_null_.insert_node(18);
-//  tree_null_.insert_node(17);
-//  tree_null_.insert_node(30);
-//  tree_null_.insert_node(35);
-//  tree_null_.insert_node(32);
-//  tree_null_.insert_node(33);
-//  tree_null_.insert_node(45);
+// test 2
+TEST_F(Tree_test, rotate) {
+  tree_null_.insert_node(10);
+  tree_null_.insert_node(20);
+  tree_null_.insert_node(5);
+  tree_null_.insert_node(7);
+  tree_null_.insert_node(6);
+  tree_null_.insert_node(15);
+  tree_null_.insert_node(16);
+  tree_null_.insert_node(18);
+  tree_null_.insert_node(17);
+  tree_null_.insert_node(30);
+  tree_null_.insert_node(35);
+  tree_null_.insert_node(32);
+  tree_null_.insert_node(33);
+  tree_null_.insert_node(45);
 //  tree_null_.insert_node(50);
 //  tree_null_.insert_node(55);
 //  tree_null_.insert_node(53);
@@ -66,8 +66,8 @@ TEST_F(Tree_test, Insert) {
 //  tree_null_.insert_node(65);
 //  tree_null_.insert_node(70);
 //  tree_null_.insert_node(75);
-//
-//  // збс проходит, так же как и в визуализации
+
+  // збс проходит, так же как и в визуализации
 //  tree_null_.erase_node(50);
 //  tree_null_.erase_node(60);
 //  tree_null_.erase_node(32);
@@ -89,9 +89,9 @@ TEST_F(Tree_test, Insert) {
 //  tree_null_.erase_node(45);
 //  tree_null_.erase_node(30);
 //  tree_null_.erase_node(16);
-//
-//  tree_null_.print2D();
-//}
+
+  tree_null_.print2D();
+}
 //// test 3
 //TEST_F(Tree_test, Sasha_tests) {
 //  tree_null_.insert_node(50);
