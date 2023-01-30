@@ -20,6 +20,7 @@ enum DirectionOfRotation { LEFT, RIGHT };
 
 template <typename Key, typename T>
 struct RBT {
+  RBT() = default;
   RBT(const Key &key,  T value) {
     data_ = new std::pair<const Key, T>(key, value);
   }
@@ -43,9 +44,15 @@ class Tree {
 
   void erase_node(T value);
 
-  Tree() : root_(nullptr) {}
+  Tree() : root_(nullptr) {
+	fake_ = new RBT<Key, T>();
+	fake_->data_ = new std::pair<const Key, T>();
+	begin_ = fake_;
+	end_ = fake_;
+  }
   ~Tree() {
 	ClearRBT();
+	delete fake_->data_;
   };
 
 
@@ -61,7 +68,7 @@ class Tree {
 
   class ConstIterator {
    public:
-	friend Tree; // need for access node in list
+	friend Tree; // need for access node in tree
 	ConstIterator() : node_(nullptr) {}
 	explicit ConstIterator(RBT<Key, T> *pt) : node_(pt) {}
 	ConstIterator(const ConstIterator &other) : node_(other.node_) {}
@@ -80,6 +87,7 @@ class Tree {
 
   class Iterator : public ConstIterator {
    public:
+	friend Tree; // need for access node in tree
 	Iterator() { this->node_ = nullptr; }
 	explicit Iterator(RBT<Key, T> *pt) { this->node_ = pt; }
 	Iterator(const Iterator &other) : ConstIterator(other) {}
@@ -87,17 +95,16 @@ class Tree {
 	Iterator operator++(int);
 	Iterator &operator--();
 	Iterator operator--(int);
-	std::pair<const Key, T> & operator*() { return *this->node_->data_; }
+	std::pair<const Key, T> & operator*();
 	Iterator &operator=(const Iterator &other);
   };
+
 
   using iterator = Iterator;
   using const_iterator = const ConstIterator;
 
   iterator begin();
   iterator end();
-
-
 
  protected:
 
@@ -106,6 +113,7 @@ class Tree {
   RBT<Key, T> *end_{};
   int size;
 
+  RBT<Key, T> *fake_{};
  private:
   //_____SUPPORT_FOR_INSERT_____
   void AddNodeByCondition(RBT<Key, T> *&node, const Key &key,  T value, RBT<Key, T> *&parent);
@@ -150,11 +158,11 @@ typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
   }
 
 
-
-
-
-
   return *this;
+}
+template<typename Key, typename T>
+std::pair<const Key, T> &Tree<Key, T>::Iterator::operator*() {
+	return *this->node_->data_;
 }
 
 //_____MODIFIERS_____
@@ -677,8 +685,9 @@ void Tree<Key, T>::clearUtil(RBT<Key, T> *node) {
 }
 template<typename Key, typename T>
 typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
-  begin_ = MinNode(root_);
-  return s21::Tree<Key, T>::iterator(begin_);
+
+  if (!root_) return s21::Tree<Key, T>::iterator(fake_);
+  else return s21::Tree<Key, T>::iterator(MinNode(root_));
 }
 
 }  // namespace s21
