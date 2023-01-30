@@ -92,7 +92,7 @@ class Tree {
 	explicit Iterator(RBT<Key, T> *pt) { this->node_ = pt; }
 	Iterator(const Iterator &other) : ConstIterator(other) {}
 	Iterator &operator++();
-	Iterator operator++(int);
+	const Iterator operator++(int);
 	Iterator &operator--();
 	Iterator operator--(int);
 	std::pair<const Key, T> & operator*();
@@ -160,10 +160,18 @@ typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
 
   return *this;
 }
+
+template<typename Key, typename T>
+typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator--() {
+  return s21::Tree<Key, T>::iterator(this->node_->parent_);
+}
+
+
 template<typename Key, typename T>
 std::pair<const Key, T> &Tree<Key, T>::Iterator::operator*() {
 	return *this->node_->data_;
 }
+
 
 //_____MODIFIERS_____
 template <typename Key, typename T>
@@ -685,9 +693,18 @@ void Tree<Key, T>::clearUtil(RBT<Key, T> *node) {
 }
 template<typename Key, typename T>
 typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
-
+  fake_->parent_ = nullptr;
   if (!root_) return s21::Tree<Key, T>::iterator(fake_);
-  else return s21::Tree<Key, T>::iterator(MinNode(root_));
+  else {
+	return s21::Tree<Key, T>::iterator(MinNode(root_));
+  }
+
+}
+template<typename Key, typename T>
+typename Tree<Key, T>::iterator Tree<Key, T>::end() {
+  fake_->parent_ = nullptr;
+  if (!root_) fake_->parent_ = MaxNodeForTesting(root_);
+  return s21::Tree<Key, T>::iterator(fake_);
 }
 
 }  // namespace s21
