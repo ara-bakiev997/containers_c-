@@ -94,7 +94,7 @@ class Tree {
 	Iterator &operator++();
 	const Iterator operator++(int);
 	Iterator &operator--();
-	Iterator operator--(int);
+	const Iterator operator--(int);
 	std::pair<const Key, T> & operator*();
 	Iterator &operator=(const Iterator &other);
   };
@@ -162,8 +162,20 @@ typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
 }
 
 template<typename Key, typename T>
+const typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator++(int) {
+  return Tree::Iterator();
+}
+
+
+
+template<typename Key, typename T>
 typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator--() {
-  return s21::Tree<Key, T>::iterator(this->node_->parent_);
+  return (s21::Tree<Key, T>::iterator(this->node_->parent_));
+}
+
+template<typename Key, typename T>
+const typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator--(int) {
+  return Tree::Iterator();
 }
 
 
