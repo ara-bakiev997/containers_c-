@@ -75,16 +75,16 @@ class Tree {
 
   class Iterator : public ConstIterator {
    public:
-    friend Tree;  // need for access node in tree
-    Iterator() { this->node_ = nullptr; }
-    explicit Iterator(RBT<Key, T> *pt) { this->node_ = pt; }
-    Iterator(const Iterator &other) : ConstIterator(other) {}
-    Iterator &operator++();
-    Iterator operator++(int);
-    Iterator &operator--();
-    Iterator operator--(int);
-    std::pair<const Key, T> &operator*();
-    Iterator &operator=(const Iterator &other);
+	friend Tree; // need for access node in tree
+	Iterator() { this->node_ = nullptr; }
+	explicit Iterator(RBT<Key, T> *pt) { this->node_ = pt; }
+	Iterator(const Iterator &other) : ConstIterator(other) {}
+	Iterator &operator++();
+	const Iterator operator++(int);
+	Iterator &operator--();
+	const Iterator operator--(int);
+	std::pair<const Key, T> & operator*();
+	Iterator &operator=(const Iterator &other);
   };
 
   using iterator = Iterator;
@@ -147,7 +147,26 @@ typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
 
   return *this;
 }
-template <typename Key, typename T>
+
+template<typename Key, typename T>
+const typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator++(int) {
+  return Tree::Iterator();
+}
+
+
+
+template<typename Key, typename T>
+typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator--() {
+  return (s21::Tree<Key, T>::iterator(this->node_->parent_));
+}
+
+template<typename Key, typename T>
+const typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator--(int) {
+  return Tree::Iterator();
+}
+
+
+template<typename Key, typename T>
 std::pair<const Key, T> &Tree<Key, T>::Iterator::operator*() {
   return *this->node_->data_;
 }
@@ -695,10 +714,18 @@ void Tree<Key, T>::clearUtil(RBT<Key, T> *node) {
 
 template <typename Key, typename T>
 typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
-  if (!root_)
-    return s21::Tree<Key, T>::iterator(fake_);
-  else
+  fake_->parent_ = nullptr;
+  if (!root_) return s21::Tree<Key, T>::iterator(fake_);
+  else {
     return s21::Tree<Key, T>::iterator(MinNode(root_));
+  }
+
+}
+template<typename Key, typename T>
+typename Tree<Key, T>::iterator Tree<Key, T>::end() {
+  fake_->parent_ = nullptr;
+  if (!root_) fake_->parent_ = MaxNodeForTesting(root_);
+  return s21::Tree<Key, T>::iterator(fake_);
 }
 
 }  // namespace s21
