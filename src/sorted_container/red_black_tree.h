@@ -65,7 +65,7 @@ class Tree {
 	ConstIterator() : node_(nullptr) {}
 	explicit ConstIterator(RBT<Key, T> *pt) : node_(pt) {}
 	ConstIterator(const ConstIterator &other) : node_(other.node_) {}
-	std::pair<const Key, T> * operator*() const { return *(this->node_->data_); }
+	std::pair<const Key, T> & operator*() const { return *this->node_->data_; }
 	bool operator!=(const ConstIterator &other) const {
 	  return node_ != other.node_;
 	}
@@ -87,7 +87,7 @@ class Tree {
 	Iterator operator++(int);
 	Iterator &operator--();
 	Iterator operator--(int);
-	std::pair<const Key, T> * operator*() { return  *(this->node_->data_); }
+	std::pair<const Key, T> & operator*() { return *this->node_->data_; }
 	Iterator &operator=(const Iterator &other);
   };
 
@@ -631,12 +631,18 @@ void Tree<Key, T>::print2DUtil(RBT<Key, T> *root, int space) {
   for (int i = 5; i < space; i++) std::cout << " ";
   if (root->parent_ == nullptr) std::cout << "#";
   if (root->color_ == BLACK) {
-    std::cout << root->data_->first << "_B" << " " << root->data_->second
-              << "\n";
+    std::cout << root->data_->first << "_B" << " " << "\n";
   } else {
-    std::cout << root->data_->first << "_R" << " " << root->data_->second
-              << "\n";
+    std::cout << root->data_->first << "_R" << " " << "\n";
   }
+
+//  if (root->color_ == BLACK) {
+//	std::cout << root->data_->first << "_B" << " " << root->data_->second
+//			  << "\n";
+//  } else {
+//	std::cout << root->data_->first << "_R" << " " << root->data_->second
+//			  << "\n";
+//  }
 
   // Process left child
   print2DUtil(root->left_, space);

@@ -11,7 +11,7 @@ class Tree_test : public ::testing::Test {
  protected:
   void SetUp() override {}
   std::set<int> set_empty;
-  Tree<const int, const int> tree_null_;
+  Tree<int,  int> tree_null_;
 };
 
 template<typename K, typename V>
@@ -342,7 +342,7 @@ TEST_F(Tree_test, Iterator) {
 //  tree_null_.erase_node(3);
 
 auto it = tree_null_.begin();
-std::cout << *it << std::endl;
+std::cout << (*it).first << std::endl;
 
   tree_null_.print2D();
 }
