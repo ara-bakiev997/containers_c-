@@ -373,36 +373,45 @@ TEST_F(Tree_test, testCoverage) {
 }
 
 TEST_F(Tree_test, Iterator) {
-  //  tree_null_.insert_node(0);
-  //  tree_null_.insert_node(2);
-  //  tree_null_.insert_node(1);
-  //  tree_null_.insert_node(3);
-  //  tree_null_.insert_node(4);
-  //  tree_null_.insert_node(6);
-  //  tree_null_.insert_node(5);
-  //  tree_null_.insert_node(8);
-  //  tree_null_.insert_node(-8);
-  //  // збс проходит, так же как и в визуализации
-  //  //  tree_null_.erase_node(2); // 2.1.2
-  //  //  tree_null_.erase_node(4);
-  //  //  tree_null_.erase_node(0);
-  //  //  tree_null_.erase_node(1);
-  //  //  tree_null_.erase_node(8);
-  //  //  tree_null_.erase_node(6);
-  //  //  tree_null_.erase_node(5);
-  //  //  tree_null_.erase_node(3);
-  //
-  //  auto it = tree_null_.begin();
-  //  std::cout << (*it).first << std::endl;
-  //
-  //  auto end = tree_null_.end();
-  //  std::cout << (*end).first << std::endl;
-  //
-  //  // auto itm = map_null.begin();
-  //  // std::cout << &(*itm) << std::endl;
-  //  //
-  //
-  //  tree_null_.print2D();
+    tree_null_.insert_node(0);
+    tree_null_.insert_node(2);
+    tree_null_.insert_node(1);
+    tree_null_.insert_node(3);
+    tree_null_.insert_node(4);
+    tree_null_.insert_node(6);
+    tree_null_.insert_node(5);
+    tree_null_.insert_node(8);
+    tree_null_.insert_node(-8);
+    // збс проходит, так же как и в визуализации
+      tree_null_.erase_node(2); // 2.1.2
+      tree_null_.erase_node(4);
+      tree_null_.erase_node(0);
+      tree_null_.erase_node(1);
+      tree_null_.erase_node(8);
+      tree_null_.erase_node(6);
+      tree_null_.erase_node(5);
+      tree_null_.erase_node(3);
+
+//    auto it = tree_null_.begin();
+//    std::cout << (*it).first << std::endl;
+
+    auto end = tree_null_.end();
+    std::cout << (*end).first << std::endl;
+    --end;
+    --end;
+    --end;
+
+    std::cout << (*end).first << std::endl;
+
+//    std::set test = {1, 3, 4};
+//    auto it = test.begin();
+//    --it;
+
+    // auto itm = map_null.begin();
+    // std::cout << &(*itm) << std::endl;
+    //
+
+    tree_null_.print2D();
 }
 //
 TEST_F(Tree_test, random) {
