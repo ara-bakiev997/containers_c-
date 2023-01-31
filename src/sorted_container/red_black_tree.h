@@ -35,12 +35,6 @@ struct RBT {
 template <typename Key, typename T = int>
 class Tree {
  public:
-  void insert_node(const Key &key, T value = 0) {
-    AddNodeByCondition(this->root_, key, value, this->root_);
-  }
-
-  void erase_node(T value);
-
   Tree() : root_(nullptr) { InitFakeNode(); }
   ~Tree() {
     clearUtil(root_);
@@ -48,6 +42,13 @@ class Tree {
     //    delete fake_->data_;
     //    delete fake_;
   };
+
+  void insert_node(const Key &key, T value = 0) {
+    AddNodeByCondition(this->root_, key, value, this->root_);
+  }
+  RBT<Key, T> *GetFake() const;
+
+  void erase_node(T value);
 
   //_____MODIFIERS____
   void print2D();
@@ -59,8 +60,8 @@ class Tree {
    public:
     friend Tree;  // need for access node in tree
     ConstIterator() : node_(nullptr) {}
-    explicit ConstIterator(RBT<Key, T> *pt) : node_(pt) {}
-    ConstIterator(const ConstIterator &other) : node_(other.node_) {}
+    ConstIterator(const ConstIterator &other)
+        : node_(other.node_), it_fake_(other.it_fake_) {}
     std::pair<const Key, T> &operator*() const { return *this->node_->data_; }
     bool operator!=(const ConstIterator &other) const {
       return node_ != other.node_;
@@ -71,13 +72,18 @@ class Tree {
 
    protected:
     RBT<Key, T> *node_{};
+    RBT<Key, T> *it_fake_{};
+
+   private:
+    explicit ConstIterator(RBT<Key, T> *pt, RBT<Key, T> *fake)
+        : node_(pt), it_fake_(fake) {}
   };
 
   class Iterator : public ConstIterator {
    public:
     friend Tree;  // need for access node in tree
+    friend RBT<Key, T> *Tree<Key, T>::GetFake() const;
     Iterator() { this->node_ = nullptr; }
-    explicit Iterator(RBT<Key, T> *pt) { this->node_ = pt; }
     Iterator(const Iterator &other) : ConstIterator(other) {}
     Iterator &operator++();
     Iterator operator++(int);
@@ -85,6 +91,22 @@ class Tree {
     Iterator operator--(int);
     std::pair<const Key, T> &operator*();
     Iterator &operator=(const Iterator &other);
+    RBT<Key, T> *MaxNodeForTesting(RBT<Key, T> *node) {
+      RBT<Key, T> *ret = nullptr;
+      if (node != this->it_fake_) {
+        ret = node;
+        if (node->right_ != this->it_fake_) {
+          ret = MaxNodeForTesting(node->right_);
+        }
+      }
+      return ret;
+    }
+
+   protected:
+    explicit Iterator(RBT<Key, T> *pt, RBT<Key, T> *fake) {
+      this->node_ = pt;
+      this->it_fake_ = fake;
+    }
   };
 
   using iterator = Iterator;
@@ -99,6 +121,8 @@ class Tree {
   RBT<Key, T> *begin_{};
   RBT<Key, T> *end_{};
   int size;
+  friend Iterator;
+  friend ConstIterator;
 
  private:
   //_____SUPPORT_FOR_INSERT_____
@@ -155,8 +179,23 @@ typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator++(int) {
 
 template <typename Key, typename T>
 typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator--() {
-  this->node_ = this->node_->parent_;
-  return *this;
+  //  if (this->node_ == this->it_fake_ || this->node_->left_ == this->it_fake_)
+  //  {
+  //    this->node_ = this->node_->parent_;
+  //  } else if (this->node_->left_ != this->it_fake_) {
+  //    this->node_ = MaxNodeForTesting(this->node_->left_);
+  //  } else
+//  if (this->node_->parent_ && this->node_->parent_->left_ != this->it_fake_ &&
+//      this->node_->parent_->left_ == this->node_) {
+//    this->node_ = this->node_->parent_;
+//    --(*this);
+//    return *this;
+//  } else if (this->node_ != this->it_fake_ && this->node_->right_ != this->it_fake_ && this->node_->left_ != this->it_fake_) {
+//    this->node_ = MaxNodeForTesting(this->node_->left_);
+//    return *this;
+//  }
+//  this->node_ = this->node_->parent_;
+//  return *this;
 }
 
 template <typename Key, typename T>
@@ -704,16 +743,22 @@ template <typename Key, typename T>
 typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
   fake_->parent_ = nullptr;
   if (root_)
-    return s21::Tree<Key, T>::iterator(MinNode(root_));
+    return s21::Tree<Key, T>::iterator(MinNode(root_, fake_));
   else {
-    return s21::Tree<Key, T>::iterator(fake_);
+    return s21::Tree<Key, T>::iterator(fake_, fake_);
   }
 }
+
 template <typename Key, typename T>
 typename Tree<Key, T>::iterator Tree<Key, T>::end() {
   fake_->parent_ = nullptr;
   if (root_) fake_->parent_ = MaxNodeForTesting(root_);
-  return s21::Tree<Key, T>::iterator(fake_);
+  return s21::Tree<Key, T>::iterator(fake_, fake_);
+}
+
+template <typename Key, typename T>
+RBT<Key, T> *Tree<Key, T>::GetFake() const {
+  return fake_;
 }
 
 }  // namespace s21

@@ -383,20 +383,22 @@ TEST_F(Tree_test, Iterator) {
     tree_null_.insert_node(8);
     tree_null_.insert_node(-8);
     // збс проходит, так же как и в визуализации
-      tree_null_.erase_node(2); // 2.1.2
-      tree_null_.erase_node(4);
-      tree_null_.erase_node(0);
-      tree_null_.erase_node(1);
-      tree_null_.erase_node(8);
-      tree_null_.erase_node(6);
-      tree_null_.erase_node(5);
-      tree_null_.erase_node(3);
+//      tree_null_.erase_node(2); // 2.1.2
+//      tree_null_.erase_node(4);
+//      tree_null_.erase_node(0);
+//      tree_null_.erase_node(1);
+//      tree_null_.erase_node(8);
+//      tree_null_.erase_node(6);
+//      tree_null_.erase_node(5);
+//      tree_null_.erase_node(3);
 
 //    auto it = tree_null_.begin();
 //    std::cout << (*it).first << std::endl;
 
     auto end = tree_null_.end();
     std::cout << (*end).first << std::endl;
+    --end;
+    --end;
     --end;
     --end;
     --end;
