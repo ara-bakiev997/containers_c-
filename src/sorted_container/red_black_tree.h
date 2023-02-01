@@ -18,6 +18,8 @@ enum RBT_colors { RED, BLACK };
 
 enum DirectionOfRotation { LEFT, RIGHT };
 
+enum IteratorType { PREF_PLUS, PREF_MINUS};
+
 template <typename Key, typename T>
 struct RBT {
   RBT() = default;
@@ -91,6 +93,10 @@ class Tree {
     Iterator operator--(int);
     std::pair<const Key, T> &operator*();
     Iterator &operator=(const Iterator &other);
+
+	RBT<Key, T> *PrefIter(RBT<Key, T> *node, IteratorType mode);
+	RBT<Key, T> *GetNodeChild(RBT<Key, T> *node, IteratorType mode);
+	RBT<Key, T> *GetNodeParentChild(RBT<Key, T> *node, IteratorType mode);
 
     RBT<Key, T> *MaxNode(RBT<Key, T> *node) {
       RBT<Key, T> *ret = nullptr;
@@ -178,23 +184,21 @@ class Tree {
 template <typename Key, typename T>
 typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
   
-//  if (this->node_ == this->it_fake_) {
+//  if (this->node_->right_ == this->it_fake_) {
+//    while (this->node_ == this->node_->parent_->right_) {
+//      this->node_ = this->node_->parent_;
+//    }
 //    this->node_ = this->node_->parent_;
 //    return *this;
 //  }
-  
-  if (this->node_->right_ == this->it_fake_) {
-    while (this->node_ == this->node_->parent_->right_) {
-      this->node_ = this->node_->parent_;
-    }
-    this->node_ = this->node_->parent_;
-    return *this;
-  }
+//
+//  if (this->node_->right_ != this->it_fake_) {
+//    this->node_ = MinNode(this->node_->right_);
+//    return *this;
+//  }
 
-  if (this->node_->right_ != this->it_fake_) {
-    this->node_ = MinNode(this->node_->right_);
-    return *this;
-  }
+  this->node_ =   PrefIter(this->node_, PREF_PLUS);
+  return *this;
 }
 
 template <typename Key, typename T>
@@ -205,24 +209,25 @@ typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator++(int) {
 template <typename Key, typename T>
 typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator--() {
 
-  if (this->node_ == this->it_fake_) {
-    this->node_ = this->node_->parent_;
-    return *this;
-  }
-
-  if (this->node_->left_ == this->it_fake_) {
-    while (this->node_ == this->node_->parent_->left_) {
-      this->node_ = this->node_->parent_;
-    }
-    this->node_ = this->node_->parent_;
-    return *this;
-  }
-
-  if (this->node_->left_ != this->it_fake_) {
-    this->node_ = MaxNode(this->node_->left_);
-    return *this;
-  }
-
+//  if (this->node_ == this->it_fake_) {
+//    this->node_ = this->node_->parent_;
+//    return *this;
+//  }
+//
+//  if (this->node_->left_ == this->it_fake_) {
+//    while (this->node_ == this->node_->parent_->left_) {
+//      this->node_ = this->node_->parent_;
+//    }
+//    this->node_ = this->node_->parent_;
+//    return *this;
+//  }
+//
+//  if (this->node_->left_ != this->it_fake_) {
+//    this->node_ = MaxNode(this->node_->left_);
+//    return *this;
+//  }
+  this->node_ =   PrefIter(this->node_, PREF_MINUS);
+  return *this;
 }
 
 template <typename Key, typename T>
@@ -234,6 +239,70 @@ template <typename Key, typename T>
 std::pair<const Key, T> &Tree<Key, T>::Iterator::operator*() {
   return *this->node_->data_;
 }
+
+template<typename Key, typename T>
+RBT<Key, T> *Tree<Key, T>::Iterator::PrefIter(RBT<Key, T> *node, IteratorType mode) {
+
+  if (mode == PREF_MINUS) {
+	if (node == this->it_fake_) {
+	  node = this->node_->parent_;
+	  return node;
+	}
+  }
+	// node->left or node->right == this->it_fake_
+  if (GetNodeChild(this->node_, mode) == this->it_fake_) {
+	// node == node->parent->left or node->parent->right
+	while (node == GetNodeParentChild(this->node_, mode)) {
+	  node = node->parent_;
+	}
+	node = node->parent_;
+	return node;
+  }
+
+  if (GetNodeChild(this->node_, mode) != this->it_fake_) {
+	node = MaxNode(GetNodeChild(this->node_, mode));
+	return node;
+  }
+}
+
+template<typename Key, typename T>
+RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeChild(RBT<Key, T> *node, IteratorType mode) {
+  if (mode == PREF_MINUS) {
+	return node->left_;
+  } else {
+	return node->right_;
+  }
+}
+
+template<typename Key, typename T>
+RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeParentChild(RBT<Key, T> *node, IteratorType mode) {
+  if (mode == PREF_MINUS) {
+	return node->parent_->left_;
+  } else {
+	return node->parent_->right_;
+  }
+}
+
+//template<typename Key, typename T>
+//typename Tree<Key, T>::Iterator *Tree<Key, T>::Iterator::PrefIter(RBT<Key, T> *node, DirectionOfRotation mode) {
+//  if (node == this->it_fake_) {
+//	node = this->node_->parent_;
+//	return *node;
+//  }
+//
+//  if (node->left_ == this->it_fake_) {
+//	while (node == node->parent_->left_) {
+//	  node = node->parent_;
+//	}
+//	node = node->parent_;
+//	return *node;
+//  }
+//
+//  if (node->left_ != this->it_fake_) {
+//	node = MaxNode(node->left_);
+//	return *node;
+//  }
+//}
 
 //_____MODIFIERS_____
 template <typename Key, typename T>
@@ -787,6 +856,7 @@ template <typename Key, typename T>
 RBT<Key, T> *Tree<Key, T>::GetFake() const {
   return fake_;
 }
+
 
 }  // namespace s21
 

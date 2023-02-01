@@ -394,22 +394,21 @@ TEST_F(Tree_test, Iterator) {
 //    auto it = tree_null_.begin();
 //    std::cout << (*it).first << std::endl;
 
-//    auto end = tree_null_.end();
-//    std::cout << (*end).first << std::endl;
-//
-//    for (int i = 0; i < 8; ++i) {
-//      --end;
-//      std::cout << (*end).first << std::endl;
-//    }
+    auto end = tree_null_.end();
+    std::cout << (*end).first << std::endl;
 
-    auto begin = tree_null_.begin();
-    std::cout << (*begin).first << std::endl;
-
-    for (int i = 0; i < 7; ++i) {
-      ++begin;
-      std::cout << (*begin).first << std::endl;
+    for (int i = 0; i < 8; ++i) {
+      --end;
+      std::cout << (*end).first << std::endl;
     }
 
+//    auto begin = tree_null_.begin();
+//    std::cout << (*begin).first << std::endl;
+//
+//    for (int i = 0; i < 7; ++i) {
+//      ++begin;
+//      std::cout << (*begin).first << std::endl;
+//    }
 
 
 //    std::set test = {1, 3, 4};
