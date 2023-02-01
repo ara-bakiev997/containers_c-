@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <initializer_list>
 #include <iostream>
+#include <memory>
 #include <queue>
 #include <utility>
 #include <valarray>
@@ -23,18 +24,16 @@ enum OperatorType { PLUS_PLUS, MINUS_MINUS };
 template <typename Key, typename T>
 struct RBT {
   RBT() = default;
-  RBT(const Key &key, T value) {
-    data_ = new std::pair<const Key, T>(key, value);
-  }
-  ~RBT() { delete data_; }
-  RBT<Key, T> *parent_{};
-  RBT<Key, T> *left_{};
-  RBT<Key, T> *right_{};
+  ~RBT() = default;
+  RBT<const Key, T> *parent_{};
+  RBT<const Key, T> *left_{};
+  RBT<const Key, T> *right_{};
   enum RBT_colors color_ = RED;
   std::pair<const Key, T> *data_{};
 };
 
-template <typename Key, typename T = int>
+template <typename Key, typename T = int,
+          typename Alloc = std::allocator<std::pair<const Key, T>>>
 class Tree {
  public:
   using key_type = Key;
@@ -42,22 +41,9 @@ class Tree {
   using reference = value_type &;
   using const_reference = const value_type &;
   using size_type = size_t;
-
-  //____CONSTRUCTOR_AND_DESTRUCTOR____
-  Tree() : root_(nullptr) { InitFakeNode(); }
-  ~Tree();
-
-  //____MODIFIERS____
-  void insert_node(const Key &key, T value = 0);
-  void erase_node(T value);
-
-  //____CAPACITY____
-  bool empty() { return !this->root_; }
-  size_type size() { return this->size_; }
-  size_type max_size();
-
-  //____PRINT____
-  void print2D();
+  using ValueTypeAlloc = Alloc;                      // под пару
+  using NodeAlloc = typename std::allocator_traits<  // под ноду
+      Alloc>::template rebind_alloc<RBT<const Key, T>>;
 
   //____ITERATORS____
   class ConstIterator {
@@ -75,11 +61,11 @@ class Tree {
     }
 
    protected:
-    RBT<Key, T> *node_{};
-    RBT<Key, T> *it_fake_{};
+    RBT<const Key, T> *node_{};
+    RBT<const Key, T> *it_fake_{};
 
    private:
-    explicit ConstIterator(RBT<Key, T> *pt, RBT<Key, T> *fake)
+    explicit ConstIterator(RBT<const Key, T> *pt, RBT<const Key, T> *fake)
         : node_(pt), it_fake_(fake) {}
   };
 
@@ -96,96 +82,170 @@ class Tree {
     Iterator &operator=(const Iterator &other);
 
    private:
-    explicit Iterator(RBT<Key, T> *pt, RBT<Key, T> *fake) {
+    explicit Iterator(RBT<const Key, T> *pt, RBT<const Key, T> *fake) {
       this->node_ = pt;
       this->it_fake_ = fake;
     }
 
     //____SUPPORT_ITERATORS_FUNC____
-    RBT<Key, T> *PrefIter(RBT<Key, T> *node, OperatorType mode);
-    RBT<Key, T> *GetNodeChild(RBT<Key, T> *node, OperatorType mode);
-    RBT<Key, T> *GetNodeParentChild(RBT<Key, T> *node, OperatorType mode);
-    RBT<Key, T> *MaxNode(RBT<Key, T> *node);
-    RBT<Key, T> *MinNode(RBT<Key, T> *node);
+    RBT<const Key, T> *PrefIter(RBT<const Key, T> *node, OperatorType mode);
+    RBT<const Key, T> *GetNodeChild(RBT<const Key, T> *node, OperatorType mode);
+    RBT<const Key, T> *GetNodeParentChild(RBT<const Key, T> *node,
+                                          OperatorType mode);
+    RBT<const Key, T> *MaxNode(RBT<const Key, T> *node);
+    RBT<const Key, T> *MinNode(RBT<const Key, T> *node);
   };
 
   using iterator = Iterator;
   using const_iterator = const ConstIterator;
+
+  //____CONSTRUCTOR_AND_DESTRUCTOR____
+  Tree() : root_(nullptr) { InitFakeNode(); }
+  Tree(std::initializer_list<value_type> const &items);
+  Tree(const Tree &other);
+  Tree(Tree &&other) noexcept;
+  ~Tree();
+  Tree &operator=(const Tree &other) noexcept;
+  Tree &operator=(Tree &&other) noexcept;
+
+  //____MODIFIERS____
+  void clear();
+  void insert_node(const Key &key, T value = 0);
+  void erase_node(T value);
+
+  //____CAPACITY____
+  bool empty() { return !this->root_; }
+  size_type size() { return this->size_; }
+  size_type max_size() { return node_alloc_.max_size(); }
+
+  //____PRINT____
+  void print2D();
 
   //____ITERATORS_FOR_TREE____
   iterator begin();
   iterator end();
 
  protected:
-  RBT<Key, T> *root_{};
-  RBT<Key, T> *fake_{};
-  RBT<Key, T> *begin_{};
-  RBT<Key, T> *end_{};
+  RBT<const Key, T> *root_{};
+  RBT<const Key, T> *fake_{};
   size_type size_{};
+  NodeAlloc node_alloc_{};
+  ValueTypeAlloc value_type_alloc_{};
 
   friend Iterator;
   friend ConstIterator;
-  void clearUtil(RBT<Key, T> *node);
 
  private:
-  //_____SUPPORT_FOR_INSERT_____
-  void AddNodeByCondition(RBT<Key, T> *&node, const Key &key, T value,
-                          RBT<Key, T> *&parent);
+  //_____WORKING_WITH_MEMORY_____
+  RBT<const Key, T> *CreateNode(const Key &key, T value);
+  void RemNode(RBT<const Key, T> *node);
   void InitFakeNode();
-  RBT<Key, T> *CreateNode(const Key &key, T value);
+  void clearUtil(RBT<const Key, T> *node);
+
+  //_____SUPPORT_FOR_INSERT_____
+  void AddNodeByCondition(RBT<const Key, T> *&node, const Key &key, T value,
+                          RBT<const Key, T> *&parent);
 
   //_____SUPPORT_FOR_ERASE_____
-  void DelNodeByCondition(RBT<Key, T> *node);
-  void DelNodeWithOneChild(RBT<Key, T> *del_node, RBT<Key, T> *child,
-                           RBT<Key, T> *parent);
-  void DelNodeWithoutChild(RBT<Key, T> *del_node, RBT<Key, T> *parent);
-
+  void DelNodeByCondition(RBT<const Key, T> *node);
+  void DelNodeWithOneChild(RBT<const Key, T> *del_node,
+                           RBT<const Key, T> *child, RBT<const Key, T> *parent);
+  void DelNodeWithoutChild(RBT<const Key, T> *del_node,
+                           RBT<const Key, T> *parent);
   //_____FIND_NODE_____
-  RBT<Key, T> *FindNode(RBT<Key, T> *node, T &value);
-  RBT<Key, T> *MinNode(RBT<Key, T> *node);
-  RBT<Key, T> *MaxNode(RBT<Key, T> *node);
+  RBT<const Key, T> *FindNode(RBT<const Key, T> *node, T &value);
+  RBT<const Key, T> *MinNode(RBT<const Key, T> *node);
+  RBT<const Key, T> *MaxNode(RBT<const Key, T> *node);
 
   //_____BALANCE_FUNC____
-  void BalanceInsert(RBT<Key, T> *node, RBT<Key, T> *parent);
-  void BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child);
+  void BalanceInsert(RBT<const Key, T> *node, RBT<const Key, T> *parent);
+  void BalanceErase(RBT<const Key, T> *parent, RBT<const Key, T> *child);
 
   //_____ACCESS_FUNC____
-  RBT<Key, T> *GetBro(RBT<Key, T> *node);
-  RBT<Key, T> *GetFather(RBT<Key, T> *node);
-  RBT<Key, T> *GetChildLeft(RBT<Key, T> *node);
-  RBT<Key, T> *GetChildRight(RBT<Key, T> *node);
-  RBT<Key, T> *GetRedChild(RBT<Key, T> *node);
+  RBT<const Key, T> *GetBro(RBT<const Key, T> *node);
+  RBT<const Key, T> *GetFather(RBT<const Key, T> *node);
+  RBT<const Key, T> *GetChildLeft(RBT<const Key, T> *node);
+  RBT<const Key, T> *GetChildRight(RBT<const Key, T> *node);
+  RBT<const Key, T> *GetRedChild(RBT<const Key, T> *node);
 
   //_____CHANGE_FUNC____
-  void ChangeColorIfUncleRed(RBT<Key, T> *parent, RBT<Key, T> *bro_parent,
-                             RBT<Key, T> *grand_parent);
-  void ChangeColorAfterBigRotate(RBT<Key, T> *parent, RBT<Key, T> *grandfather);
-  void SmallRotate(RBT<Key, T> *node, DirectionOfRotation direction);
-  void BigRotate(RBT<Key, T> *node, DirectionOfRotation direction);
+  void ChangeColorIfUncleRed(RBT<const Key, T> *parent,
+                             RBT<const Key, T> *bro_parent,
+                             RBT<const Key, T> *grand_parent);
+  void ChangeColorAfterBigRotate(RBT<const Key, T> *parent,
+                                 RBT<const Key, T> *grandfather);
+  void SmallRotate(RBT<const Key, T> *node, DirectionOfRotation direction);
+  void BigRotate(RBT<const Key, T> *node, DirectionOfRotation direction);
 
   //_____SUPPORT_FOR_PRINT_____
-  void print2DUtil(RBT<Key, T> *root, int space);
+  void print2DUtil(RBT<const Key, T> *root, int space);
 };
 
 //_____CONSTRUCTOR_AND_DESTRUCTOR____
-template <typename Key, typename T>
-Tree<Key, T>::~Tree() {
-  clearUtil(root_);
-  root_ = nullptr;
-  //    delete fake_->data_;
-  //    delete fake_;
+template <typename Key, typename T, typename Alloc>
+Tree<Key, T, Alloc>::Tree(std::initializer_list<value_type> const &items) {
+  InitFakeNode();
+  for (auto it = items.begin(); it != items.end(); ++it) {
+    this->insert_node(*it);
+  }
+}
+
+template <typename Key, typename T, typename Alloc>
+Tree<Key, T, Alloc>::Tree(const Tree &other) {
+  InitFakeNode();
+  for (auto it = other.begin(); it != other.end(); ++it) {
+    this->insert_node(*it);
+  }
+}
+
+template <typename Key, typename T, typename Alloc>
+Tree<Key, T, Alloc>::Tree(Tree &&other) noexcept {
+  InitFakeNode();
+  *this = std::move(other);
+}
+
+template <typename Key, typename T, typename Alloc>
+Tree<Key, T, Alloc>::~Tree() {
+  clear();
+  node_alloc_.deallocate(this->fake_,
+                         1);  // отдельно удаляем память fake ноды
+}
+
+template <typename Key, typename T, typename Alloc>
+Tree<Key, T, Alloc> &Tree<Key, T, Alloc>::operator=(
+    const Tree &other) noexcept {
+  if (this == &other) return *this;
+  this->clear();
+  for (auto i = other.begin(); i != other.end(); ++i) {
+    insert_node(*i);
+  }
+  return *this;
+}
+
+template <typename Key, typename T, typename Alloc>
+Tree<Key, T, Alloc> &Tree<Key, T, Alloc>::operator=(Tree &&other) noexcept {
+  if (this == &other) return *this;
+  std::swap(this->size_, other.size_);
+  std::swap(fake_, other.fake_);
+  return *this;
 }
 
 //_____MODIFIERS____
-template <typename Key, typename T>
-void Tree<Key, T>::insert_node(const Key &key, T value) {
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::clear() {
+  clearUtil(root_);
+  root_ = nullptr;
+}
+
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::insert_node(const Key &key, T value) {
   AddNodeByCondition(this->root_, key, value, this->root_);
   ++this->size_;
 }
 
-template <typename Key, typename T>
-void Tree<Key, T>::erase_node(T value) {  // iterator pos нужно
-  RBT<Key, T> *find = FindNode(this->root_, value);
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::erase_node(T value) {  // iterator pos нужно
+  RBT<const Key, T> *find = FindNode(this->root_, value);
   if (find != this->fake_ && find != nullptr) {
     DelNodeByCondition(find);
   }
@@ -193,27 +253,72 @@ void Tree<Key, T>::erase_node(T value) {  // iterator pos нужно
 }
 
 //____ITERATORS_FOR_TREE____
-template <typename Key, typename T>
-typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
+template <typename Key, typename T, typename Alloc>
+typename Tree<Key, T, Alloc>::iterator Tree<Key, T, Alloc>::begin() {
   fake_->parent_ = nullptr;
   if (root_)
-    return s21::Tree<Key, T>::iterator(MinNode(root_), fake_);
+    return s21::Tree<Key, T, Alloc>::iterator(MinNode(root_), fake_);
   else {
-    return s21::Tree<Key, T>::iterator(fake_, fake_);
+    return s21::Tree<Key, T, Alloc>::iterator(fake_, fake_);
   }
 }
 
-template <typename Key, typename T>
-typename Tree<Key, T>::iterator Tree<Key, T>::end() {
+template <typename Key, typename T, typename Alloc>
+typename Tree<Key, T, Alloc>::iterator Tree<Key, T, Alloc>::end() {
   fake_->parent_ = nullptr;
   if (root_) fake_->parent_ = MaxNode(root_);
-  return s21::Tree<Key, T>::iterator(fake_, fake_);
+  return s21::Tree<Key, T, Alloc>::iterator(fake_, fake_);
+}
+
+//_____WORKING_WITH_MEMORY_____
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::CreateNode(const Key &key, T value) {
+  RBT<const Key, T> *new_node = node_alloc_.allocate(1);
+  try {
+    node_alloc_.construct(new_node, RBT<const Key, T>());
+  } catch (...) {
+    node_alloc_.deallocate(new_node, 1);
+  }
+  // memory alloc for value in node
+  new_node->data_ = value_type_alloc_.allocate(1);
+  try {
+    value_type_alloc_.construct(new_node->data_,
+                                std::pair<const Key, T>(key, value));
+  } catch (...) {
+    value_type_alloc_.deallocate(new_node->data_, 1);
+  }
+  new_node->parent_ = nullptr;
+  new_node->left_ = new_node->right_ = fake_;
+  return new_node;
+}
+
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::RemNode(RBT<const Key, T> *node) {
+  value_type_alloc_.destroy(node->data_);
+  value_type_alloc_.deallocate(node->data_, 1);
+  node_alloc_.destroy(node);
+  node_alloc_.deallocate(node, 1);
+}
+
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::InitFakeNode() {
+  fake_ = node_alloc_.allocate(1);
+}
+
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::clearUtil(RBT<const Key, T> *node) {
+  if (node == nullptr || node == fake_) return;
+  clearUtil(node->left_);
+  auto tmp = node->right_;
+  RemNode(node);
+  clearUtil(tmp);
 }
 
 //_____SUPPORT_FOR_INSERT_____
-template <typename Key, typename T>
-void Tree<Key, T>::AddNodeByCondition(RBT<Key, T> *&node, const Key &key,
-                                      T value, RBT<Key, T> *&parent) {
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::AddNodeByCondition(RBT<const Key, T> *&node,
+                                             const Key &key, T value,
+                                             RBT<const Key, T> *&parent) {
   if (node == fake_ || root_ == nullptr) {
     node = CreateNode(key, value);
     if (node != parent) {
@@ -231,29 +336,13 @@ void Tree<Key, T>::AddNodeByCondition(RBT<Key, T> *&node, const Key &key,
   }
 }
 
-template <typename Key, typename T>
-void Tree<Key, T>::InitFakeNode() {
-  fake_ = new RBT<Key, T>();
-  fake_->data_ = new std::pair<const Key, T>();
-  begin_ = fake_;
-  end_ = fake_;
-}
-
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::CreateNode(const Key &key, T value) {
-  auto temp = new RBT<Key, T>(key, value);
-  temp->parent_ = nullptr;
-  temp->left_ = temp->right_ = fake_;
-  return temp;
-}
-
 //_____SUPPORT_FOR_ERASE_____
-template <typename Key, typename T>
-void Tree<Key, T>::DelNodeByCondition(RBT<Key, T> *node) {
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::DelNodeByCondition(RBT<const Key, T> *node) {
   if (node->left_ != fake_ && node->right_ != fake_) {
-    //    RBT<Key, T> *change = MinNode(node->right_);  // ранее
+    //    RBT<const Key, T> *change = MinNode(node->right_);  // ранее
 
-    RBT<Key, T> *change = MaxNode(node->left_);
+    RBT<const Key, T> *change = MaxNode(node->left_);
     std::swap(change->data_, node->data_);
     DelNodeByCondition(change);
   } else if (node->left_ != fake_) {  // есть один левый ребенок
@@ -268,8 +357,8 @@ void Tree<Key, T>::DelNodeByCondition(RBT<Key, T> *node) {
     if (node->color_ == RED) {
       DelNodeWithoutChild(node, node->parent_);
     } else {
-      RBT<Key, T> *parent = GetFather(node);
-      RBT<Key, T> *brother_of_remote = GetBro(node);
+      RBT<const Key, T> *parent = GetFather(node);
+      RBT<const Key, T> *brother_of_remote = GetBro(node);
       DelNodeWithoutChild(node, node->parent_);
       if (parent && brother_of_remote) {
         BalanceErase(parent, brother_of_remote);
@@ -278,10 +367,10 @@ void Tree<Key, T>::DelNodeByCondition(RBT<Key, T> *node) {
   }
 }
 
-template <typename Key, typename T>
-void Tree<Key, T>::DelNodeWithOneChild(RBT<Key, T> *del_node,
-                                       RBT<Key, T> *child,
-                                       RBT<Key, T> *parent) {
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::DelNodeWithOneChild(RBT<const Key, T> *del_node,
+                                              RBT<const Key, T> *child,
+                                              RBT<const Key, T> *parent) {
   if (del_node != root_) {
     if (parent->left_ == del_node) {
       parent->left_ = child;
@@ -293,12 +382,12 @@ void Tree<Key, T>::DelNodeWithOneChild(RBT<Key, T> *del_node,
   }
   child->parent_ = parent;
   child->color_ = BLACK;
-  delete del_node;
+  RemNode(del_node);
 }
 
-template <typename Key, typename T>
-void Tree<Key, T>::DelNodeWithoutChild(RBT<Key, T> *del_node,
-                                       RBT<Key, T> *parent) {
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::DelNodeWithoutChild(RBT<const Key, T> *del_node,
+                                              RBT<const Key, T> *parent) {
   if (del_node != root_) {
     if (parent->left_ == del_node) {
       parent->left_ = fake_;
@@ -308,13 +397,14 @@ void Tree<Key, T>::DelNodeWithoutChild(RBT<Key, T> *del_node,
   } else {
     root_ = nullptr;
   }
-  delete del_node;
+  RemNode(del_node);
 }
 
 //_____FIND_NODE_____
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::FindNode(RBT<Key, T> *node, T &value) {
-  RBT<Key, T> *ret = nullptr;
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::FindNode(RBT<const Key, T> *node,
+                                                 T &value) {
+  RBT<const Key, T> *ret = nullptr;
   if (node != fake_ && node != nullptr) {
     if (node->data_->first == value) {
       ret = node;
@@ -327,9 +417,9 @@ RBT<Key, T> *Tree<Key, T>::FindNode(RBT<Key, T> *node, T &value) {
   return ret;
 }
 
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::MinNode(RBT<Key, T> *node) {
-  RBT<Key, T> *ret = nullptr;
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::MinNode(RBT<const Key, T> *node) {
+  RBT<const Key, T> *ret = nullptr;
   if (node != fake_) {
     ret = node;
     if (node->left_ != fake_) {
@@ -339,9 +429,9 @@ RBT<Key, T> *Tree<Key, T>::MinNode(RBT<Key, T> *node) {
   return ret;
 }
 
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::MaxNode(RBT<Key, T> *node) {
-  RBT<Key, T> *ret = nullptr;
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::MaxNode(RBT<const Key, T> *node) {
+  RBT<const Key, T> *ret = nullptr;
   if (node != fake_) {
     ret = node;
     if (node->right_ != fake_) {
@@ -352,9 +442,10 @@ RBT<Key, T> *Tree<Key, T>::MaxNode(RBT<Key, T> *node) {
 }
 
 //_____BALANCE_FUNC____
-template <typename Key, typename T>
-void Tree<Key, T>::BalanceInsert(RBT<Key, T> *node, RBT<Key, T> *parent) {
-  RBT<Key, T> *bro_parent = GetBro(parent);
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::BalanceInsert(RBT<const Key, T> *node,
+                                        RBT<const Key, T> *parent) {
+  RBT<const Key, T> *bro_parent = GetBro(parent);
   if (parent->color_ == RED) {  // в рекурсии нужна проверка
     if (bro_parent != fake_ && bro_parent->color_ == RED) {
       ChangeColorIfUncleRed(parent, bro_parent, GetFather(parent));
@@ -391,10 +482,11 @@ void Tree<Key, T>::BalanceInsert(RBT<Key, T> *node, RBT<Key, T> *parent) {
 
 // Источник: https://www.youtube.com/watch?v=T70nn4EyTrs
 // Визуализация: https://www.cs.usfca.edu/~galles/visualization/RedBlack.html
-template <typename Key, typename T>
-void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::BalanceErase(RBT<const Key, T> *parent,
+                                       RBT<const Key, T> *child) {
   if (parent->color_ == RED) {  // 2.1. Отец удаленной ноды красный
-    RBT<Key, T> *grandsonRed = GetRedChild(child);
+    RBT<const Key, T> *grandsonRed = GetRedChild(child);
     if (grandsonRed) {  // 2.1.1  // Брат удаленной ноды красный
       if (parent->left_ == child) {          // мы слева от деда
         if (child->right_ == grandsonRed) {  // мы справа от отца
@@ -426,11 +518,12 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
     }
   } else {  // 2.2. Отец удаленной ноды черный
     if (child->color_ == RED) {  // 2.2.1. Брат удаленной ноды красный
-      RBT<Key, T> *grandsonLeft = GetChildLeft(child);  // внуки
-      RBT<Key, T> *grandsonRight = GetChildRight(child);
+      RBT<const Key, T> *grandsonLeft = GetChildLeft(child);  // внуки
+      RBT<const Key, T> *grandsonRight = GetChildRight(child);
 
       if (grandsonLeft && grandsonLeft->color_ == BLACK) {
-        RBT<Key, T> *great_grandsonRed = GetRedChild(grandsonLeft);  // правнуки
+        RBT<const Key, T> *great_grandsonRed =
+            GetRedChild(grandsonLeft);  // правнуки
         if (great_grandsonRed) {  // 2.2.1.1. есть красный правнук
           if (parent->right_ == child) {  // мы справа от отца
             BigRotate(grandsonLeft, LEFT);
@@ -460,7 +553,7 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
                  grandsonRight->color_ ==
                      BLACK) {  // внук черный  // скорее всего не нужно когда мы
                                // работаем с max в левом поддереве
-        RBT<Key, T> *great_grandsonRed = GetRedChild(grandsonRight);
+        RBT<const Key, T> *great_grandsonRed = GetRedChild(grandsonRight);
         if (great_grandsonRed) {  // 2.2.1.1. есть красный правнук
           if (parent->left_ == child) {  // мы слева от отца
             SmallRotate(grandsonRight, LEFT);
@@ -485,7 +578,7 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
         }
       }
     } else {  // 2.2.2. Брат удаленной ноды черный
-      RBT<Key, T> *grandsonRed = GetRedChild(child);
+      RBT<const Key, T> *grandsonRed = GetRedChild(child);
       if (grandsonRed) {  // 2.2.2.1 у брата удаленной ноды есть красные дети
         if (parent->left_ == child) {          // мы слева от деда
           if (child->right_ == grandsonRed) {  // мы справа от отца
@@ -510,8 +603,8 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
         child->color_ = RED;
         // рекурсивно вверх
         if (parent != root_) {  // рекурсивно к деду
-          RBT<Key, T> *grandfather = GetFather(parent);
-          RBT<Key, T> *brother_of_parent = GetBro(parent);
+          RBT<const Key, T> *grandfather = GetFather(parent);
+          RBT<const Key, T> *brother_of_parent = GetBro(parent);
           if (grandfather && brother_of_parent) {
             BalanceErase(grandfather, brother_of_parent);
           }
@@ -522,10 +615,10 @@ void Tree<Key, T>::BalanceErase(RBT<Key, T> *parent, RBT<Key, T> *child) {
 }
 
 //_____ACCESS_FUNC____
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::GetBro(RBT<Key, T> *node) {
-  RBT<Key, T> *parent = node->parent_;
-  RBT<Key, T> *ret = nullptr;
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::GetBro(RBT<const Key, T> *node) {
+  RBT<const Key, T> *parent = node->parent_;
+  RBT<const Key, T> *ret = nullptr;
   if (parent != nullptr) {
     if (parent->left_ != node) {
       ret = parent->left_;
@@ -536,27 +629,27 @@ RBT<Key, T> *Tree<Key, T>::GetBro(RBT<Key, T> *node) {
   return ret;
 }
 
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::GetFather(RBT<Key, T> *node) {
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::GetFather(RBT<const Key, T> *node) {
   return node->parent_;
 }
 
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::GetChildLeft(RBT<Key, T> *node) {
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::GetChildLeft(RBT<const Key, T> *node) {
   return node->left_;
 }
 
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::GetChildRight(RBT<Key, T> *node) {
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::GetChildRight(RBT<const Key, T> *node) {
   return node->right_;
 }
 
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::GetRedChild(
-    RBT<Key, T> *node) {  //м.б. не нужна пров с дед
-  RBT<Key, T> *patent = node->parent_;
-  RBT<Key, T> *grandFather = node->parent_->parent_;
-  RBT<Key, T> *ret = nullptr;
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::GetRedChild(
+    RBT<const Key, T> *node) {  //м.б. не нужна пров с дед
+  RBT<const Key, T> *patent = node->parent_;
+  RBT<const Key, T> *grandFather = node->parent_->parent_;
+  RBT<const Key, T> *ret = nullptr;
 
   if (grandFather && grandFather->left_ == patent) {  // мы слева от дедушки
     if (patent->left_ == node) {  // мы слева от отца
@@ -591,28 +684,28 @@ RBT<Key, T> *Tree<Key, T>::GetRedChild(
 }
 
 //_____CHANGE_FUNC____
-template <typename Key, typename T>
-void Tree<Key, T>::ChangeColorIfUncleRed(RBT<Key, T> *parent,
-                                         RBT<Key, T> *bro_parent,
-                                         RBT<Key, T> *grand_parent) {
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::ChangeColorIfUncleRed(
+    RBT<const Key, T> *parent, RBT<const Key, T> *bro_parent,
+    RBT<const Key, T> *grand_parent) {
   parent->color_ = bro_parent->color_ = BLACK;
   if (grand_parent != this->root_) {
     grand_parent->color_ = RED;
   }
 }
 
-template <typename Key, typename T>
-void Tree<Key, T>::ChangeColorAfterBigRotate(RBT<Key, T> *parent,
-                                             RBT<Key, T> *grandfather) {
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::ChangeColorAfterBigRotate(
+    RBT<const Key, T> *parent, RBT<const Key, T> *grandfather) {
   if (parent) parent->color_ = BLACK;
   if (grandfather) grandfather->color_ = RED;
 }
 
-template <typename Key, typename T>
-void Tree<Key, T>::SmallRotate(RBT<Key, T> *node,
-                               DirectionOfRotation direction) {
-  RBT<Key, T> *temp = (direction == RIGHT) ? node->right_ : node->left_;
-  RBT<Key, T> *parent = node->parent_;
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::SmallRotate(RBT<const Key, T> *node,
+                                      DirectionOfRotation direction) {
+  RBT<const Key, T> *temp = (direction == RIGHT) ? node->right_ : node->left_;
+  RBT<const Key, T> *parent = node->parent_;
   if (direction == RIGHT) {
     node->right_ = parent;
     parent->left_ = temp;
@@ -620,7 +713,7 @@ void Tree<Key, T>::SmallRotate(RBT<Key, T> *node,
     node->left_ = parent;
     parent->right_ = temp;
   }
-  RBT<Key, T> *grandfather = GetFather(parent);
+  RBT<const Key, T> *grandfather = GetFather(parent);
   if (grandfather) {
     node->parent_ = grandfather;
     if (direction == RIGHT) {
@@ -635,11 +728,13 @@ void Tree<Key, T>::SmallRotate(RBT<Key, T> *node,
   parent->parent_ = node;
 }
 
-template <typename Key, typename T>
-void Tree<Key, T>::BigRotate(RBT<Key, T> *node, DirectionOfRotation direction) {
-  RBT<Key, T> *parent = node->parent_;
-  RBT<Key, T> *grandfather = GetFather(parent);
-  RBT<Key, T> *temp = (direction == RIGHT) ? parent->right_ : parent->left_;
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::BigRotate(RBT<const Key, T> *node,
+                                    DirectionOfRotation direction) {
+  RBT<const Key, T> *parent = node->parent_;
+  RBT<const Key, T> *grandfather = GetFather(parent);
+  RBT<const Key, T> *temp =
+      (direction == RIGHT) ? parent->right_ : parent->left_;
   if (direction == RIGHT) {
     parent->right_ = grandfather;
     grandfather->left_ = temp;
@@ -650,7 +745,7 @@ void Tree<Key, T>::BigRotate(RBT<Key, T> *node, DirectionOfRotation direction) {
   if (temp) {
     temp->parent_ = grandfather;
   }
-  RBT<Key, T> *great_grandfather = GetFather(grandfather);
+  RBT<const Key, T> *great_grandfather = GetFather(grandfather);
   if (great_grandfather) {  // связка с прадедом
     if (great_grandfather->left_ == grandfather) {
       great_grandfather->left_ = parent;
@@ -665,51 +760,46 @@ void Tree<Key, T>::BigRotate(RBT<Key, T> *node, DirectionOfRotation direction) {
   }
 }
 
-template <typename Key, typename T>
-void Tree<Key, T>::clearUtil(RBT<Key, T> *node) {
-  if (node == nullptr || node == fake_) return;
-  clearUtil(node->left_);
-  auto tmp = node->right_;
-  delete node;
-  clearUtil(tmp);
-}
-
 //____ITERATORS____
-template <typename Key, typename T>
-typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
+template <typename Key, typename T, typename Alloc>
+typename Tree<Key, T, Alloc>::Iterator &
+Tree<Key, T, Alloc>::Iterator::operator++() {
   this->node_ = PrefIter(this->node_, PLUS_PLUS);
   return *this;
 }
 
-template <typename Key, typename T>
-typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator++(int) {
-  auto temp = s21::Tree<Key, T>::iterator(this->node_, this->it_fake_);
+template <typename Key, typename T, typename Alloc>
+typename Tree<Key, T, Alloc>::Iterator
+Tree<Key, T, Alloc>::Iterator::operator++(int) {
+  auto temp = s21::Tree<Key, T, Alloc>::iterator(this->node_, this->it_fake_);
   this->node_ = PrefIter(this->node_, PLUS_PLUS);
   return temp;
 }
 
-template <typename Key, typename T>
-typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator--() {
+template <typename Key, typename T, typename Alloc>
+typename Tree<Key, T, Alloc>::Iterator &
+Tree<Key, T, Alloc>::Iterator::operator--() {
   this->node_ = PrefIter(this->node_, MINUS_MINUS);
   return *this;
 }
 
-template <typename Key, typename T>
-typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator--(int) {
-  auto temp = s21::Tree<Key, T>::iterator(this->node_, this->it_fake_);
+template <typename Key, typename T, typename Alloc>
+typename Tree<Key, T, Alloc>::Iterator
+Tree<Key, T, Alloc>::Iterator::operator--(int) {
+  auto temp = s21::Tree<Key, T, Alloc>::iterator(this->node_, this->it_fake_);
   this->node_ = PrefIter(this->node_, MINUS_MINUS);
   return temp;
 }
 
-template <typename Key, typename T>
-std::pair<const Key, T> &Tree<Key, T>::Iterator::operator*() {
+template <typename Key, typename T, typename Alloc>
+std::pair<const Key, T> &Tree<Key, T, Alloc>::Iterator::operator*() {
   return *this->node_->data_;
 }
 
 //____SUPPORT_ITERATORS_FUNC____
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::Iterator::PrefIter(RBT<Key, T> *node,
-                                              OperatorType mode) {
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::Iterator::PrefIter(
+    RBT<const Key, T> *node, OperatorType mode) {
   if (mode == MINUS_MINUS) {
     if (node == this->it_fake_) {
       node = this->node_->parent_;
@@ -732,9 +822,9 @@ RBT<Key, T> *Tree<Key, T>::Iterator::PrefIter(RBT<Key, T> *node,
   }
 }
 
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeChild(RBT<Key, T> *node,
-                                                  OperatorType mode) {
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::Iterator::GetNodeChild(
+    RBT<const Key, T> *node, OperatorType mode) {
   if (mode == MINUS_MINUS) {
     return node->left_;
   } else {
@@ -742,9 +832,9 @@ RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeChild(RBT<Key, T> *node,
   }
 }
 
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeParentChild(RBT<Key, T> *node,
-                                                        OperatorType mode) {
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::Iterator::GetNodeParentChild(
+    RBT<const Key, T> *node, OperatorType mode) {
   if (mode == MINUS_MINUS) {
     return node->parent_->left_;
   } else {
@@ -752,9 +842,10 @@ RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeParentChild(RBT<Key, T> *node,
   }
 }
 
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::Iterator::MaxNode(RBT<Key, T> *node) {
-  RBT<Key, T> *ret = nullptr;
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::Iterator::MaxNode(
+    RBT<const Key, T> *node) {
+  RBT<const Key, T> *ret = nullptr;
   if (node != this->it_fake_) {
     ret = node;
     if (node->right_ != this->it_fake_) {
@@ -764,9 +855,10 @@ RBT<Key, T> *Tree<Key, T>::Iterator::MaxNode(RBT<Key, T> *node) {
   return ret;
 }
 
-template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::Iterator::MinNode(RBT<Key, T> *node) {
-  RBT<Key, T> *ret = nullptr;
+template <typename Key, typename T, typename Alloc>
+RBT<const Key, T> *Tree<Key, T, Alloc>::Iterator::MinNode(
+    RBT<const Key, T> *node) {
+  RBT<const Key, T> *ret = nullptr;
   if (node != this->it_fake_) {
     ret = node;
     if (node->left_ != this->it_fake_) {
@@ -777,8 +869,8 @@ RBT<Key, T> *Tree<Key, T>::Iterator::MinNode(RBT<Key, T> *node) {
 }
 
 //_____FUNCTIONS_FOR_PRINT_____
-template <typename Key, typename T>
-void Tree<Key, T>::print2DUtil(RBT<Key, T> *root, int space) {
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::print2DUtil(RBT<const Key, T> *root, int space) {
   // Base case
   if (root == nullptr || root == fake_) return;
 
@@ -808,8 +900,8 @@ void Tree<Key, T>::print2DUtil(RBT<Key, T> *root, int space) {
 }
 
 // Wrapper over print2DUtil()
-template <typename Key, typename T>
-void Tree<Key, T>::print2D() {
+template <typename Key, typename T, typename Alloc>
+void Tree<Key, T, Alloc>::print2D() {
   // Pass initial space count as 0
   print2DUtil(this->root_, 0);
 }
