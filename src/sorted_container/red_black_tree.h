@@ -18,7 +18,7 @@ enum RBT_colors { RED, BLACK };
 
 enum DirectionOfRotation { LEFT, RIGHT };
 
-enum IteratorType { PREF_PLUS, PREF_MINUS};
+enum OperatorType { PLUS_PLUS, MINUS_MINUS};
 
 template <typename Key, typename T>
 struct RBT {
@@ -94,9 +94,9 @@ class Tree {
     std::pair<const Key, T> &operator*();
     Iterator &operator=(const Iterator &other);
 
-	RBT<Key, T> *PrefIter(RBT<Key, T> *node, IteratorType mode);
-	RBT<Key, T> *GetNodeChild(RBT<Key, T> *node, IteratorType mode);
-	RBT<Key, T> *GetNodeParentChild(RBT<Key, T> *node, IteratorType mode);
+	RBT<Key, T> *PrefIter(RBT<Key, T> *node, OperatorType mode);
+	RBT<Key, T> *GetNodeChild(RBT<Key, T> *node, OperatorType mode);
+	RBT<Key, T> *GetNodeParentChild(RBT<Key, T> *node, OperatorType mode);
 
     RBT<Key, T> *MaxNode(RBT<Key, T> *node) {
       RBT<Key, T> *ret = nullptr;
@@ -183,27 +183,16 @@ class Tree {
 };
 template <typename Key, typename T>
 typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
-  
-//  if (this->node_->right_ == this->it_fake_) {
-//    while (this->node_ == this->node_->parent_->right_) {
-//      this->node_ = this->node_->parent_;
-//    }
-//    this->node_ = this->node_->parent_;
-//    return *this;
-//  }
-//
-//  if (this->node_->right_ != this->it_fake_) {
-//    this->node_ = MinNode(this->node_->right_);
-//    return *this;
-//  }
 
-  this->node_ =   PrefIter(this->node_, PREF_PLUS);
+  this->node_ =   PrefIter(this->node_, PLUS_PLUS);
   return *this;
 }
 
 template <typename Key, typename T>
 typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator++(int) {
-  return Tree::Iterator();
+  auto temp = s21::Tree<Key, T>::iterator(this->node_, this->it_fake_);
+  this->node_ = PrefIter(this->node_, PLUS_PLUS);
+  return temp;
 }
 
 template <typename Key, typename T>
@@ -226,13 +215,17 @@ typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator--() {
 //    this->node_ = MaxNode(this->node_->left_);
 //    return *this;
 //  }
-  this->node_ =   PrefIter(this->node_, PREF_MINUS);
+  this->node_ = PrefIter(this->node_, MINUS_MINUS);
   return *this;
 }
 
 template <typename Key, typename T>
 typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator--(int) {
-  return Tree::Iterator();
+
+  auto temp = s21::Tree<Key, T>::iterator(this->node_, this->it_fake_);
+  this->node_ = PrefIter(this->node_, MINUS_MINUS);
+  return temp;
+
 }
 
 template <typename Key, typename T>
@@ -241,9 +234,9 @@ std::pair<const Key, T> &Tree<Key, T>::Iterator::operator*() {
 }
 
 template<typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::Iterator::PrefIter(RBT<Key, T> *node, IteratorType mode) {
+RBT<Key, T> *Tree<Key, T>::Iterator::PrefIter(RBT<Key, T> *node, OperatorType mode) {
 
-  if (mode == PREF_MINUS) {
+  if (mode == MINUS_MINUS) {
 	if (node == this->it_fake_) {
 	  node = this->node_->parent_;
 	  return node;
@@ -266,8 +259,8 @@ RBT<Key, T> *Tree<Key, T>::Iterator::PrefIter(RBT<Key, T> *node, IteratorType mo
 }
 
 template<typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeChild(RBT<Key, T> *node, IteratorType mode) {
-  if (mode == PREF_MINUS) {
+RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeChild(RBT<Key, T> *node, OperatorType mode) {
+  if (mode == MINUS_MINUS) {
 	return node->left_;
   } else {
 	return node->right_;
@@ -275,8 +268,8 @@ RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeChild(RBT<Key, T> *node, IteratorTyp
 }
 
 template<typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeParentChild(RBT<Key, T> *node, IteratorType mode) {
-  if (mode == PREF_MINUS) {
+RBT<Key, T> *Tree<Key, T>::Iterator::GetNodeParentChild(RBT<Key, T> *node, OperatorType mode) {
+  if (mode == MINUS_MINUS) {
 	return node->parent_->left_;
   } else {
 	return node->parent_->right_;
