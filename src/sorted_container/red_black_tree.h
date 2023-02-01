@@ -178,10 +178,10 @@ class Tree {
 template <typename Key, typename T>
 typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
   
-  if (this->node_ == this->it_fake_) {
-    this->node_ = this->node_->parent_;
-    return *this;
-  }
+//  if (this->node_ == this->it_fake_) {
+//    this->node_ = this->node_->parent_;
+//    return *this;
+//  }
   
   if (this->node_->right_ == this->it_fake_) {
     while (this->node_ == this->node_->parent_->right_) {
@@ -770,7 +770,7 @@ template <typename Key, typename T>
 typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
   fake_->parent_ = nullptr;
   if (root_)
-    return s21::Tree<Key, T>::iterator(MinNode(root_, fake_));
+    return s21::Tree<Key, T>::iterator(MinNode(root_), fake_);
   else {
     return s21::Tree<Key, T>::iterator(fake_, fake_);
   }
