@@ -11,13 +11,6 @@
 
 namespace s21 {
 
-//    template<typename Key, typename Value>
-//    struct Node {
-//        std::pair<const Key, Value> data{};
-//        Node* parent{};
-//        Node* left{};
-//        Node* right{};
-//    };
 
     template<typename Key, typename Value, typename Compare = std::less<Key>, typename Alloc = std::allocator<std::pair<const Key, Value>>>
 class S21Map : public Tree<Key, Value> {
@@ -148,14 +141,21 @@ class S21Map : public Tree<Key, Value> {
 //        return;
     }
 
+    template<typename Key, typename Value, typename Compare, typename Alloc>
+    std::pair<typename S21Map<Key, Value, Compare, Alloc>::iterator, bool>
+    S21Map<Key, Value, Compare, Alloc>::insert(const S21Map::value_type &value) {
+        Tree<Key, Value>::insert_node(value.first, value.second);
 
-    template <typename Key, typename Value, typename Compare, typename Alloc>
+        return std::pair<iterator, bool>();
+    }
+
+    template<typename Key, typename Value, typename Compare, typename Alloc>
     std::pair<typename S21Map<Key, Value, Compare, Alloc>::iterator, bool> S21Map<Key, Value, Compare, Alloc>::insert(
-        const Key &key, const Value &obj) {
-      Tree<Key, Value>::insert_node(key, obj);
+            const Key &key, const Value &obj) {
+        Tree<Key, Value>::insert_node(key, obj);
 
 
-      return std::pair<iterator, bool>();
+        return std::pair<iterator, bool>();
     }
     template <typename Key, typename Value, typename Compare, typename Alloc>
     void S21Map<Key, Value, Compare, Alloc>::erase(const Key &key) {
@@ -166,6 +166,7 @@ class S21Map : public Tree<Key, Value> {
       Tree<Key, Value>::ClearRBT();
       size_ = 0;
     }
+
 
     //    template<typename Key, typename Value, typename Compare, typename Alloc>
 //    template<typename... Args>
