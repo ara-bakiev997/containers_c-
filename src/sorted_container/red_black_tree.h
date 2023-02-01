@@ -91,12 +91,24 @@ class Tree {
     Iterator operator--(int);
     std::pair<const Key, T> &operator*();
     Iterator &operator=(const Iterator &other);
-    RBT<Key, T> *MaxNodeForTesting(RBT<Key, T> *node) {
+
+    RBT<Key, T> *MaxNode(RBT<Key, T> *node) {
       RBT<Key, T> *ret = nullptr;
       if (node != this->it_fake_) {
         ret = node;
         if (node->right_ != this->it_fake_) {
-          ret = MaxNodeForTesting(node->right_);
+          ret = MaxNode(node->right_);
+        }
+      }
+      return ret;
+    }
+
+    RBT<Key, T> *MinNode(RBT<Key, T> *node) {
+      RBT<Key, T> *ret = nullptr;
+      if (node != this->it_fake_) {
+        ret = node;
+        if (node->left_ != this->it_fake_) {
+          ret = MinNode(node->left_);
         }
       }
       return ret;
@@ -140,7 +152,7 @@ class Tree {
   //_____FIND_NODE_____
   RBT<Key, T> *FindNode(RBT<Key, T> *node, T &value);
   RBT<Key, T> *MinNode(RBT<Key, T> *node);
-  RBT<Key, T> *MaxNodeForTesting(RBT<Key, T> *node);
+  RBT<Key, T> *MaxNode(RBT<Key, T> *node);
 
   //_____BALANCE_FUNC____
   void BalanceInsert(RBT<Key, T> *node, RBT<Key, T> *parent);
@@ -165,11 +177,24 @@ class Tree {
 };
 template <typename Key, typename T>
 typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator++() {
-  if (!this->node_->right_) {
+  
+  if (this->node_ == this->it_fake_) {
     this->node_ = this->node_->parent_;
+    return *this;
+  }
+  
+  if (this->node_->right_ == this->it_fake_) {
+    while (this->node_ == this->node_->parent_->right_) {
+      this->node_ = this->node_->parent_;
+    }
+    this->node_ = this->node_->parent_;
+    return *this;
   }
 
-  return *this;
+  if (this->node_->right_ != this->it_fake_) {
+    this->node_ = MinNode(this->node_->right_);
+    return *this;
+  }
 }
 
 template <typename Key, typename T>
@@ -179,23 +204,25 @@ typename Tree<Key, T>::Iterator Tree<Key, T>::Iterator::operator++(int) {
 
 template <typename Key, typename T>
 typename Tree<Key, T>::Iterator &Tree<Key, T>::Iterator::operator--() {
-  //  if (this->node_ == this->it_fake_ || this->node_->left_ == this->it_fake_)
-  //  {
-  //    this->node_ = this->node_->parent_;
-  //  } else if (this->node_->left_ != this->it_fake_) {
-  //    this->node_ = MaxNodeForTesting(this->node_->left_);
-  //  } else
-//  if (this->node_->parent_ && this->node_->parent_->left_ != this->it_fake_ &&
-//      this->node_->parent_->left_ == this->node_) {
-//    this->node_ = this->node_->parent_;
-//    --(*this);
-//    return *this;
-//  } else if (this->node_ != this->it_fake_ && this->node_->right_ != this->it_fake_ && this->node_->left_ != this->it_fake_) {
-//    this->node_ = MaxNodeForTesting(this->node_->left_);
-//    return *this;
-//  }
-//  this->node_ = this->node_->parent_;
-//  return *this;
+
+  if (this->node_ == this->it_fake_) {
+    this->node_ = this->node_->parent_;
+    return *this;
+  }
+
+  if (this->node_->left_ == this->it_fake_) {
+    while (this->node_ == this->node_->parent_->left_) {
+      this->node_ = this->node_->parent_;
+    }
+    this->node_ = this->node_->parent_;
+    return *this;
+  }
+
+  if (this->node_->left_ != this->it_fake_) {
+    this->node_ = MaxNode(this->node_->left_);
+    return *this;
+  }
+
 }
 
 template <typename Key, typename T>
@@ -264,7 +291,7 @@ void Tree<Key, T>::DelNodeByCondition(RBT<Key, T> *node) {
   if (node->left_ != fake_ && node->right_ != fake_) {
     //    RBT<Key, T> *change = MinNode(node->right_);  // node->right_ ранее
 
-    RBT<Key, T> *change = MaxNodeForTesting(node->left_);  // node->right_ ранее
+    RBT<Key, T> *change = MaxNode(node->left_);  // node->right_ ранее
     std::swap(change->data_, node->data_);
     DelNodeByCondition(change);
   } else if (node->left_ != fake_) {  // есть один левый ребенок
@@ -351,12 +378,12 @@ RBT<Key, T> *Tree<Key, T>::MinNode(RBT<Key, T> *node) {
 }
 
 template <typename Key, typename T>
-RBT<Key, T> *Tree<Key, T>::MaxNodeForTesting(RBT<Key, T> *node) {
+RBT<Key, T> *Tree<Key, T>::MaxNode(RBT<Key, T> *node) {
   RBT<Key, T> *ret = nullptr;
   if (node != fake_) {
     ret = node;
     if (node->right_ != fake_) {
-      ret = MaxNodeForTesting(node->right_);
+      ret = MaxNode(node->right_);
     }
   }
   return ret;
@@ -752,7 +779,7 @@ typename Tree<Key, T>::iterator Tree<Key, T>::begin() {
 template <typename Key, typename T>
 typename Tree<Key, T>::iterator Tree<Key, T>::end() {
   fake_->parent_ = nullptr;
-  if (root_) fake_->parent_ = MaxNodeForTesting(root_);
+  if (root_) fake_->parent_ = MaxNode(root_);
   return s21::Tree<Key, T>::iterator(fake_, fake_);
 }
 
