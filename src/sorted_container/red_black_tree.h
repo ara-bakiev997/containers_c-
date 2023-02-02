@@ -246,6 +246,7 @@ template<typename Key, typename T, typename Alloc>
 void Tree<Key, T, Alloc>::clear() {
   clearUtil(root_);
   root_ = nullptr;
+  size_ = 0;
 }
 
 //template <typename Key, typename T, typename Alloc>

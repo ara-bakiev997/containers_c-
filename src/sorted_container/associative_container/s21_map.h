@@ -23,10 +23,10 @@ class S21Map : public Tree<Key, Value> {
         using value_type = std::pair<const key_type, mapped_type>;
         using reference = value_type &;
         using const_reference = const value_type &;
-        using iterator = MapIterator;
-        using const_iterator = MapConstIterator;
-//        using AllocTraits = std::allocator_traits<Alloc>;
-//        using AllocNode = typename std::allocator_traits<Alloc>::template rebind_alloc<Node<key_type, mapped_type>>;
+        using iterator = typename Tree<Key, Value>::iterator;
+        using const_iterator = typename Tree<Key, Value>::const_iterator;
+        using ValueTypeAlloc = typename Tree<Key, Value>::ValueTypeAlloc;
+        using NodeAlloc = typename Tree<Key, Value>::NodeAlloc;
         using size_type = size_t;
 
         S21Map() {}
@@ -61,11 +61,11 @@ class S21Map : public Tree<Key, Value> {
 
         bool empty();
 
-        size_type size();
+//        size_type size();
 
-        size_type max_size();
+//        size_type max_size();
 
-        void clear();
+//        void clear();
 
         std::pair<iterator, bool> insert(const value_type &value);
 
@@ -144,9 +144,9 @@ class S21Map : public Tree<Key, Value> {
     template<typename Key, typename Value, typename Compare, typename Alloc>
     std::pair<typename S21Map<Key, Value, Compare, Alloc>::iterator, bool>
     S21Map<Key, Value, Compare, Alloc>::insert(const S21Map::value_type &value) {
-        Tree<Key, Value>::insert_node(value.first, value.second);
+        return Tree<Key, Value>::insert_node(value.first, value.second);
 
-        return std::pair<iterator, bool>();
+//        return std::pair<iterator, bool>();
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
@@ -161,11 +161,11 @@ class S21Map : public Tree<Key, Value> {
     void S21Map<Key, Value, Compare, Alloc>::erase(const Key &key) {
       Tree<Key, Value>::erase_node(key);
     }
-    template <typename Key, typename Value, typename Compare, typename Alloc>
-    void S21Map<Key, Value, Compare, Alloc>::clear() {
-      Tree<Key, Value>::ClearRBT();
-      size_ = 0;
-    }
+//    template <typename Key, typename Value, typename Compare, typename Alloc>
+//    void S21Map<Key, Value, Compare, Alloc>::clear() {
+//      Tree<Key, Value>::ClearRBT();
+//      size_ = 0;
+//    }
 
 
     //    template<typename Key, typename Value, typename Compare, typename Alloc>
