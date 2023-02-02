@@ -45,7 +45,7 @@ TEST_F(S21Map_test, clear) {
 TEST_F(S21Map_test, insert_delete) {
 
     map.insert(1, 25);
-    auto pr = map.insert(std::pair(0, 43));
+    auto pr = map.insert(std::pair(1, 43));
     auto pr2 =map.insert(std::pair(4, 4));
     map.insert(7, 11);
     std_map.insert(std::pair{1, 180});
@@ -60,8 +60,8 @@ TEST_F(S21Map_test, insert_delete) {
 //    cout<<map.max_size() << endl;
 //    cout<<"std ="<<std_map.max_size() << endl;
 //    cout<<map.size() << endl;
-    cout<< (*(pr.first)).first << endl;
-//    cout<< (*(pr2.first)).first << endl;
+    cout<< (*(pr.first)).second << endl;
+    cout<< (*(pr2.first)).second << endl;
     cout<< pr.second << endl;
 }
 

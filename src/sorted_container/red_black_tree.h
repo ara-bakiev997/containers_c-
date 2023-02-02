@@ -338,8 +338,10 @@ RBT<const Key, T> *Tree<Key, T, Alloc>::AddNodeByCondition(RBT<const Key, T> *&n
 														   const Key &key, T value,
 														   RBT<const Key, T> *&parent,
 														   bool &is_node_create) {
+    RBT<const Key, T> *temp_node = nullptr;
   if (node == fake_ || root_ == nullptr) {
 	node = CreateNode(key, value);
+    temp_node = node;
 	is_node_create = true;
 	if (node != parent) {
 	  node->parent_ = parent;
@@ -350,11 +352,13 @@ RBT<const Key, T> *Tree<Key, T, Alloc>::AddNodeByCondition(RBT<const Key, T> *&n
 	  BalanceInsert(node, parent);
 	}
   } else if (key < node->data_->first) {
-	AddNodeByCondition(node->left_, key, value, node, is_node_create);
+	temp_node = AddNodeByCondition(node->left_, key, value, node, is_node_create);
   } else if (node->data_->first < key) {
-	AddNodeByCondition(node->right_, key, value, node, is_node_create);
+      temp_node = AddNodeByCondition(node->right_, key, value, node, is_node_create);
+  } else {
+      temp_node = node;
   }
-  return node;
+  return temp_node;
 }
 
 //_____SUPPORT_FOR_ERASE_____
