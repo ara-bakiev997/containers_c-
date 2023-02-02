@@ -143,7 +143,7 @@ class Tree {
   void clearUtil(RBT<const Key, T> *node);
 
   //_____SUPPORT_FOR_INSERT_____
-  void AddNodeByCondition(RBT<const Key, T> *&node, const Key &key, T value,
+  RBT<const Key, T> *AddNodeByCondition(RBT<const Key, T> *&node, const Key &key, T value,
                           RBT<const Key, T> *&parent, bool & is_node_create);
 
   //_____SUPPORT_FOR_ERASE_____
@@ -317,12 +317,13 @@ void Tree<Key, T, Alloc>::clearUtil(RBT<const Key, T> *node) {
 
 //_____SUPPORT_FOR_INSERT_____
 template <typename Key, typename T, typename Alloc>
-void Tree<Key, T, Alloc>::AddNodeByCondition(RBT<const Key, T> *&node,
+RBT<const Key, T> *Tree<Key, T, Alloc>::AddNodeByCondition(RBT<const Key, T> *&node,
                                              const Key &key, T value,
                                              RBT<const Key, T> *&parent,
 											 bool & is_node_create) {
   if (node == fake_ || root_ == nullptr) {
     node = CreateNode(key, value);
+	is_node_create = true;
     if (node != parent) {
       node->parent_ = parent;
     } else {
@@ -336,6 +337,7 @@ void Tree<Key, T, Alloc>::AddNodeByCondition(RBT<const Key, T> *&node,
   } else if (node->data_->first < key) {
     AddNodeByCondition(node->right_, key, value, node, is_node_create);
   }
+  return node;
 }
 
 //_____SUPPORT_FOR_ERASE_____
