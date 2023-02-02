@@ -143,6 +143,8 @@ class Tree {
   NodeAlloc node_alloc_{};
   ValueTypeAlloc value_type_alloc_{};
 
+  RBT<const Key, T> *FindNode(RBT<const Key, T> *node, T &value);
+  RBT<const Key, T> *FindNodeByKey(RBT<const Key, T> *node, const Key &key);
   friend Iterator;
   friend ConstIterator;
 
@@ -164,7 +166,7 @@ class Tree {
   void DelNodeWithoutChild(RBT<const Key, T> *del_node,
 						   RBT<const Key, T> *parent);
   //_____FIND_NODE_____
-  RBT<const Key, T> *FindNode(RBT<const Key, T> *node, T &value);
+//  RBT<const Key, T> *FindNodeByKey(RBT<const Key, T> *node, T &key);
   RBT<const Key, T> *MinNode(RBT<const Key, T> *node);
   RBT<const Key, T> *MaxNode(RBT<const Key, T> *node);
 
@@ -246,7 +248,6 @@ template<typename Key, typename T, typename Alloc>
 void Tree<Key, T, Alloc>::clear() {
   clearUtil(root_);
   root_ = nullptr;
-  size_ = 0;
 }
 
 //template <typename Key, typename T, typename Alloc>
@@ -441,6 +442,21 @@ RBT<const Key, T> *Tree<Key, T, Alloc>::FindNode(RBT<const Key, T> *node,
   }
   return ret;
 }
+    template<typename Key, typename T, typename Alloc>
+    RBT<const Key, T> *Tree<Key, T, Alloc>::FindNodeByKey(RBT<const Key, T> *node,
+                                                     const Key &key) {
+        RBT<const Key, T> *ret = nullptr;
+        if (node != fake_ && node != nullptr) {
+            if (node->data_->first == key) {
+                ret = node;
+            } else if (key < node->data_->first) {
+                ret = FindNodeByKey(node->left_, key);
+            } else if (node->data_->first < key) {
+                ret = FindNodeByKey(node->right_, key);
+            }
+        }
+        return ret;
+    }
 
 template<typename Key, typename T, typename Alloc>
 RBT<const Key, T> *Tree<Key, T, Alloc>::MinNode(RBT<const Key, T> *node) {

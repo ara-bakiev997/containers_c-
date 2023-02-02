@@ -59,7 +59,7 @@ class S21Map : public Tree<Key, Value> {
 //        iterator begin();
 //        iterator end();
 
-        bool empty();
+//        bool empty();
 
 //        size_type size();
 
@@ -92,7 +92,7 @@ class S21Map : public Tree<Key, Value> {
 //        AllocTraits  alloc_{};
 //        AllocNode anode_{};
 //        Node<Key, Value>* node_{};
-        size_type size_{};
+//        size_type size_{};
 
 //        template<typename... Args>
 //        Node<Key, Value>* createNode(Args&& ...args);
@@ -128,35 +128,37 @@ class S21Map : public Tree<Key, Value> {
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     Value &S21Map<Key, Value, Compare, Alloc>::at(const key_type &key) {
-//        return;
+       auto ptr = Tree<Key, Value>::FindNodeByKey(this->root_, key);
+       if (!ptr) { throw std::out_of_range("key not found"); }
+       return ptr->data_->second;
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     const Value &S21Map<Key, Value, Compare, Alloc>::at(const key_type &key) const {
-//        return;
+        auto ptr = Tree<Key, Value>::FindNodeByKey(this->root_, key);
+        if (!ptr) { throw std::out_of_range("key not found"); }
+        return ptr->data_->second;
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     Value &S21Map<Key, Value, Compare, Alloc>::operator[](const key_type &key) {
-//        return;
+        auto ptr = Tree<Key, Value>::FindNodeByKey(this->root_, key);
+        if (!ptr) {insert(key, 0);}
+        return at(key);
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     std::pair<typename S21Map<Key, Value, Compare, Alloc>::iterator, bool>
     S21Map<Key, Value, Compare, Alloc>::insert(const S21Map::value_type &value) {
         return Tree<Key, Value>::insert_node(value.first, value.second);
-
-//        return std::pair<iterator, bool>();
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     std::pair<typename S21Map<Key, Value, Compare, Alloc>::iterator, bool> S21Map<Key, Value, Compare, Alloc>::insert(
             const Key &key, const Value &obj) {
-        Tree<Key, Value>::insert_node(key, obj);
-
-
-        return std::pair<iterator, bool>();
+        return Tree<Key, Value>::insert_node(key, obj);
     }
+
     template <typename Key, typename Value, typename Compare, typename Alloc>
     void S21Map<Key, Value, Compare, Alloc>::erase(const Key &key) {
       Tree<Key, Value>::erase_node(key);
@@ -166,38 +168,6 @@ class S21Map : public Tree<Key, Value> {
 //      Tree<Key, Value>::ClearRBT();
 //      size_ = 0;
 //    }
-
-
-    //    template<typename Key, typename Value, typename Compare, typename Alloc>
-//    template<typename... Args>
-//    Node<Key, Value> *S21Map<Key, Value, Compare, Alloc>::createNode(Args&& ...args) {
-//
-//        Node<key_type, mapped_type>* new_node = AllocTraits::allocate(anode_, 1);//AllocNode::allocate(a_node_, 1);//this->a_node_.allocate(1);
-//        try {
-//            AllocTraits::construct(anode_, new_node, Node<key_type, mapped_type>());
-//        } catch (...) {
-//            AllocTraits::deallocate(anode_, new_node, 1);
-//        }
-//
-//        new_node->data = AllocTraits::allocate(alloc_, 1);
-//        try {
-//            AllocTraits::construct(alloc_, new_node->data, std::forward<Args>(args)...);
-//        } catch (...) {
-//            AllocTraits::deallocate(alloc_, new_node->data, 1);
-//        }
-//        return new_node;
-//    }
-
-//    template<typename Key, typename Value, typename Compare, typename Alloc>
-//    void S21Map<Key, Value, Compare, Alloc>::removeNode(Node<key_type, mapped_type> *node) {
-//        AllocTraits::destroy(alloc_, node->data);
-//        AllocTraits::deallocate(alloc_, node->data, 1);
-//
-//        AllocTraits::destroy(anode_, node);
-//        AllocTraits::deallocate(anode_, node, 1);
-//    }
-
-
 
 
 }
