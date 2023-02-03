@@ -112,15 +112,6 @@ class Tree {
   void clear();
 //  std::pair<iterator, bool> insert_node(const Key &key, T value = 0);
 
-  std::pair<iterator, bool> insert_node(const Key &key, T value = 0) {
-	bool is_node_create = false;
-	auto node = AddNodeByCondition(this->root_, key, value, this->root_, is_node_create);
-	std::pair<iterator, bool> pair = std::make_pair(s21::Tree<Key, T, Alloc>::iterator(node, fake_), is_node_create);;
-	if (is_node_create) {
-	  ++this->size_;
-	}
-	return pair;
-  }
 
   void erase_node(T value);
 
@@ -143,6 +134,15 @@ class Tree {
   NodeAlloc node_alloc_{};
   ValueTypeAlloc value_type_alloc_{};
 
+  std::pair<iterator, bool> insert_node(const Key &key, T value = 0) {
+	bool is_node_create = false;
+	auto node = AddNodeByCondition(this->root_, key, value, this->root_, is_node_create);
+	std::pair<iterator, bool> pair = std::make_pair(s21::Tree<Key, T, Alloc>::iterator(node, fake_), is_node_create);;
+	if (is_node_create) {
+	  ++this->size_;
+	}
+	return pair;
+  }
   RBT<const Key, T> *FindNode(RBT<const Key, T> *node, T &value);
   RBT<const Key, T> *FindNodeByKey(RBT<const Key, T> *node, const Key &key);
   friend Iterator;

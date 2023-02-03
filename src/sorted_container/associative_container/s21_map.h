@@ -143,7 +143,7 @@ class S21Map : public Tree<Key, Value> {
     template<typename Key, typename Value, typename Compare, typename Alloc>
     Value &S21Map<Key, Value, Compare, Alloc>::operator[](const key_type &key) {
         auto ptr = Tree<Key, Value>::FindNodeByKey(this->root_, key);
-        if (!ptr) {insert(key, 0);}
+        if (!ptr) {insert(key, {});}
         return at(key);
     }
 
@@ -159,10 +159,18 @@ class S21Map : public Tree<Key, Value> {
         return Tree<Key, Value>::insert_node(key, obj);
     }
 
+    template<typename Key, typename Value, typename Compare, typename Alloc>
+    std::pair<typename S21Map<Key, Value, Compare, Alloc>::iterator, bool> S21Map<Key, Value, Compare, Alloc>::insert_or_assign(const Key &key, const Value &obj) {
+        auto pr = insert(key, obj);
+        if (!pr.second) (*(pr.first)).second = obj;
+        return pr;
+    }
+
     template <typename Key, typename Value, typename Compare, typename Alloc>
     void S21Map<Key, Value, Compare, Alloc>::erase(const Key &key) {
       Tree<Key, Value>::erase_node(key);
     }
+
 //    template <typename Key, typename Value, typename Compare, typename Alloc>
 //    void S21Map<Key, Value, Compare, Alloc>::clear() {
 //      Tree<Key, Value>::ClearRBT();
