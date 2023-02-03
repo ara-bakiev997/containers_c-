@@ -128,21 +128,24 @@ class Tree {
   iterator end();
 
  protected:
-  RBT<const Key, T> *root_{};
-  RBT<const Key, T> *fake_{};
-  size_type size_{};
-  NodeAlloc node_alloc_{};
-  ValueTypeAlloc value_type_alloc_{};
+    RBT<const Key, T> *root_{};
+    RBT<const Key, T> *fake_{};
+    size_type size_{};
+    NodeAlloc node_alloc_{};
+    ValueTypeAlloc value_type_alloc_{};
 
-  std::pair<iterator, bool> insert_node(const Key &key, T value = 0) {
-	bool is_node_create = false;
-	auto node = AddNodeByCondition(this->root_, key, value, this->root_, is_node_create);
-	std::pair<iterator, bool> pair = std::make_pair(s21::Tree<Key, T, Alloc>::iterator(node, fake_), is_node_create);;
-	if (is_node_create) {
-	  ++this->size_;
-	}
-	return pair;
-  }
+    void InitFakeNode();
+
+    std::pair<iterator, bool> insert_node(const Key &key, T value = 0) {
+        bool is_node_create = false;
+        auto node = AddNodeByCondition(this->root_, key, value, this->root_, is_node_create);
+        std::pair<iterator, bool> pair = std::make_pair(s21::Tree<Key, T, Alloc>::iterator(node, fake_),
+                                                        is_node_create);;
+        if (is_node_create) {
+            ++this->size_;
+        }
+        return pair;
+    }
   RBT<const Key, T> *FindNode(RBT<const Key, T> *node, T &value);
   RBT<const Key, T> *FindNodeByKey(RBT<const Key, T> *node, const Key &key);
   friend Iterator;
@@ -152,7 +155,6 @@ class Tree {
   //_____WORKING_WITH_MEMORY_____
   RBT<const Key, T> *CreateNode(const Key &key, T value);
   void RemNode(RBT<const Key, T> *node);
-  void InitFakeNode();
   void clearUtil(RBT<const Key, T> *node);
 
   //_____SUPPORT_FOR_INSERT_____

@@ -26,13 +26,29 @@ protected:
     S21Map<int, std::string> map_s;
     std::map<int, int> std_map;
     std::map<int, std::string> std_map_s;
-//    S21Map<int, int> map2({10,50});
-    std::map<int, int> std_map2{{10, 50}, {8, 60}, {6, 70}, {12, 40}, {14, 30}, {16, 20}};
+    S21Map<int, int> map3{{10, 50}, {8, 60}, {6, 70}};
+    std::map<int, int> std_map3{{10, 50}, {8, 60}, {6, 70}};
 
 
 
 
 };
+
+TEST_F(S21Map_test, construct_il) {
+
+    for (const auto &pair : std_map3) {
+        EXPECT_EQ(map3.at(pair.first), std_map3.at(pair.first));
+    }
+}
+
+TEST_F(S21Map_test, construct_copy) {
+    S21Map<int, int> map4(map3);
+    std::map<int, int> std_map4(std_map3);
+
+//    for (auto &pair : std_map4) {
+//        EXPECT_EQ(map4.at(pair.first), std_map4.at(pair.first));
+//    }
+}
 
 TEST_F(S21Map_test, size) {
     map.insert(std::pair(1, 25));
@@ -46,6 +62,10 @@ TEST_F(S21Map_test, size) {
     std_map.insert(std::pair(7, 11));
     std_map.insert(std::pair(-5, 28));
     EXPECT_EQ(map.size(), std_map.size());
+
+//    cout << map3[8]<<endl;
+//
+//    cout << std_map3[8]<<endl;
 }
 
 TEST_F(S21Map_test, max_size) {
