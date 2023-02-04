@@ -13,7 +13,7 @@ namespace s21 {
 
 
     template<typename Key, typename Value, typename Compare = std::less<Key>, typename Alloc = std::allocator<std::pair<const Key, Value>>>
-class S21Map : public Tree<Key, Value> {
+    class S21Map : public Tree<Key, Value> {
     public:
 
         using key_type = Key;
@@ -31,12 +31,12 @@ class S21Map : public Tree<Key, Value> {
         S21Map() {}
 
 
-    S21Map(std::initializer_list<value_type> const &items);
+        S21Map(std::initializer_list<value_type> const &items);
 
         S21Map(const S21Map &other);
-//
-//        S21Map(const S21Map &&other) noexcept;
-//
+
+        S21Map(const S21Map &&other) noexcept;
+
         ~S21Map() = default;
 
 
@@ -61,31 +61,33 @@ class S21Map : public Tree<Key, Value> {
 
 //        void clear();
 
+//        void swap(S21Map &other);
+
+        void erase(const Key &key);// T value-?
+
         std::pair<iterator, bool> insert(const value_type &value);
 
         std::pair<iterator, bool> insert(const Key &key, const Value &obj);
 
         std::pair<iterator, bool> insert_or_assign(const Key &key, const Value &obj);
 
-        void erase(const Key &key);
 
-        void swap(S21Map &other);
 
         void merge(S21Map &other);
 
         bool contains(const Key &key);
 
         template<typename... Args>
-        std::pair<iterator, bool> emplace( Args &&... args );
+        std::pair<iterator, bool> emplace(Args &&... args);
 
         void print() {
-          Tree<Key, Value>::print2D();
+            Tree<Key, Value>::print2D();
         }
     };
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     S21Map<Key, Value, Compare, Alloc>::S21Map(const std::initializer_list<value_type> &items) {
-        Tree<Key, Value>::InitFakeNode();
+//        Tree<Key, Value>::InitFakeNode();
         for (const auto &it : items) {
             Tree<Key, Value>::insert_node(it.first, it.second);
         }
@@ -95,15 +97,18 @@ class S21Map : public Tree<Key, Value> {
     template<typename Key, typename Value, typename Compare, typename Alloc>
     S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &other) {
 //        Tree<Key, Value>::InitFakeNode();
-//        for (auto it = other.begin(); it != other.end(); ++it) {
-//            Tree<Key, Value>::insert_node(it.first, it.second);
-//        }
+
+        auto it2 = other.end();
+        --it2;
+        for (; it2 != other.begin(); --it2) {
+            Tree<Key, Value>::insert_node((*it2).first, (*it2).second);
+        }
     }
-//
-//    template<typename Key, typename Value, typename Compare, typename Alloc>
-//    S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &&other) noexcept {
-//
-//    }
+
+    template<typename Key, typename Value, typename Compare, typename Alloc>
+    S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &&other) noexcept {
+
+    }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     S21Map<Key, Value, Compare, Alloc> &S21Map<Key, Value, Compare, Alloc>::operator=(const S21Map &other) {
@@ -160,6 +165,12 @@ class S21Map : public Tree<Key, Value> {
       Tree<Key, Value>::erase_node(key);
     }
 
+
+//    template<typename Key, typename Value, typename Compare, typename Alloc>
+//    void S21Map<Key, Value, Compare, Alloc>::swap(S21Map &other) {
+//
+//
+//    }
 
 
 }
