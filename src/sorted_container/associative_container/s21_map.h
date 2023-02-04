@@ -165,6 +165,24 @@ namespace s21 {
       Tree<Key, Value>::erase_node(key);
     }
 
+    template<typename Key, typename Value, typename Compare, typename Alloc>
+    void S21Map<Key, Value, Compare, Alloc>::merge(S21Map &other) {
+        for (auto it = other.begin(); it!= other.end(); it++) {
+           auto res = insert(std::pair(it->first, it->second));
+           if (res.second) { erase(it->first); }
+        }
+    }
+
+    template<typename Key, typename Value, typename Compare, typename Alloc>
+    bool S21Map<Key, Value, Compare, Alloc>::contains(const Key &key) {
+        auto ptr = Tree<Key, Value>::FindNodeByKey(this->root_, key);
+        return ptr!= nullptr;
+    }
+
+
+
+
+
 
 //    template<typename Key, typename Value, typename Compare, typename Alloc>
 //    void S21Map<Key, Value, Compare, Alloc>::swap(S21Map &other) {

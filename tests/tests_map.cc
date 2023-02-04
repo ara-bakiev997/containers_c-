@@ -173,6 +173,34 @@ TEST_F(S21Map_test, insert_or_assign) {
 
 }
 
+TEST_F(S21Map_test, merge) {
+
+    std::map<int, std::string> ma {{1, "apple"}, {5, "pear"}, {10, "banana"}};
+    std::map<int, std::string> mb {{2, "zorro"}, {4, "batman"}, {5, "X"}, {8, "alpaca"}};
+    std::map<int, std::string> u;
+    u.merge(ma);
+    std::cout << "ma.size(): " << ma.size() << '\n';
+    u.merge(mb);
+    std::cout << "mb.size(): " << mb.size() << '\n';
+    std::cout << "mb.at(5): " << mb.at(5) << '\n';
+    for(auto const &kv: u)
+        std::cout << kv.first << ", " << kv.second << '\n';
+
+
+}
+
+TEST_F(S21Map_test, contains) {
+    S21Map<int,char> example = {{1,'a'},{2,'b'}};
+
+    for(int x: {2, 5}) {
+        if(example.contains(x)) {
+            std::cout << x << ": Found\n";
+        } else {
+            std::cout << x << ": Not found\n";
+        }
+    }
+}
+
 TEST_F(S21Map_test, insert_delete) {
 
 
@@ -180,6 +208,7 @@ TEST_F(S21Map_test, insert_delete) {
 
 
     map.print();
+
 
 }
 
