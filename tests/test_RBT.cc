@@ -1,164 +1,445 @@
 #include <gtest/gtest.h>
 
 // #include <utility>
+#include <algorithm>
+#include <map>
+#include <random>
 #include <set>
+#include <vector>
 
 #include "../src/sorted_container/red_black_tree.h"
 
 using namespace s21;
 
 class Tree_test : public ::testing::Test {
-protected:
-  void SetUp() override {
-//            tree_int.Insert(6);
-//            tree_int.Insert(20);
-//            tree_int.Insert(4);
-//            tree_int.Insert(1);
-//            tree_int.Insert(5);
-//            tree_int.Insert(-4);
-//            tree_int.Insert(80);
-//            tree_int.Insert(80);
-//            tree_int.Insert(32);
-//            tree_int.Insert(-8);
-//            tree_int.Insert(16);
-//            tree_int.Insert(38);
-//            tree_int.Insert(-19);
-//            tree_int.Insert(63);
-//            tree_int.Insert(18);
-//            tree_int.Insert(35);
-  }
+ protected:
+  void SetUp() override {}
   std::set<int> set_empty;
-  Tree<int> tree_null_;
-  Tree<int> tree_int;
-  Tree<int> tree_left_round;
-  //  RBT<int>* RBT_null = new RBT<int>;
-  //  Node<int> node_data(1);
+  Tree<int, int> tree_null_;
+  std::map<int, int> map_null;
 };
 
-// TEST_F(Tree_test, Node_insert) {
-//   RBT_null->Insert(5);
-////  std::cout << node_null.data_ << std::endl;
-//  RBT_null->Insert(3);
-////  node_null->Insert(7);
-//  RBT_null->RBTPrint();
-//}
+template <typename K, typename V>
+struct node {
+  std::pair<const K, V> p = std::make_pair<const K, V>(1, 2);
+};
 
-TEST_F(Tree_test, GetRoot) { EXPECT_EQ(tree_null_.GetRoot(), nullptr); }
-
+// test 1+
 TEST_F(Tree_test, Insert) {
-  tree_null_.Insert(6);
-  EXPECT_EQ(tree_null_.GetRoot()->data_, 6);
-  tree_null_.Insert(20);
-  EXPECT_EQ(tree_null_.GetRoot()->right_->data_, 20);
-  tree_null_.Insert(4);
-  EXPECT_EQ(tree_null_.GetRoot()->left_->data_, 4);
-  tree_null_.Insert(1);
-  tree_null_.Insert(5);
-  EXPECT_EQ(tree_null_.GetRoot()->left_->data_, 4);
-  tree_null_.Insert(-4);
-  tree_null_.Insert(80);
-  tree_null_.Insert(80);
-  tree_null_.Insert(32);
-  tree_null_.Insert(-8);
-  tree_null_.Insert(16);
-  //  tree_null_.TreePrint();
-  //  tree_null_.WalkInWidth();
-  //  tree_null_.Remove(-8);
-  //  tree_null_.Remove(-4);
-  //  tree_null_.Remove(20);
-  //    tree_null_.Remove(6);
-  tree_null_.print2D();
-}
+  tree_null_.insert_node(5);
+  tree_null_.insert_node(2);
+  tree_null_.insert_node(1);
+  tree_null_.insert_node(3);
+  tree_null_.insert_node(4);
+  tree_null_.insert_node(6);
+  tree_null_.insert_node(0);
+  tree_null_.insert_node(8);
 
-TEST_F(Tree_test, FindMin) {
-  tree_int.print2D();
-  std::cout << tree_int.FindMin(reinterpret_cast<RBT<int> *&>(tree_int))->data_
-            << std::endl;
-}
-
-TEST_F(Tree_test, GetBrother) {
-  tree_int.print2D();
-  std::cout << tree_int.GetBrother(tree_int.GetRoot()->left_->right_)->data_
-            << std::endl;
-}
-
-// TEST_F(Tree_test, IsRoot) {
-//   tree_int.print2D();
-//   std::cout << tree_int.IsRoot(tree_int.GetRoot()) << std::endl;
-// }
-
-TEST_F(Tree_test, tree_left_round) {
-  tree_left_round.Insert(50);
-  tree_left_round.Insert(40);
-  tree_left_round.Insert(30);
-  tree_left_round.Insert(20);
-  tree_left_round.Insert(60);
-  tree_left_round.Insert(70);
-  tree_left_round.Insert(80);
-  tree_left_round.Insert(75);
-  tree_left_round.Insert(81);
-  tree_left_round.Insert(82);
-  tree_left_round.Insert(83);
-  tree_left_round.Insert(84);
-  tree_left_round.Insert(85);
-  tree_left_round.Insert(86);
-  tree_left_round.Insert(6);
-  tree_left_round.Insert(4);
-  tree_left_round.Insert(1);
-  tree_left_round.Insert(5);
-  tree_left_round.Insert(-4);
-  tree_left_round.Insert(32);
-  tree_left_round.Insert(-8);
-  tree_left_round.Insert(-6);
-//  tree_left_round.Insert(16);
-  tree_left_round.print2D();
-}
-
-TEST_F(Tree_test, segfolt) {
-  tree_left_round.Insert(6);
-  tree_left_round.Insert(20);
-  tree_left_round.Insert(4);
-  tree_left_round.Insert(1);
-  tree_left_round.Insert(5);
-  tree_left_round.Insert(-4);
-  tree_left_round.Insert(80);
-  tree_left_round.Insert(80);
-  tree_left_round.Insert(32);
-//  tree_left_round.Insert(-8);
-  tree_left_round.Insert(16);
-  tree_left_round.Insert(38);
-//  tree_left_round.Insert(-19);
-  tree_left_round.Insert(63);
-  tree_left_round.Insert(18);
-  tree_left_round.Insert(35);
-  tree_left_round.print2D();
-}
-
-TEST_F(Tree_test, small_left_rotation) {
-  tree_null_.Insert(10);
-  tree_null_.Insert(5);
-  tree_null_.Insert(7);
+  tree_null_.erase_node(2);  // 2.1.2
+  tree_null_.erase_node(4);
+  tree_null_.erase_node(0);
+  tree_null_.erase_node(1);
+  tree_null_.erase_node(8);
+  tree_null_.erase_node(6);
+  tree_null_.erase_node(5);
+  tree_null_.erase_node(3);
 
   tree_null_.print2D();
 }
+// test 2+
+TEST_F(Tree_test, rotate) {
+  tree_null_.insert_node(10);
+  tree_null_.insert_node(20);
+  tree_null_.insert_node(5);
+  tree_null_.insert_node(7);
+  tree_null_.insert_node(6);
+  tree_null_.insert_node(15);
+  tree_null_.insert_node(16);
+  tree_null_.insert_node(18);
+  tree_null_.insert_node(17);
+  tree_null_.insert_node(30);
+  tree_null_.insert_node(35);
+  tree_null_.insert_node(32);
+  tree_null_.insert_node(33);
+  tree_null_.insert_node(45);
+  tree_null_.insert_node(50);
+  tree_null_.insert_node(55);
+  tree_null_.insert_node(53);
+  tree_null_.insert_node(60);
+  tree_null_.insert_node(65);
+  tree_null_.insert_node(70);
+  tree_null_.insert_node(75);
 
-TEST_F(Tree_test, Remove) {
-
-  tree_null_.Insert(6);
-  tree_null_.Insert(20);
-  tree_null_.Insert(4);
-  tree_null_.Insert(1);
-  tree_null_.Insert(5);
-  tree_null_.Insert(-4);
-  tree_null_.Insert(80);
-  tree_null_.Insert(32);
-  tree_null_.Insert(16);
-  tree_null_.Insert(38);
-  tree_null_.Insert(63);
-  tree_null_.Insert(18);
-  tree_null_.Insert(35);
-
-  tree_null_.Remove(5);
+  tree_null_.erase_node(50);
+  tree_null_.erase_node(60);
+  tree_null_.erase_node(32);
+  tree_null_.erase_node(53);
+  tree_null_.erase_node(75);
+  tree_null_.erase_node(70);
+  tree_null_.erase_node(55);
+  tree_null_.erase_node(35);
+  tree_null_.erase_node(33);
+  tree_null_.erase_node(17);
+  tree_null_.erase_node(20);
+  tree_null_.erase_node(18);
+  tree_null_.erase_node(65);
+  tree_null_.erase_node(15);
+  tree_null_.erase_node(5);
+  tree_null_.erase_node(6);
+  tree_null_.erase_node(7);
+  tree_null_.erase_node(10);
+  tree_null_.erase_node(45);
+  tree_null_.erase_node(30);
+  tree_null_.erase_node(16);
 
   tree_null_.print2D();
+}
+// test 3+
+TEST_F(Tree_test, Sasha_tests) {
+  tree_null_.insert_node(50);
+  tree_null_.insert_node(40);
+  tree_null_.insert_node(30);
+  tree_null_.insert_node(20);
+  tree_null_.insert_node(60);
+  tree_null_.insert_node(70);
+  tree_null_.insert_node(80);
+  tree_null_.insert_node(75);
+  tree_null_.insert_node(81);
+  tree_null_.insert_node(82);
+  tree_null_.insert_node(83);
+  tree_null_.insert_node(84);
+  tree_null_.insert_node(85);
+  tree_null_.insert_node(86);
+  tree_null_.insert_node(6);
+  tree_null_.insert_node(4);
+  tree_null_.insert_node(1);
+  tree_null_.insert_node(5);
+
+  tree_null_.erase_node(40);
+  tree_null_.erase_node(30);
+  tree_null_.erase_node(20);
+  tree_null_.erase_node(50);
+  tree_null_.erase_node(75);
+  tree_null_.erase_node(60);
+  tree_null_.erase_node(4);
+  tree_null_.erase_node(80);
+  tree_null_.erase_node(83);
+  tree_null_.erase_node(81);
+  tree_null_.erase_node(85);
+  tree_null_.erase_node(84);
+  tree_null_.erase_node(82);
+  tree_null_.erase_node(6);
+  tree_null_.erase_node(86);
+  tree_null_.erase_node(70);
+  tree_null_.erase_node(1);
+  tree_null_.erase_node(5);
+
+  tree_null_.print2D();
+}
+// test 4+
+TEST_F(Tree_test, Erase) {
+  tree_null_.insert_node(50);
+  tree_null_.insert_node(40);
+  tree_null_.insert_node(30);
+  tree_null_.insert_node(20);
+  tree_null_.insert_node(60);
+  tree_null_.insert_node(70);
+  tree_null_.insert_node(80);
+  tree_null_.insert_node(75);
+  tree_null_.insert_node(81);
+  tree_null_.insert_node(82);
+  tree_null_.insert_node(83);
+  tree_null_.insert_node(84);
+  tree_null_.insert_node(85);
+  tree_null_.insert_node(86);
+  tree_null_.insert_node(6);
+  tree_null_.insert_node(4);
+  tree_null_.insert_node(1);
+  tree_null_.insert_node(5);
+
+  tree_null_.erase_node(40);
+  tree_null_.erase_node(30);
+  tree_null_.erase_node(50);
+  tree_null_.erase_node(60);
+  tree_null_.erase_node(80);
+  tree_null_.erase_node(83);
+  tree_null_.erase_node(70);
+  tree_null_.erase_node(81);  // смотри зайдет ли в gcov
+  tree_null_.erase_node(85);
+  tree_null_.erase_node(5);
+  tree_null_.erase_node(84);
+  tree_null_.erase_node(6);
+  tree_null_.erase_node(1);
+  tree_null_.erase_node(4);
+  tree_null_.erase_node(75);
+  tree_null_.erase_node(86);
+  tree_null_.erase_node(82);
+  tree_null_.erase_node(20);
+
+  tree_null_.print2D();
+}
+// test 5++
+TEST_F(Tree_test, EraseARA) {
+  tree_null_.insert_node(6);
+  tree_null_.insert_node(20);
+  tree_null_.insert_node(4);
+  tree_null_.insert_node(1);
+  tree_null_.insert_node(5);
+  tree_null_.insert_node(-4);
+  tree_null_.insert_node(80);
+  tree_null_.insert_node(32);
+  tree_null_.insert_node(16);
+  tree_null_.insert_node(38);
+  tree_null_.insert_node(63);
+  tree_null_.insert_node(18);
+  tree_null_.insert_node(35);
+
+  tree_null_.erase_node(5);
+  tree_null_.erase_node(80);
+  tree_null_.erase_node(1);
+  tree_null_.erase_node(4);
+  tree_null_.erase_node(18);
+  tree_null_.erase_node(38);
+  tree_null_.erase_node(35);
+  tree_null_.erase_node(20);
+  tree_null_.erase_node(-4);
+  tree_null_.erase_node(63);
+  tree_null_.erase_node(6);
+  tree_null_.erase_node(16);
+  tree_null_.erase_node(32);
+  tree_null_.print2D();
+}
+
+// test 6+
+TEST_F(Tree_test, SearchBug) {
+  tree_null_.insert_node(1);
+  tree_null_.insert_node(2);
+  tree_null_.insert_node(3);
+  tree_null_.insert_node(4);
+  tree_null_.insert_node(5);
+  tree_null_.insert_node(6);
+  tree_null_.insert_node(7);
+  tree_null_.insert_node(8);
+  tree_null_.insert_node(9);
+  tree_null_.insert_node(10);
+  tree_null_.insert_node(11);
+  tree_null_.insert_node(12);
+  tree_null_.insert_node(13);
+
+  tree_null_.erase_node(1);
+  tree_null_.erase_node(2);
+  tree_null_.erase_node(3);
+  tree_null_.erase_node(4);
+  tree_null_.erase_node(5);
+  tree_null_.erase_node(6);
+  tree_null_.erase_node(7);
+  tree_null_.erase_node(8);
+  tree_null_.erase_node(9);
+  tree_null_.erase_node(10);
+  tree_null_.erase_node(11);
+  tree_null_.erase_node(12);
+  tree_null_.erase_node(13);
+
+  tree_null_.print2D();
+}
+
+// test 7 randomizer+
+TEST_F(Tree_test, randomizer) {
+  tree_null_.insert_node(7);
+  tree_null_.insert_node(17);
+  tree_null_.insert_node(10);
+  tree_null_.insert_node(18);
+  tree_null_.insert_node(4);
+  tree_null_.insert_node(20);
+  tree_null_.insert_node(3);
+  tree_null_.insert_node(15);
+  tree_null_.insert_node(16);
+  tree_null_.insert_node(6);
+  tree_null_.insert_node(5);
+  tree_null_.insert_node(9);
+
+  tree_null_.erase_node(4);
+  tree_null_.erase_node(7);
+  tree_null_.erase_node(17);
+  tree_null_.erase_node(3);
+  tree_null_.erase_node(18);
+  tree_null_.erase_node(10);
+  tree_null_.erase_node(15);
+  tree_null_.erase_node(16);
+  tree_null_.erase_node(20);
+  tree_null_.erase_node(6);
+  tree_null_.erase_node(5);
+  tree_null_.erase_node(9);
+
+  tree_null_.print2D();
+}
+
+// test 7 randomizer+
+TEST_F(Tree_test, randomizerTest2) {
+  tree_null_.insert_node(92);
+  tree_null_.insert_node(103);
+  tree_null_.insert_node(120);
+  tree_null_.insert_node(2);
+  tree_null_.insert_node(139);
+  tree_null_.insert_node(91);
+  tree_null_.insert_node(56);
+  tree_null_.insert_node(94);
+  tree_null_.insert_node(126);
+  tree_null_.insert_node(104);
+  tree_null_.insert_node(21);
+  tree_null_.insert_node(97);
+  tree_null_.insert_node(54);
+  tree_null_.insert_node(12);
+  tree_null_.insert_node(142);
+  tree_null_.insert_node(93);
+  tree_null_.insert_node(77);
+  tree_null_.insert_node(113);
+  tree_null_.insert_node(107);
+  tree_null_.insert_node(25);
+  tree_null_.insert_node(3);
+
+  tree_null_.erase_node(103);
+  tree_null_.erase_node(97);
+  tree_null_.erase_node(77);
+  tree_null_.erase_node(92);
+  tree_null_.erase_node(113);
+  tree_null_.erase_node(126);
+  tree_null_.erase_node(142);
+  tree_null_.erase_node(107);
+  tree_null_.erase_node(54);
+  tree_null_.erase_node(2);
+  tree_null_.erase_node(94);
+  tree_null_.erase_node(25);
+  tree_null_.erase_node(56);
+  tree_null_.erase_node(104);
+  tree_null_.erase_node(12);
+  tree_null_.erase_node(91);
+  tree_null_.erase_node(120);
+  tree_null_.erase_node(93);
+  tree_null_.erase_node(21);
+  tree_null_.erase_node(139);
+  tree_null_.erase_node(3);
+
+  tree_null_.print2D();
+}
+
+TEST_F(Tree_test, testCoverage) {
+  for (auto i = 0; i < 1000; ++i) {
+    tree_null_.insert_node(i);
+  }
+
+  for (auto i = 125; i > 0; --i) {
+    tree_null_.erase_node(i);
+  }
+
+  for (auto i = 125; i < 250; ++i) {
+    tree_null_.erase_node(i);
+  }
+
+  for (auto i = 375; i > 250; --i) {
+    tree_null_.erase_node(i);
+  }
+
+  for (auto i = 375; i < 500; ++i) {
+    tree_null_.erase_node(i);
+  }
+
+  for (auto i = 501; i < 625; ++i) {
+    tree_null_.erase_node(i);
+  }
+
+  for (auto i = 625; i < 750; ++i) {
+    tree_null_.erase_node(i);
+  }
+
+  for (auto i = 750; i > 625; --i) {
+    tree_null_.erase_node(i);
+  }
+
+  for (auto i = 875; i > 750; --i) {
+    tree_null_.erase_node(i);
+  }
+
+  for (auto i = 1000; i > 875; --i) {
+    tree_null_.erase_node(i);
+  }
+
+  tree_null_.print2D();
+}
+
+TEST_F(Tree_test, Iterator) {
+  tree_null_.insert_node(10);
+  tree_null_.insert_node(20);
+  tree_null_.insert_node(30);
+  tree_null_.insert_node(40);
+  tree_null_.insert_node(60);
+  tree_null_.insert_node(50);
+  tree_null_.insert_node(80);
+  tree_null_.insert_node(-80);
+  // збс проходит, так же как и в визуализации
+  //      tree_null_.erase_node(2); // 2.1.2
+  //      tree_null_.erase_node(4);
+  //      tree_null_.erase_node(0);
+  //      tree_null_.erase_node(1);
+  //      tree_null_.erase_node(8);
+  //      tree_null_.erase_node(6);
+  //      tree_null_.erase_node(5);
+  //      tree_null_.erase_node(3);
+
+  //    auto it = tree_null_.begin();
+  //    std::cout << (*it).first << std::endl;
+
+  //    auto end = tree_null_.end();
+  //    std::cout << (*end).first << std::endl;
+  //
+  //    for (int i = 0; i < 8; ++i) {
+  //      end--;
+  //      std::cout << (*end).first << std::endl;
+  //    }
+
+  auto begin = tree_null_.begin();
+  std::cout << (*begin).first << std::endl;
+
+  for (int i = 0; i < 7; ++i) {
+    begin++;
+    std::cout << (*begin).first << std::endl;
+  }
+
+  //    std::set test = {1, 3, 4};
+  //    auto it = test.begin();
+  //    --it;
+
+  // auto itm = map_null.begin();
+  // std::cout << &(*itm) << std::endl;
+  //
+
+  tree_null_.print2D();
+}
+
+TEST_F(Tree_test, random) {
+  // создаем массив на 100+ значений
+  std::vector<int> v;
+  for (auto i = 0; i < 1000000; ++i) {
+    v.insert(v.begin() + i, i);
+  }
+
+  // перемешиваем значения в массиве в случайном порядке
+  std::random_device rd;
+  std::mt19937 g(rd());
+  std::shuffle(v.begin(), v.end(), g);
+
+  //закидываем значения в set/map/tree
+  Tree<int> v2;
+  for (auto i = 0; i < 1000000; ++i) {
+    v2.insert_node(i);
+  }
+  //   удаляем значения в set/map/tree  в случайном порядке
+  for (auto i = 0; i < 1000000; ++i) {
+    v2.erase_node(v[i]);
+  }
+}
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

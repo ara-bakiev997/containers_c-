@@ -78,7 +78,7 @@ namespace s21 {
     template<class T, size_t N>
     S21Array<T, N>::S21Array() {
         this->size_ = N;
-        this->arr_ = arr_stat;
+        if (this->size_) this->arr_ = arr_stat;
     }
 
     template<class value_type, size_t N>
@@ -89,7 +89,8 @@ namespace s21 {
 
     template<class T, size_t N>
     S21Array<T, N>::S21Array(const S21Array &other) : S21Array() {
-        std::memcpy(this->arr_, other.arr_, sizeof(value_type) * this->size_);
+//        std::memcpy(this->arr_, other.arr_, sizeof(value_type) * this->size_);
+        std::copy(other.begin(), other.end(), this->arr_);
     }
 
     template<class T, size_t N>
