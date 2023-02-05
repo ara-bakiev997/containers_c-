@@ -160,7 +160,12 @@ TEST_F(S21Map_test, empty) {
     EXPECT_TRUE(std_map_empty.empty());
 }
 
-TEST_F(S21Map_test, insert_value_type) {}
+TEST_F(S21Map_test, insert_value_type) {
+   auto pr1 =map_s.insert(1, "25");
+    auto pr2 = map_s.insert(std::pair(2, "55"));
+    auto pr3 = std_map_s.insert(std::pair(1, "75"));
+    cout<<"insert_value_  "<<(*pr2.first).second<<endl;
+}
 
 TEST_F(S21Map_test, insert_key_value) {}
 
@@ -189,6 +194,16 @@ TEST_F(S21Map_test, insert_or_assign) {
 
 }
 
+TEST_F(S21Map_test, emplace) {
+//    auto pr1 =map.emplace(9, 35);
+    auto pr3 = map_s.emplace(1, "a");
+
+//    auto pr2 =std_map.emplace(9, 35);
+    cout<<"insert_value_  "<<(*pr3[0].first).second<<endl;
+
+//    EXPECT_EQ(pr1.second, pr2.second);
+}
+
 TEST_F(S21Map_test, merge) {
 
     std::map<int, std::string> ma {{1, "apple"}, {5, "pear"}, {10, "banana"}};
@@ -201,6 +216,19 @@ TEST_F(S21Map_test, merge) {
     std::cout << "mb.at(5): " << mb.at(5) << '\n';
     for(auto const &kv: u)
         std::cout << kv.first << ", " << kv.second << '\n';
+
+    std::cout <<"-------------------------------"<< '\n';
+
+    S21Map<int, std::string> ma_ {{1, "apple"}, {5, "pear"}, {10, "banana"}};
+    S21Map<int, std::string> mb_ {{2, "zorro"}, {4, "batman"}, {5, "X"}, {8, "alpaca"}};
+    S21Map<int, std::string> u_;
+//    u_.merge(ma_);
+//    std::cout << "ma_.size(): " << ma_.size() << '\n';
+//    u_.merge(mb_);
+//    std::cout << "mb_.size(): " << mb_.size() << '\n';
+//    std::cout << "mb_.at(5): " << mb_.at(5) << '\n';
+//    for(auto const &kv: u_)
+//        std::cout << kv.first << ", " << kv.second << '\n';
 
 
 }

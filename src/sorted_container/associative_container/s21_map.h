@@ -8,6 +8,7 @@
 #include <iostream>
 #include <initializer_list>
 #include "../red_black_tree.h"
+#include "../../sequence/s21_vector.h"
 
 namespace s21 {
 
@@ -77,7 +78,7 @@ namespace s21 {
         bool contains(const Key &key);
 
         template<typename... Args>
-        std::pair<iterator, bool> emplace(Args &&... args);
+        S21Vector<std::pair<iterator,bool>> emplace(Args&&... args);
 
         void print() {
             Tree<Key, Value>::print2D();
@@ -189,9 +190,16 @@ namespace s21 {
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     void S21Map<Key, Value, Compare, Alloc>::merge(S21Map &other) {
-        for (auto it = other.begin(); it != other.end(); it++) {
+//        for (auto it = other.begin(); it != other.end(); it++) {
+//            auto res = insert(std::pair(it->first, it->second));
+//            if (res.second) { erase(it->first); }
+//        }
+
+        auto it = other.begin();
+        for (auto i = 0; i < other.size_; ++i) {
             auto res = insert(std::pair(it->first, it->second));
             if (res.second) { erase(it->first); }
+            ++it;
         }
     }
 
@@ -200,6 +208,17 @@ namespace s21 {
         auto ptr = Tree<Key, Value>::FindNodeByKey(this->root_, key);
         return ptr != nullptr;
     }
+
+    template<typename Key, typename Value, typename Compare, typename Alloc>
+    template<typename... Args>
+    S21Vector<std::pair<typename Tree<Key, Value>::iterator, bool>>
+    S21Map<Key, Value, Compare, Alloc>::emplace(Args &&... args) {
+        S21Vector<std::pair<iterator, bool>> data;
+        data.push_back(insert(std::forward<Args>(args)...));
+        return data;
+    }
+
+
 
 
 
