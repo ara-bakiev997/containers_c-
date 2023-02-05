@@ -6,6 +6,8 @@
 #define S21_CONTAINERS_SRC_SEQUENCE_CONTAINER_H_
 
 #include "../container.h"
+#include <utility>
+#include <cstddef>
 
 namespace s21 {
 
