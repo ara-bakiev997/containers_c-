@@ -135,7 +135,7 @@ namespace s21 {
 
         ~Tree();
 
-        Tree &operator=(const Tree &other) noexcept;
+        Tree &operator=(const Tree &other);
 
         Tree &operator=(Tree &&other) noexcept;
 
@@ -282,11 +282,19 @@ namespace s21 {
 
     template<typename Key, typename T, typename Alloc>
     Tree<Key, T, Alloc> &Tree<Key, T, Alloc>::operator=(
-            const Tree &other) noexcept {
-        if (this == &other) return *this;
+            const Tree &other) {
+//        if (this == &other) return *this;
+//        this->clear();
+//        for (auto i = other.begin(); i != other.end(); ++i) {
+//            insert_node(*i);
+//        }
+//        return *this;
+
+        if (this != &other) {
         this->clear();
         for (auto i = other.begin(); i != other.end(); ++i) {
             insert_node(*i);
+        }
         }
         return *this;
     }

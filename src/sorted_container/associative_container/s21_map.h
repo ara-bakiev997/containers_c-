@@ -35,7 +35,7 @@ namespace s21 {
 
         S21Map(const S21Map &other);
 
-        S21Map(const S21Map &&other) noexcept;
+        S21Map(S21Map &&other) noexcept;
 
         ~S21Map() = default;
 
@@ -72,7 +72,6 @@ namespace s21 {
         std::pair<iterator, bool> insert_or_assign(const Key &key, const Value &obj);
 
 
-
         void merge(S21Map &other);
 
         bool contains(const Key &key);
@@ -88,7 +87,7 @@ namespace s21 {
     template<typename Key, typename Value, typename Compare, typename Alloc>
     S21Map<Key, Value, Compare, Alloc>::S21Map(const std::initializer_list<value_type> &items) {
 //        Tree<Key, Value>::InitFakeNode();
-        for (const auto &it : items) {
+        for (const auto &it: items) {
             Tree<Key, Value>::insert_node(it.first, it.second);
         }
     }
@@ -98,33 +97,55 @@ namespace s21 {
     S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &other) {
 //        Tree<Key, Value>::InitFakeNode();
 
-        auto it2 = other.end();
-        --it2;
-        for (; it2 != other.begin(); --it2) {
+        auto it2 = other.begin();
+
+        for ( auto i = 0; i< other.size_; ++i ) {
             Tree<Key, Value>::insert_node((*it2).first, (*it2).second);
+            ++it2;
         }
+//        for(auto it = other.begin(); it!= other.end(); ++it) {
+//            Tree<Key, Value>::insert_node((*it).first, (*it).second);
+//        }
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
-    S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &&other) noexcept {
-
+    S21Map<Key, Value, Compare, Alloc>::S21Map(S21Map &&other) noexcept {
+        this->swap(other);
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     S21Map<Key, Value, Compare, Alloc> &S21Map<Key, Value, Compare, Alloc>::operator=(const S21Map &other) {
-        return *this;
+        if (this != &other) {
+//            this->~S21Map();
+//            new (this) S21Map(other);
+            this->clear();
+            auto it2 = other.begin();
+
+            for (auto i = 0; i < other.size_; ++i) {
+                Tree<Key, Value>::insert_node((*it2).first, (*it2).second);
+                ++it2;
+            }
+            //        for(auto it = other.begin(); it!= other.end(); ++it) {
+//            Tree<Key, Value>::insert_node((*it).first, (*it).second);
+//        }
+        }
+            return *this;
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     S21Map<Key, Value, Compare, Alloc> &S21Map<Key, Value, Compare, Alloc>::operator=(S21Map &&other) noexcept {
+        if (this != &other) {
+            this->clear();
+            this->swap(other);
+        }
         return *this;
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     Value &S21Map<Key, Value, Compare, Alloc>::at(const key_type &key) {
-       auto ptr = Tree<Key, Value>::FindNodeByKey(this->root_, key);
-       if (!ptr) { throw std::out_of_range("key not found"); }
-       return ptr->data_->second;
+        auto ptr = Tree<Key, Value>::FindNodeByKey(this->root_, key);
+        if (!ptr) { throw std::out_of_range("key not found"); }
+        return ptr->data_->second;
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
@@ -137,7 +158,7 @@ namespace s21 {
     template<typename Key, typename Value, typename Compare, typename Alloc>
     Value &S21Map<Key, Value, Compare, Alloc>::operator[](const key_type &key) {
         auto ptr = Tree<Key, Value>::FindNodeByKey(this->root_, key);
-        if (!ptr) {insert(key, {});}
+        if (!ptr) { insert(key, {}); }
         return at(key);
     }
 
@@ -154,29 +175,30 @@ namespace s21 {
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
-    std::pair<typename S21Map<Key, Value, Compare, Alloc>::iterator, bool> S21Map<Key, Value, Compare, Alloc>::insert_or_assign(const Key &key, const Value &obj) {
+    std::pair<typename S21Map<Key, Value, Compare, Alloc>::iterator, bool>
+    S21Map<Key, Value, Compare, Alloc>::insert_or_assign(const Key &key, const Value &obj) {
         auto pr = insert(key, obj);
         if (!pr.second) (*(pr.first)).second = obj;
         return pr;
     }
 
-    template <typename Key, typename Value, typename Compare, typename Alloc>
+    template<typename Key, typename Value, typename Compare, typename Alloc>
     void S21Map<Key, Value, Compare, Alloc>::erase(const Key &key) {
-      Tree<Key, Value>::erase_node(key);
+        Tree<Key, Value>::erase_node(key);
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     void S21Map<Key, Value, Compare, Alloc>::merge(S21Map &other) {
-        for (auto it = other.begin(); it!= other.end(); it++) {
-           auto res = insert(std::pair(it->first, it->second));
-           if (res.second) { erase(it->first); }
+        for (auto it = other.begin(); it != other.end(); it++) {
+            auto res = insert(std::pair(it->first, it->second));
+            if (res.second) { erase(it->first); }
         }
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>
     bool S21Map<Key, Value, Compare, Alloc>::contains(const Key &key) {
         auto ptr = Tree<Key, Value>::FindNodeByKey(this->root_, key);
-        return ptr!= nullptr;
+        return ptr != nullptr;
     }
 
 

@@ -44,17 +44,33 @@ TEST_F(S21Map_test, construct_il) {
 TEST_F(S21Map_test, construct_copy) {
     S21Map<int, int> map4(map3);
     std::map<int, int> std_map4(std_map3);
-    auto it = std_map4.begin();
-    ++it;
-    ++it;
-    ++it;
-    cout << &(*it )<< std::endl;
-    cout << (*it).first << std::endl;
-//    cout << map4.at(8) << std::endl;
-//    cout << map3.begin()->first << std::endl;
-//    for (auto &pair : std_map4) {
-//        EXPECT_EQ(map4.at(pair.first), std_map4.at(pair.first));
-//    }
+    for (auto &pair : std_map4) {
+        EXPECT_EQ(map4.at(pair.first), std_map4.at(pair.first));
+    }
+}
+
+TEST_F(S21Map_test, construct_move) {
+    S21Map<int, int> map4(std::move(map3));
+    std::map<int, int> std_map4(std::move(std_map3));
+    for (const auto &pair: std_map4) {
+        EXPECT_EQ(map4.at(pair.first), std_map4.at(pair.first));
+    }
+}
+
+TEST_F(S21Map_test, operator_copy) {
+   map_empty = map3;
+   std_map_empty = std_map3;
+    for (auto &pair : std_map_empty) {
+        EXPECT_EQ(map_empty.at(pair.first), std_map_empty.at(pair.first));
+    }
+}
+
+TEST_F(S21Map_test, operator_move) {
+    map_empty = std::move(map3);
+    std_map_empty = std::move(std_map3);
+    for (const auto &pair: std_map_empty) {
+        EXPECT_EQ(map_empty.at(pair.first), std_map_empty.at(pair.first));
+    }
 }
 
 TEST_F(S21Map_test, swap) {
