@@ -98,15 +98,17 @@ namespace s21 {
     S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &other) {
 //        Tree<Key, Value>::InitFakeNode();
 
-        auto it2 = other.begin();
-
-        for ( auto i = 0; i< other.size_; ++i ) {
-            Tree<Key, Value>::insert_node((*it2).first, (*it2).second);
-            ++it2;
-        }
-//        for(auto it = other.begin(); it!= other.end(); ++it) {
-//            Tree<Key, Value>::insert_node((*it).first, (*it).second);
+//        auto it2 = other.begin();
+//
+//        for ( auto i = 0; i< other.size_; ++i ) {
+//            Tree<Key, Value>::insert_node((*it2).first, (*it2).second);
+//            ++it2;
 //        }
+        for(auto it = other.begin(); it!= other.end(); ) {
+            Tree<Key, Value>::insert_node((*it).first, (*it).second);
+            ++it;
+            int a = 0;
+        }
     }
 
     template<typename Key, typename Value, typename Compare, typename Alloc>

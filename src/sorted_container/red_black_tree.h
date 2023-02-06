@@ -344,7 +344,7 @@ namespace s21 {
 //____ITERATORS_FOR_TREE____
     template<typename Key, typename T, typename Alloc>
     typename Tree<Key, T, Alloc>::iterator Tree<Key, T, Alloc>::begin() const {
-        fake_->parent_ = nullptr;
+//        fake_->parent_ = nullptr;
         if (root_)
             return s21::Tree<Key, T, Alloc>::iterator(MinNode(root_), fake_);
         else {
@@ -354,8 +354,8 @@ namespace s21 {
 
     template<typename Key, typename T, typename Alloc>
     typename Tree<Key, T, Alloc>::iterator Tree<Key, T, Alloc>::end() const {
-        fake_->parent_ = nullptr;
-        if (root_) fake_->parent_ = MaxNode(root_);
+//        fake_->parent_ = nullptr;
+//        if (root_) fake_->parent_ = MaxNode(root_);
         return s21::Tree<Key, T, Alloc>::iterator(fake_, fake_);
     }
 
@@ -418,6 +418,11 @@ namespace s21 {
                 node->parent_ = parent;
             } else {
                 node->color_ = BLACK;
+            }
+            if (node == root_) {
+                this->fake_->parent_ = node;
+            } else if (node->data_->first > this->fake_->parent_->data_->first) {
+                this->fake_->parent_ = node;
             }
             if (parent && parent->color_ == RED) {
                 BalanceInsert(node, parent);
@@ -922,6 +927,10 @@ namespace s21 {
         if (GetNodeChild(this->node_, mode) == this->it_fake_) {
             // node == node->parent->left or node->parent->right
             while (node == GetNodeParentChild(this->node_, mode)) {
+                if (node == this->it_fake_->parent_) {
+                    node = this->it_fake_;
+                    return node;
+                }
                 node = node->parent_;
             }
             node = node->parent_;
