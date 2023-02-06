@@ -321,7 +321,7 @@ void Tree<Key, T, Alloc>::erase(const Key &key) {  // iterator pos нужно
     if (find == root_ && find->left_ == this->fake_) {
       this->fake_->parent_ = this->fake_;
     } else {
-      this->fake_->parent_ = --(iterator(find, this->fake_));
+      this->fake_->parent_ = (--(iterator(find, this->fake_))).node_;
     }
   }
   if (find != this->fake_ && find != nullptr) {
