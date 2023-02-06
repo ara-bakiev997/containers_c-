@@ -253,6 +253,27 @@ TEST_F(S21Map_test, insert_delete) {
   map.print();
 }
 
+TEST_F(S21Map_test, iterators) {
+  auto it = map3.end();
+  auto std_it = std_map3.end();
+  --it;
+  --std_it;
+  while (std_it != std_map3.begin()) {
+    EXPECT_EQ(it->first, std_it->first);
+    --it;
+    --std_it;
+  }
+
+  std::cout << it->first << std::endl;
+  --it;
+  std::cout << std_it->first << std::endl;
+  --std_it;
+
+//  std::cout << it->first << std::endl;
+//  std::cout << std_it->first << std::endl;
+
+}
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

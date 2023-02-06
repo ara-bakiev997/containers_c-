@@ -258,8 +258,8 @@ Tree<Key, T, Alloc>::Tree(Tree &&other) noexcept {
 template <typename Key, typename T, typename Alloc>
 Tree<Key, T, Alloc>::~Tree() {
   clear();
-  node_alloc_.deallocate(this->fake_,
-                         1);  // отдельно удаляем память fake ноды
+  node_alloc_.deallocate(this->fake_, 1);
+  value_type_alloc_.deallocate(this->fake_->data_, 1);
 }
 
 template <typename Key, typename T, typename Alloc>
@@ -374,6 +374,7 @@ void Tree<Key, T, Alloc>::RemNode(RBT<const Key, T> *node) {
 template <typename Key, typename T, typename Alloc>
 void Tree<Key, T, Alloc>::InitFakeNode() {
   fake_ = node_alloc_.allocate(1);
+  fake_->data_ = value_type_alloc_.allocate(1);
 }
 
 template <typename Key, typename T, typename Alloc>
