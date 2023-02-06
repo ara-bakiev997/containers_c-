@@ -95,10 +95,8 @@ S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &other) {
   //            Tree<Key, Value>::insert_node((*it2).first, (*it2).second);
   //            ++it2;
   //        }
-  for (auto it = other.begin(); it != other.end();) {
+  for (auto it = other.begin(); it != other.end(); ++it) {
     Tree<Key, Value>::insert_node((*it).first, (*it).second);
-    ++it;
-    int a = 0;
   }
 }
 
