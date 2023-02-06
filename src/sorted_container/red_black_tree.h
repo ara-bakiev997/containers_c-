@@ -317,6 +317,13 @@ void Tree<Key, T, Alloc>::clear() {
 template <typename Key, typename T, typename Alloc>
 void Tree<Key, T, Alloc>::erase(const Key &key) {  // iterator pos нужно
   RBT<const Key, T> *find = FindNodeByKey(this->root_, key);
+  if (find == this->fake_->parent_) {
+    if (find == root_ && find->left_ == this->fake_) {
+      this->fake_->parent_ = this->fake_;
+    } else {
+      this->fake_->parent_ = --(iterator(find, this->fake_));
+    }
+  }
   if (find != this->fake_ && find != nullptr) {
     DelNodeByCondition(find);
   }
@@ -395,7 +402,6 @@ Tree<Key, T, Alloc>::insert_node(const Key &key, T value) {
       AddNodeByCondition(this->root_, key, value, this->root_, is_node_create);
   std::pair<iterator, bool> pair = std::make_pair(
       s21::Tree<Key, T, Alloc>::iterator(node, fake_), is_node_create);
-  ;
   if (is_node_create) {
     ++this->size_;
   }
@@ -440,19 +446,13 @@ RBT<const Key, T> *Tree<Key, T, Alloc>::AddNodeByCondition(
 template <typename Key, typename T, typename Alloc>
 void Tree<Key, T, Alloc>::DelNodeByCondition(RBT<const Key, T> *node) {
   if (node->left_ != fake_ && node->right_ != fake_) {
-    //    RBT<const Key, T> *change = MinNode(node->right_);  // ранее
-
     RBT<const Key, T> *change = MaxNode(node->left_);
     std::swap(change->data_, node->data_);
     DelNodeByCondition(change);
-  } else if (node->left_ != fake_) {  // есть один левый ребенок
-    //    if (node->color_ == BLACK) {
+  } else if (node->left_ != fake_) {  // есть один левый ребено
     DelNodeWithOneChild(node, node->left_, node->parent_);
-    //    }
   } else if (node->right_ != fake_) {  // есть один правый ребенок
-    //    if (node->color_ == BLACK) {
     DelNodeWithOneChild(node, node->right_, node->parent_);
-    //    }
   } else {  // лист
     if (node->color_ == RED) {
       DelNodeWithoutChild(node, node->parent_);
