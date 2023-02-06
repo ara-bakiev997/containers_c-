@@ -190,18 +190,22 @@ S21Map<Key, Value, Compare, Alloc>::insert_or_assign(const Key &key,
 
 template <typename Key, typename Value, typename Compare, typename Alloc>
 void S21Map<Key, Value, Compare, Alloc>::merge(S21Map &other) {
-  //        for (auto it = other.begin(); it != other.end(); it++) {
-  //            auto res = insert(std::pair(it->first, it->second));
-  //            if (res.second) { erase(it->first); }
-  //        }
+//  for (auto it = other.begin(); it != other.end(); it++) {
+//    auto res = insert(std::pair(it->first, it->second));
+//    if (res.second) {
+//      other.erase(it->first);
+//    }
+//  }
 
-  auto it = other.begin();
-  for (auto i = 0; i < other.size_; ++i) {
+    auto it = other.begin();
+  auto x =other.size();
+  for ( auto i = 0 ; i < x; ++i) {
     auto res = insert(std::pair(it->first, it->second));
     if (res.second) {
-      erase(it->first);
+      other.erase(it->first);
     }
-    ++it;
+    if (i < (x - 1)) {++it;}
+
   }
 }
 
@@ -219,12 +223,6 @@ S21Map<Key, Value, Compare, Alloc>::emplace(Args &&...args) {
   data.push_back(insert(std::forward<Args>(args)...));
   return data;
 }
-
-//    template<typename Key, typename Value, typename Compare, typename Alloc>
-//    void S21Map<Key, Value, Compare, Alloc>::swap(S21Map &other) {
-//
-//
-//    }
 
 }  // namespace s21
 

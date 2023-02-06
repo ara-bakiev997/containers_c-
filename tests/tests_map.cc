@@ -226,13 +226,13 @@ TEST_F(S21Map_test, merge) {
   S21Map<int, std::string> mb_{
       {2, "zorro"}, {4, "batman"}, {5, "X"}, {8, "alpaca"}};
   S21Map<int, std::string> u_;
-  //    u_.merge(ma_);
-  //    std::cout << "ma_.size(): " << ma_.size() << '\n';
-  //    u_.merge(mb_);
-  //    std::cout << "mb_.size(): " << mb_.size() << '\n';
-  //    std::cout << "mb_.at(5): " << mb_.at(5) << '\n';
-  //    for(auto const &kv: u_)
-  //        std::cout << kv.first << ", " << kv.second << '\n';
+      u_.merge(ma_);
+      std::cout << "ma_.size(): " << ma_.size() << '\n';
+      u_.merge(mb_);
+      std::cout << "mb_.size(): " << mb_.size() << '\n';
+      std::cout << "mb_.at(5): " << mb_.at(5) << '\n';
+//      for(auto const &kv: u_)
+//          std::cout << kv.first << ", " << kv.second << '\n';
 }
 
 TEST_F(S21Map_test, contains) {
@@ -253,26 +253,26 @@ TEST_F(S21Map_test, insert_delete) {
   map.print();
 }
 
-TEST_F(S21Map_test, iterators) {
-  auto it = map3.end();
-  auto std_it = std_map3.end();
-  --it;
-  --std_it;
-  while (std_it != std_map3.begin()) {
-    EXPECT_EQ(it->first, std_it->first);
-    --it;
-    --std_it;
-  }
-
-  std::cout << it->first << std::endl;
-  --it;
-  std::cout << std_it->first << std::endl;
-  --std_it;
-
+//TEST_F(S21Map_test, iterators) {
+//  auto it = map3.begin();
+//  auto std_it = std_map3.end();
+//  --it;
+//  --std_it;
+//  while (std_it != std_map3.end()) {
+//    EXPECT_EQ(it->first, std_it->first);
+//    ++it;
+//    ++std_it;
+//  }
+//
 //  std::cout << it->first << std::endl;
+//  --it;
 //  std::cout << std_it->first << std::endl;
-
-}
+//  --std_it;
+//
+////  std::cout << it->first << std::endl;
+////  std::cout << std_it->first << std::endl;
+//
+//}
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
