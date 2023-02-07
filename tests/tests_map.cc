@@ -155,18 +155,30 @@ TEST_F(S21Map_test, empty) {
 }
 
 TEST_F(S21Map_test, insert_value_type) {
-  auto pr1 = map_s.insert(1, "25");
+  auto pr1 = map_s.insert(std::pair(1, "25"));
   auto pr2 = map_s.insert(std::pair(2, "55"));
-  auto pr3 = std_map_s.insert(std::pair(1, "75"));
-  cout << "insert_value_  " << (*pr2.first).second << endl;
+  auto std_pr1 = std_map_s.insert(std::pair(1, "25"));
+  auto std_pr2 = std_map_s.insert(std::pair(2, "55"));
+  EXPECT_EQ((*pr1.first).first, (*std_pr1.first).first);
+  EXPECT_EQ((*pr2.first).first, (*std_pr2.first).first);
+  EXPECT_EQ((*pr1.first).second, (*std_pr1.first).second);
+  EXPECT_EQ((*pr2.first).second, (*std_pr2.first).second);
 }
 
-TEST_F(S21Map_test, insert_key_value) {}
+TEST_F(S21Map_test, insert_key_value) {
+  auto pr1 = map_s.insert(1, "25");
+  auto pr2 = map_s.insert(2, "55");
+  auto std_pr1 = std_map_s.insert(std::pair(1, "25"));
+  auto std_pr2 = std_map_s.insert(std::pair(2, "55"));
+  EXPECT_EQ((*pr1.first).first, (*std_pr1.first).first);
+  EXPECT_EQ((*pr2.first).first, (*std_pr2.first).first);
+  EXPECT_EQ((*pr1.first).second, (*std_pr1.first).second);
+  EXPECT_EQ((*pr2.first).second, (*std_pr2.first).second);
+}
 
 TEST_F(S21Map_test, erase) {
   map3.erase(10);
   std_map3.erase(10);
-  //    map3.at(10);
   EXPECT_EQ(map3.size(), std_map3.size());
   //    for (auto itr = map3.begin(), auto std_itr = std_map3.begin() ; itr!=
   //    map3.end(); itr++) {
@@ -199,40 +211,40 @@ TEST_F(S21Map_test, insert_or_assign) {
 }
 
 TEST_F(S21Map_test, emplace) {
-  //    auto pr1 =map.emplace(9, 35);
   auto pr3 = map_s.emplace(1, "a");
-
-  //    auto pr2 =std_map.emplace(9, 35);
-  cout << "insert_value_  " << (*pr3[0].first).second << endl;
-
-  //    EXPECT_EQ(pr1.second, pr2.second);
+  auto std_pr3 = std_map_s.emplace(1, "a");
+  EXPECT_EQ((*pr3[0].first).first, (*std_pr3.first).first);
+  EXPECT_EQ((*pr3[0].first).second, (*std_pr3.first).second);
 }
 
 TEST_F(S21Map_test, merge) {
-  std::map<int, std::string> ma{{1, "apple"}, {5, "pear"}, {10, "banana"}};
-  std::map<int, std::string> mb{
-      {2, "zorro"}, {4, "batman"}, {5, "X"}, {8, "alpaca"}};
-  std::map<int, std::string> u;
-  u.merge(ma);
-  std::cout << "ma.size(): " << ma.size() << '\n';
-  u.merge(mb);
-  std::cout << "mb.size(): " << mb.size() << '\n';
-  std::cout << "mb.at(5): " << mb.at(5) << '\n';
-  for (auto const &kv : u) std::cout << kv.first << ", " << kv.second << '\n';
-
-  std::cout << "-------------------------------" << '\n';
-
   S21Map<int, std::string> ma_{{1, "apple"}, {5, "pear"}, {10, "banana"}};
   S21Map<int, std::string> mb_{
       {2, "zorro"}, {4, "batman"}, {5, "X"}, {8, "alpaca"}};
   S21Map<int, std::string> u_;
-      u_.merge(ma_);
-      std::cout << "ma_.size(): " << ma_.size() << '\n';
-      u_.merge(mb_);
-      std::cout << "mb_.size(): " << mb_.size() << '\n';
-      std::cout << "mb_.at(5): " << mb_.at(5) << '\n';
-//      for(auto const &kv: u_)
-//          std::cout << kv.first << ", " << kv.second << '\n';
+  std::map<int, std::string> ma{{1, "apple"}, {5, "pear"}, {10, "banana"}};
+  std::map<int, std::string> mb{
+      {2, "zorro"}, {4, "batman"}, {5, "X"}, {8, "alpaca"}};
+  std::map<int, std::string> u;
+  u_.merge(ma_);
+  u.merge(ma);
+  EXPECT_EQ(ma_.size(),ma.size());
+  u_.merge(mb_);
+  u.merge(mb);
+  EXPECT_EQ(mb_.size(),mb.size());
+  EXPECT_EQ(mb_.at(5),mb.at(5));
+//  std::cout << "ma.size(): " << ma.size() << '\n';
+//  std::cout << "mb.size(): " << mb.size() << '\n';
+//  std::cout << "mb.at(5): " << mb.at(5) << '\n';
+////  for (auto const &kv : u) std::cout << kv.first << ", " << kv.second << '\n';
+////
+//  std::cout << "-------------------------------" << '\n';
+//
+//  std::cout << "ma_.size(): " << ma_.size() << '\n';
+//  std::cout << "mb_.size(): " << mb_.size() << '\n';
+//  std::cout << "mb_.at(5): " << mb_.at(5) << '\n';
+////  //      for(auto const &kv: u_)
+////  //          std::cout << kv.first << ", " << kv.second << '\n';
 }
 
 TEST_F(S21Map_test, contains) {
