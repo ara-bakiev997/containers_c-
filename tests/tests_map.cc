@@ -4,13 +4,13 @@
 
 #include <gtest/gtest.h>
 
-#include <algorithm>
+//#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <map>
-#include <random>
-#include <string>
-#include <vector>
+//#include <random>
+//#include <string>
+//#include <vector>
 
 #include "../src/sorted_container/associative_container/s21_map.h"
 
@@ -113,6 +113,20 @@ TEST_F(S21Map_test, clear) {
   EXPECT_ANY_THROW(std_map.at(1));
 }
 
+TEST_F(S21Map_test, it_begin) {
+  auto it = map.begin();
+  auto std_it = std_map.begin();
+    EXPECT_EQ(it->first, std_it->first);
+}
+
+TEST_F(S21Map_test, it_end) {
+  auto it = map.end();
+  auto std_it = std_map.end();
+  --it;
+  --std_it;
+  EXPECT_EQ(it->first, std_it->first);
+}
+
 TEST_F(S21Map_test, at) {
   for (const auto &pair : std_map) {
     EXPECT_EQ(map.at(pair.first), std_map.at(pair.first));
@@ -176,15 +190,6 @@ TEST_F(S21Map_test, insert_key_value) {
   EXPECT_EQ((*pr2.first).second, (*std_pr2.first).second);
 }
 
-TEST_F(S21Map_test, erase) {
-  map3.erase(10);
-  std_map3.erase(10);
-  EXPECT_EQ(map3.size(), std_map3.size());
-  //    for (auto itr = map3.begin(), auto std_itr = std_map3.begin() ; itr!=
-  //    map3.end(); itr++) {
-  //        EXPECT_EQ(itr, std_map3.size());
-  //    }
-}
 
 TEST_F(S21Map_test, insert_or_assign) {
   auto pr1 = map.insert_or_assign(9, 35);
@@ -210,6 +215,26 @@ TEST_F(S21Map_test, insert_or_assign) {
   EXPECT_EQ((*(pr_s3.first)).second, (*(pr_s4.first)).second);
 }
 
+TEST_F(S21Map_test, erase) {
+  map_s.insert(1, "25");
+  map_s.insert(2, "55");
+  std_map_s.insert(std::pair(1, "25"));
+  std_map_s.insert(std::pair(2, "55"));
+  map3.erase((map3.begin()));
+  std_map3.erase((std_map3.begin()));
+  map_s.erase((map_s.begin()));
+  std_map_s.erase((std_map_s.begin()));
+
+  for (auto const &it : map3) {
+    EXPECT_EQ(map3.at(it.first),std_map3.at(it.first));
+  }
+
+  for (auto const &it : map_s) {
+    EXPECT_EQ(map_s.at(it.first),std_map_s.at(it.first));
+  }
+
+}
+
 TEST_F(S21Map_test, emplace) {
   auto pr3 = map_s.emplace(1, "a");
   auto std_pr3 = std_map_s.emplace(1, "a");
@@ -225,66 +250,25 @@ TEST_F(S21Map_test, merge) {
   std::map<int, std::string> ma{{1, "apple"}, {5, "pear"}, {10, "banana"}};
   std::map<int, std::string> mb{
       {2, "zorro"}, {4, "batman"}, {5, "X"}, {8, "alpaca"}};
-  std::map<int, std::string> u;
+  std::map<int, std::string> std_u;
   u_.merge(ma_);
-  u.merge(ma);
-  EXPECT_EQ(ma_.size(),ma.size());
+  std_u.merge(ma);
+  EXPECT_EQ(ma_.size(), ma.size());
   u_.merge(mb_);
-  u.merge(mb);
-  EXPECT_EQ(mb_.size(),mb.size());
-  EXPECT_EQ(mb_.at(5),mb.at(5));
-//  std::cout << "ma.size(): " << ma.size() << '\n';
-//  std::cout << "mb.size(): " << mb.size() << '\n';
-//  std::cout << "mb.at(5): " << mb.at(5) << '\n';
-////  for (auto const &kv : u) std::cout << kv.first << ", " << kv.second << '\n';
-////
-//  std::cout << "-------------------------------" << '\n';
-//
-//  std::cout << "ma_.size(): " << ma_.size() << '\n';
-//  std::cout << "mb_.size(): " << mb_.size() << '\n';
-//  std::cout << "mb_.at(5): " << mb_.at(5) << '\n';
-////  //      for(auto const &kv: u_)
-////  //          std::cout << kv.first << ", " << kv.second << '\n';
+  std_u.merge(mb);
+  EXPECT_EQ(mb_.size(), mb.size());
+  EXPECT_EQ(mb_.at(5), mb.at(5));
+
+  for (auto const &kv : u_)
+  EXPECT_EQ(u_.at(kv.first), std_u.at(kv.first));
 }
 
 TEST_F(S21Map_test, contains) {
   S21Map<int, char> example = {{1, 'a'}, {2, 'b'}};
-
-  for (int x : {2, 5}) {
-    if (example.contains(x)) {
-      std::cout << x << ": Found\n";
-    } else {
-      std::cout << x << ": Not found\n";
-    }
-  }
+  std::map<int, char> std_example = {{1, 'a'}, {2, 'b'}};
+  EXPECT_TRUE(example.contains(2));
+  EXPECT_FALSE(example.contains(5));
 }
-
-TEST_F(S21Map_test, insert_delete) {
-  //    map.clear();
-
-  map.print();
-}
-
-//TEST_F(S21Map_test, iterators) {
-//  auto it = map3.begin();
-//  auto std_it = std_map3.end();
-//  --it;
-//  --std_it;
-//  while (std_it != std_map3.end()) {
-//    EXPECT_EQ(it->first, std_it->first);
-//    ++it;
-//    ++std_it;
-//  }
-//
-//  std::cout << it->first << std::endl;
-//  --it;
-//  std::cout << std_it->first << std::endl;
-//  --std_it;
-//
-////  std::cout << it->first << std::endl;
-////  std::cout << std_it->first << std::endl;
-//
-//}
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

@@ -137,7 +137,7 @@ class Tree {
   void clear();
   //  std::pair<iterator, bool> insert_node(const Key &key, T value = 0);
 
-  void erase(const Key &key);
+  void erase(iterator pos);
 
   //____CAPACITY____
   bool empty() { return !this->root_; }
@@ -149,7 +149,6 @@ class Tree {
   void swap(Tree &other) noexcept;
 
   //____PRINT____
-  void print2D();
 
   //____ITERATORS_FOR_TREE____
   iterator begin() const;
@@ -157,6 +156,7 @@ class Tree {
   iterator end() const;
 
  protected:
+  void print2D();
   RBT<const Key, T> *root_{};
   RBT<const Key, T> *fake_{};
   size_type size_{};
@@ -315,19 +315,19 @@ void Tree<Key, T, Alloc>::clear() {
 // }
 
 template <typename Key, typename T, typename Alloc>
-void Tree<Key, T, Alloc>::erase(const Key &key) {  // iterator pos нужно
-  RBT<const Key, T> *find = FindNodeByKey(this->root_, key);
-  if (find == this->fake_->parent_) {
-    if (find == root_ && find->left_ == this->fake_) {
+void Tree<Key, T, Alloc>::erase(iterator pos) {  // iterator pos нужно
+//  RBT<const Key, T> *find = FindNodeByKey(this->root_, key);
+  if (pos.node_ == this->fake_->parent_) {
+    if (pos.node_ == root_ && pos.node_->left_ == this->fake_) {
       this->fake_->parent_ = this->fake_;
     } else {
-      this->fake_->parent_ = (--(iterator(find, this->fake_))).node_;
+      this->fake_->parent_ = (--(iterator(pos.node_, this->fake_))).node_;
     }
   }
-  if (find != this->fake_ && find != nullptr) {
-    DelNodeByCondition(find);
+  if (pos.node_ != this->fake_ && pos.node_ != nullptr) {
+    DelNodeByCondition(pos.node_);
+    --this->size_;
   }
-  --this->size_;
 }
 
 //____ITERATORS_FOR_TREE____
@@ -842,7 +842,7 @@ void Tree<Key, T, Alloc>::BigRotate(RBT<const Key, T> *node,
     parent->left_ = grandfather;
     grandfather->right_ = temp;
   }
-  if (temp) {
+  if (temp != this->fake_) {
     temp->parent_ = grandfather;
   }
   RBT<const Key, T> *great_grandfather = GetFather(grandfather);
@@ -903,6 +903,11 @@ RBT<const Key, T> *Tree<Key, T, Alloc>::Iterator::PrefIter(
   if (mode == MINUS_MINUS) {
     if (node == this->it_fake_) {
       node = this->node_->parent_;
+      return node;
+    }
+  } else {
+    if (node == this->it_fake_->parent_) {
+      node = this->it_fake_;
       return node;
     }
   }
