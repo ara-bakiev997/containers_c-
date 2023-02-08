@@ -21,6 +21,8 @@ enum DirectionOfRotation { LEFT, RIGHT };
 
 enum OperatorType { PLUS_PLUS, MINUS_MINUS };
 
+enum Duplicate { WITH_DUPLICATE, WITHOUT_DUPLICATE };
+
 template <typename Key, typename T>
 struct RBT {
   RBT() = default;
@@ -34,7 +36,7 @@ struct RBT {
   std::pair<const Key, T> *data_{};
 };
 
-template <typename Key, typename T, typename Compare = std::less<Key>,
+template <typename Key, typename T = int, typename Compare = std::less<Key>,
           typename Alloc = std::allocator<std::pair<const Key, T>>>
 class Tree {
  public:
@@ -140,6 +142,23 @@ class Tree {
 
   void erase(iterator pos);
 
+  // NEED FOR TESTING AFTER DELETE
+  void erase_node(const Key&  key) {  // iterator pos нужно
+      RBT<const Key, T> *find = FindNodeByKey(this->root_, key);
+    if (find == this->fake_->parent_) {
+      if (find == root_ && find->left_ == this->fake_) {
+        this->fake_->parent_ = this->fake_;
+      } else {
+        this->fake_->parent_ = (--(iterator(find, this->fake_))).node_;
+      }
+    }
+    if (find!= this->fake_ && find != nullptr) {
+      DelNodeByCondition(find);
+      --this->size_;
+    }
+  }
+
+
   //____CAPACITY____
   bool empty() { return !this->root_; }
 
@@ -150,22 +169,22 @@ class Tree {
   void swap(Tree &other) noexcept;
 
   //____PRINT____
+  void print2D(); // !!!!! PROTECTED !!!!!
 
   //____ITERATORS_FOR_TREE____
   iterator begin() const;
 
   iterator end() const;
 
+  std::pair<iterator, bool> insert_node(const Key &key, T value = 0, Duplicate duplicate = WITHOUT_DUPLICATE); // PROTECTED!!!!!!
+
  protected:
-  void print2D();
   RBT<const Key, T> *root_{};
   RBT<const Key, T> *fake_{};
   size_type size_{};
   key_compare compare_{};
   NodeAlloc node_alloc_{};
   ValueTypeAlloc value_type_alloc_{};
-
-  std::pair<iterator, bool> insert_node(const Key &key, T value = 0);
 
   RBT<const Key, T> *FindNodeByKey(RBT<const Key, T> *node, const Key &key);
 
@@ -405,16 +424,25 @@ void Tree<Key, T, Compare, Alloc>::clearUtil(RBT<const Key, T> *node) {
 //_____SUPPORT_FOR_INSERT_____
 template <typename Key, typename T, typename Compare, typename Alloc>
 std::pair<typename Tree<Key, T, Compare, Alloc>::iterator, bool>
-Tree<Key, T, Compare, Alloc>::insert_node(const Key &key, T value) {
+Tree<Key, T, Compare, Alloc>::insert_node(const Key &key, T value, Duplicate duplicate) {
   bool is_node_create = false;
-  auto node =
-      AddNodeByCondition(this->root_, key, value, this->root_, is_node_create);
-  std::pair<iterator, bool> pair = std::make_pair(
-      s21::Tree<Key, T, Compare, Alloc>::iterator(node, fake_), is_node_create);
+  RBT<const Key, T> *node = nullptr;
+  auto find_node = this->FindNodeByKey(this->root_, key);
+  if (duplicate == WITHOUT_DUPLICATE) {
+    if (!find_node) {
+      node = AddNodeByCondition(this->root_, key, value, this->root_, is_node_create);
+    }
+  } else {
+      node = AddNodeByCondition(this->root_, key, value, this->root_, is_node_create);
+  }
   if (is_node_create) {
     ++this->size_;
+    return std::make_pair(
+        s21::Tree<Key, T, Compare, Alloc>::iterator(node, fake_), is_node_create);
+  } else {
+    return std::make_pair(
+        s21::Tree<Key, T, Compare, Alloc>::iterator(find_node, fake_), is_node_create);
   }
-  return pair;
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
@@ -443,12 +471,13 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::AddNodeByCondition(
   } else if (this->compare_(key, node->data_->first)) {
     temp_node =
         AddNodeByCondition(node->left_, key, value, node, is_node_create);
-  } else if (this->compare_(node->data_->first, key)) {
+  } else { //  if (this->compare_(node->data_->first, key))
     temp_node =
         AddNodeByCondition(node->right_, key, value, node, is_node_create);
-  } else {
-    temp_node = node;
   }
+//  else {
+//    temp_node = node;
+//  }
   return temp_node;
 }
 
