@@ -105,11 +105,11 @@ class Tree {
     std::pair<const Key, T> &operator*();
     Iterator &operator=(const Iterator &other);
 
+   private:
     explicit Iterator(RBT<const Key, T> *pt, RBT<const Key, T> *fake) {
       this->node_ = pt;
       this->it_fake_ = fake;
     }
-   private:
   };
 
   using iterator = Iterator;
@@ -129,6 +129,8 @@ class Tree {
   Tree &operator=(const Tree &other);
 
   Tree &operator=(Tree &&other) noexcept;
+
+  iterator find(const Key& key);
 
   //____MODIFIERS____
   void clear();
@@ -1033,6 +1035,11 @@ void Tree<Key, T, Compare, Alloc>::swap(Tree &other) noexcept {
   swap(this->size_, other.size_);
   swap(this->node_alloc_, other.node_alloc_);
   swap(this->value_type_alloc_, other.value_type_alloc_);
+}
+template <typename Key, typename T, typename Compare, typename Alloc>
+typename Tree<Key, T, Compare, Alloc>::iterator Tree<Key, T, Compare, Alloc>::find(const Key &key) {
+  auto ptr =Tree<Key>::FindNodeByKey(this->root_, key);
+  return ptr ? iterator(ptr, this->fake_) : this->end();
 }
 
 }  // namespace s21
