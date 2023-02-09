@@ -59,6 +59,14 @@ class Tree {
     ConstIterator(const ConstIterator &other)
         : node_(other.node_), it_fake_(other.it_fake_) {}
 
+    ConstIterator &operator++();
+
+    ConstIterator operator++(int);
+
+    ConstIterator &operator--();
+
+    ConstIterator operator--(int);
+
     std::pair<const Key, T> &operator*() const { return *this->node_->data_; }
 
     std::pair<const Key, T> *operator->() const { return this->node_->data_; }
@@ -78,25 +86,23 @@ class Tree {
    private:
     explicit ConstIterator(RBT<const Key, T> *pt, RBT<const Key, T> *fake)
         : node_(pt), it_fake_(fake) {}
+
+    //____SUPPORT_ITERATORS_FUNC____
+    RBT<const Key, T> *PrefIter(RBT<const Key, T> *node, OperatorType mode);
+    RBT<const Key, T> *GetNodeChild(RBT<const Key, T> *node, OperatorType mode);
+    RBT<const Key, T> *GetNodeParentChild(RBT<const Key, T> *node,
+                                          OperatorType mode);
+    RBT<const Key, T> *MaxNode(RBT<const Key, T> *node);
+    RBT<const Key, T> *MinNode(RBT<const Key, T> *node);
   };
 
   class Iterator : public ConstIterator {
    public:
     friend Tree;  // need for access node in tree
     Iterator() { this->node_ = nullptr; }
-
     Iterator(const Iterator &other) : ConstIterator(other) {}
 
-    Iterator &operator++();
-
-    Iterator operator++(int);
-
-    Iterator &operator--();
-
-    Iterator operator--(int);
-
     std::pair<const Key, T> &operator*();
-
     Iterator &operator=(const Iterator &other);
 
    private:
@@ -104,18 +110,6 @@ class Tree {
       this->node_ = pt;
       this->it_fake_ = fake;
     }
-
-    //____SUPPORT_ITERATORS_FUNC____
-    RBT<const Key, T> *PrefIter(RBT<const Key, T> *node, OperatorType mode);
-
-    RBT<const Key, T> *GetNodeChild(RBT<const Key, T> *node, OperatorType mode);
-
-    RBT<const Key, T> *GetNodeParentChild(RBT<const Key, T> *node,
-                                          OperatorType mode);
-
-    RBT<const Key, T> *MaxNode(RBT<const Key, T> *node);
-
-    RBT<const Key, T> *MinNode(RBT<const Key, T> *node);
   };
 
   using iterator = Iterator;
@@ -866,15 +860,15 @@ void Tree<Key, T, Compare, Alloc>::BigRotate(RBT<const Key, T> *node,
 
 //____ITERATORS____
 template <typename Key, typename T, typename Compare, typename Alloc>
-typename Tree<Key, T, Compare, Alloc>::Iterator &
-Tree<Key, T, Compare, Alloc>::Iterator::operator++() {
+typename Tree<Key, T, Compare, Alloc>::ConstIterator &
+Tree<Key, T, Compare, Alloc>::ConstIterator::operator++() {
   this->node_ = PrefIter(this->node_, PLUS_PLUS);
   return *this;
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-typename Tree<Key, T, Compare, Alloc>::Iterator
-Tree<Key, T, Compare, Alloc>::Iterator::operator++(int) {
+typename Tree<Key, T, Compare, Alloc>::ConstIterator
+Tree<Key, T, Compare, Alloc>::ConstIterator::operator++(int) {
   auto temp =
       s21::Tree<Key, T, Compare, Alloc>::iterator(this->node_, this->it_fake_);
   this->node_ = PrefIter(this->node_, PLUS_PLUS);
@@ -882,15 +876,15 @@ Tree<Key, T, Compare, Alloc>::Iterator::operator++(int) {
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-typename Tree<Key, T, Compare, Alloc>::Iterator &
-Tree<Key, T, Compare, Alloc>::Iterator::operator--() {
+typename Tree<Key, T, Compare, Alloc>::ConstIterator &
+Tree<Key, T, Compare, Alloc>::ConstIterator::operator--() {
   this->node_ = PrefIter(this->node_, MINUS_MINUS);
   return *this;
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-typename Tree<Key, T, Compare, Alloc>::Iterator
-Tree<Key, T, Compare, Alloc>::Iterator::operator--(int) {
+typename Tree<Key, T, Compare, Alloc>::ConstIterator
+Tree<Key, T, Compare, Alloc>::ConstIterator::operator--(int) {
   auto temp =
       s21::Tree<Key, T, Compare, Alloc>::iterator(this->node_, this->it_fake_);
   this->node_ = PrefIter(this->node_, MINUS_MINUS);
@@ -902,9 +896,16 @@ std::pair<const Key, T> &Tree<Key, T, Compare, Alloc>::Iterator::operator*() {
   return *this->node_->data_;
 }
 
+template <typename Key, typename T, typename Compare, typename Alloc>
+typename Tree<Key, T, Compare, Alloc>::Iterator &
+Tree<Key, T, Compare, Alloc>::Iterator::operator=(const Tree::Iterator &other) {
+  this->node_ = other.node_;
+  return *this;
+}
+
 //____SUPPORT_ITERATORS_FUNC____
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::Iterator::PrefIter(
+RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::ConstIterator::PrefIter(
     RBT<const Key, T> *node, OperatorType mode) {
   if (mode == MINUS_MINUS) {
     if (node == this->it_fake_) {
@@ -940,7 +941,7 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::Iterator::PrefIter(
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::Iterator::GetNodeChild(
+RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::ConstIterator::GetNodeChild(
     RBT<const Key, T> *node, OperatorType mode) {
   if (mode == MINUS_MINUS) {
     return node->left_;
@@ -950,7 +951,7 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::Iterator::GetNodeChild(
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::Iterator::GetNodeParentChild(
+RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::ConstIterator::GetNodeParentChild(
     RBT<const Key, T> *node, OperatorType mode) {
   if (mode == MINUS_MINUS) {
     return node->parent_->left_;
@@ -960,7 +961,7 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::Iterator::GetNodeParentChild(
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::Iterator::MaxNode(
+RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::ConstIterator::MaxNode(
     RBT<const Key, T> *node) {
   RBT<const Key, T> *ret = nullptr;
   if (node != this->it_fake_) {
@@ -973,7 +974,7 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::Iterator::MaxNode(
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::Iterator::MinNode(
+RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::ConstIterator::MinNode(
     RBT<const Key, T> *node) {
   RBT<const Key, T> *ret = nullptr;
   if (node != this->it_fake_) {
