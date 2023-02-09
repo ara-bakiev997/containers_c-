@@ -150,38 +150,35 @@ TEST_F(S21Set_test, empty) {
   EXPECT_TRUE(std_set_empty.empty());
 }
 
-//TEST_F(S21Set_test, insert_value_type) {
-//  auto pr1 = set_s.insert(std::pair(1, "25"));
-//  auto pr2 = set_s.insert(std::pair(2, "55"));
-//  auto std_pr1 = std_set_s.insert(std::pair(1, "25"));
-//  auto std_pr2 = std_set_s.insert(std::pair(2, "55"));
-//  EXPECT_EQ((*pr1.first).first, (*std_pr1.first).first);
-//  EXPECT_EQ((*pr2.first).first, (*std_pr2.first).first);
-//  EXPECT_EQ((*pr1.first).second, (*std_pr1.first).second);
-//  EXPECT_EQ((*pr2.first).second, (*std_pr2.first).second);
-//}
-//
-//TEST_F(S21Set_test, insert_key_value) {
-//  auto pr1 = set_s.insert(1, "25");
-//  auto pr2 = set_s.insert(2, "55");
-//  auto std_pr1 = std_set_s.insert(std::pair(1, "25"));
-//  auto std_pr2 = std_set_s.insert(std::pair(2, "55"));
-//  EXPECT_EQ((*pr1.first).first, (*std_pr1.first).first);
-//  EXPECT_EQ((*pr2.first).first, (*std_pr2.first).first);
-//  EXPECT_EQ((*pr1.first).second, (*std_pr1.first).second);
-//  EXPECT_EQ((*pr2.first).second, (*std_pr2.first).second);
-//}
-//
-//
+TEST_F(S21Set_test, insert) {
+  auto pr1 = set_s.insert("25");
+  auto pr2 = set_s.insert("55");
+  auto pr3 = set_s.insert("55");
+  auto std_pr1 = std_set_s.insert("25");
+  auto std_pr2 = std_set_s.insert("55");
+  auto std_pr3 = std_set_s.insert("55");
+
+  auto it2 = set_s.begin();
+  for (const auto &std_data : std_set_s) {
+    EXPECT_EQ(it2->first, std_data);
+    ++it2;
+  }
+
+  EXPECT_EQ(set_s.size(), std_set_s.size());
+  EXPECT_EQ(pr1.second, std_pr1.second);
+  EXPECT_EQ(pr2.second, std_pr2.second);
+  EXPECT_EQ(pr3.second, std_pr3.second);
+}
+
 TEST_F(S21Set_test, erase) {
-//  set_s.insert("1");
-//  set_s.insert("2");
-//  std_set_s.insert("1");
-//  std_set_s.insert("2");
+  set_s.insert("1");
+  set_s.insert("2");
+  std_set_s.insert("1");
+  std_set_s.insert("2");
   set3.erase((set3.begin()));
   std_set3.erase((std_set3.begin()));
-//  set_s.erase((set_s.begin()));
-//  std_set_s.erase((std_set_s.begin()));
+  set_s.erase((set_s.begin()));
+  std_set_s.erase((std_set_s.begin()));
 
   auto it = set3.begin();
   for (const auto &std_data : std_set3) {
@@ -189,48 +186,62 @@ TEST_F(S21Set_test, erase) {
     ++it;
   }
 
-//  auto it2 = set_s.begin();
-//  for (const auto &std_data : std_set_s) {
-//    EXPECT_EQ(it2->first, std_data);
-//    ++it2;
-//  }
+  auto it2 = set_s.begin();
+  for (const auto &std_data : std_set_s) {
+    EXPECT_EQ(it2->first, std_data);
+    ++it2;
+  }
 
 }
 
-//TEST_F(S21Set_test, emplace) {
-//  auto pr3 = set_s.emplace(1, "a");
-//  auto std_pr3 = std_set_s.emplace(1, "a");
-//  EXPECT_EQ((*pr3[0].first).first, (*std_pr3.first).first);
-//  EXPECT_EQ((*pr3[0].first).second, (*std_pr3.first).second);
-//}
-//
-//TEST_F(S21Set_test, merge) {
-//  S21Set<int, std::string> ma_{{1, "apple"}, {5, "pear"}, {10, "banana"}};
-//  S21Set<int, std::string> mb_{
-//      {2, "zorro"}, {4, "batman"}, {5, "X"}, {8, "alpaca"}};
-//  S21Set<int, std::string> u_;
-//  std::set<int, std::string> ma{{1, "apple"}, {5, "pear"}, {10, "banana"}};
-//  std::set<int, std::string> mb{
-//      {2, "zorro"}, {4, "batman"}, {5, "X"}, {8, "alpaca"}};
-//  std::set<int, std::string> std_u;
-//  u_.merge(ma_);
-//  std_u.merge(ma);
-//  EXPECT_EQ(ma_.size(), ma.size());
-//  u_.merge(mb_);
-//  std_u.merge(mb);
-//  EXPECT_EQ(mb_.size(), mb.size());
-//  EXPECT_EQ(mb_.at(5), mb.at(5));
-//
-//  for (auto const &kv : u_)
-//    EXPECT_EQ(u_.at(kv.first), std_u.at(kv.first));
-//}
-//
-//TEST_F(S21Set_test, contains) {
-//  S21Set<int, char> example = {{1, 'a'}, {2, 'b'}};
-//  std::set<int, char> std_example = {{1, 'a'}, {2, 'b'}};
-//  EXPECT_TRUE(example.contains(2));
-//  EXPECT_FALSE(example.contains(5));
-//}
+TEST_F(S21Set_test, emplace) {
+  auto pr2 = set_empty.emplace(10);
+  auto std_pr2 = std_set_empty.emplace(10);
+  auto pr3 = set_s.emplace("a");
+  auto std_pr3 = std_set_s.emplace("a");
+
+  EXPECT_EQ((*pr2[0].first).first, (*std_pr2.first));
+  EXPECT_EQ(pr2[0].second, std_pr2.second);
+
+
+  EXPECT_EQ((*pr3[0].first).first, (*std_pr3.first));
+  EXPECT_EQ(pr3[0].second, std_pr3.second);
+
+  auto pr4 = set_s.emplace("a");
+  auto std_pr4 = std_set_s.emplace("a");
+  EXPECT_EQ(pr3[0].second, std_pr3.second);
+
+}
+
+TEST_F(S21Set_test, merge) {
+  S21Set<std::string> ma_{"apple", "x", "banana"};
+  S21Set<std::string> mb_{
+      "zorro", "batman", "x", "alpaca"};
+  S21Set<std::string> u_;
+  std::set<std::string> ma{"apple", "x", "banana"};
+  std::set<std::string> mb{
+      "zorro", "batman", "x", "alpaca"};
+  std::set<std::string> std_u;
+  u_.merge(ma_);
+  std_u.merge(ma);
+  EXPECT_EQ(ma_.size(), ma.size());
+  u_.merge(mb_);
+  std_u.merge(mb);
+  EXPECT_EQ(mb_.size(), mb.size());
+  EXPECT_EQ(mb_.begin()->first, *mb.begin());
+
+  auto it2 = u_.begin();
+  for (const auto &std_data : std_u) {
+    EXPECT_EQ(it2->first, std_data);
+    ++it2;
+  }
+}
+
+TEST_F(S21Set_test, contains) {
+  S21Set<char> example = {'a','b'};
+  EXPECT_TRUE(example.contains('a'));
+  EXPECT_FALSE(example.contains('t'));
+}
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

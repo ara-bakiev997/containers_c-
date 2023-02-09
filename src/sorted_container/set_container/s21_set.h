@@ -98,7 +98,7 @@ S21Set<Key, Compare, Alloc> &S21Set<Key, Compare, Alloc>::operator=(
 template <typename Key, typename Compare, typename Alloc>
 std::pair<typename S21Set<Key, Compare, Alloc>::iterator, bool>
 S21Set<Key, Compare, Alloc>::insert(const S21Set::value_type &value) {
-  return Tree<Key>::insert_node(value.first.second);
+  return Tree<Key>::insert_node(value);
 }
 
 template <typename Key, typename Compare, typename Alloc>
@@ -107,7 +107,7 @@ void S21Set<Key, Compare, Alloc>::merge(S21Set &other) {
   auto size = other.size();
   auto end_elem = size - 1;
   for (auto i = 0; i < size; ++i) {
-    auto res = insert(std::pair(it->first, it->second));
+    auto res = insert(it->first);
     if (res.second) {
       other.erase(it);
     }
