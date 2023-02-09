@@ -64,7 +64,7 @@ S21Set<Key, Compare, Alloc>::S21Set(
 template <typename Key, typename Compare, typename Alloc>
 S21Set<Key, Compare, Alloc>::S21Set(const S21Set &other) {
   for (auto it = other.begin(); it != other.end(); ++it) {
-    Tree<Key>::insert_node((*it).first, (*it).second);
+    Tree<Key>::insert_node((*it).first);
   }
 }
 
@@ -79,7 +79,7 @@ S21Set<Key, Compare, Alloc> &S21Set<Key, Compare, Alloc>::operator=(
   if (this != &other) {
     this->clear();
     for (auto it = other.begin(); it != other.end(); ++it) {
-      Tree<Key>::insert_node((*it).first, (*it).second);
+      Tree<Key>::insert_node((*it).first);
     }
   }
   return *this;
