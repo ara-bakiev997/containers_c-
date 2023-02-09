@@ -44,8 +44,8 @@ class S21Set : public Tree<Key> {
   std::pair<iterator, bool> insert(const value_type &value);
 
   void merge(S21Set &other);
-  
-//  iterator find(const Key& key);
+
+  //  iterator find(const Key& key);
 
   bool contains(const Key &key);
 
@@ -74,8 +74,8 @@ S21Set<Key, Compare, Alloc>::S21Set(S21Set &&other) noexcept {
 }
 
 template <typename Key, typename Compare, typename Alloc>
-S21Set<Key, Compare, Alloc>
-    &S21Set<Key, Compare, Alloc>::operator=(const S21Set &other) {
+S21Set<Key, Compare, Alloc> &S21Set<Key, Compare, Alloc>::operator=(
+    const S21Set &other) {
   if (this != &other) {
     this->clear();
     for (auto it = other.begin(); it != other.end(); ++it) {
@@ -86,8 +86,8 @@ S21Set<Key, Compare, Alloc>
 }
 
 template <typename Key, typename Compare, typename Alloc>
-S21Set<Key, Compare, Alloc>
-    &S21Set<Key, Compare, Alloc>::operator=(S21Set &&other) noexcept {
+S21Set<Key, Compare, Alloc> &S21Set<Key, Compare, Alloc>::operator=(
+    S21Set &&other) noexcept {
   if (this != &other) {
     this->clear();
     this->swap(other);
@@ -134,4 +134,4 @@ S21Set<Key, Compare, Alloc>::emplace(Args &&...args) {
 
 }  // namespace s21
 
-#endif //S21_CONTAINERS_SRC_SORTED_CONTAINER_SET_CONTAINER_SET_H_
+#endif  // S21_CONTAINERS_SRC_SORTED_CONTAINER_SET_CONTAINER_SET_H_

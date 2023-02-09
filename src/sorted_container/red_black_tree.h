@@ -138,26 +138,8 @@ class Tree {
 
   //____MODIFIERS____
   void clear();
-  //  std::pair<iterator, bool> insert_node(const Key &key, T value = 0);
 
   void erase(iterator pos);
-
-  // NEED FOR TESTING AFTER DELETE
-  void erase_node(const Key&  key) {  // iterator pos нужно
-      RBT<const Key, T> *find = FindNodeByKey(this->root_, key);
-    if (find == this->fake_->parent_) {
-      if (find == root_ && find->left_ == this->fake_) {
-        this->fake_->parent_ = this->fake_;
-      } else {
-        this->fake_->parent_ = (--(iterator(find, this->fake_))).node_;
-      }
-    }
-    if (find!= this->fake_ && find != nullptr) {
-      DelNodeByCondition(find);
-      --this->size_;
-    }
-  }
-
 
   //____CAPACITY____
   bool empty() { return !this->root_; }
@@ -168,15 +150,10 @@ class Tree {
 
   void swap(Tree &other) noexcept;
 
-  //____PRINT____
-  void print2D(); // !!!!! PROTECTED !!!!!
-
   //____ITERATORS_FOR_TREE____
   iterator begin() const;
 
   iterator end() const;
-
-  std::pair<iterator, bool> insert_node(const Key &key, T value = 0, Duplicate duplicate = WITHOUT_DUPLICATE); // PROTECTED!!!!!!
 
  protected:
   RBT<const Key, T> *root_{};
@@ -186,7 +163,10 @@ class Tree {
   NodeAlloc node_alloc_{};
   ValueTypeAlloc value_type_alloc_{};
 
+  std::pair<iterator, bool> insert_node(
+      const Key &key, T value = 0, Duplicate duplicate = WITHOUT_DUPLICATE);
   RBT<const Key, T> *FindNodeByKey(RBT<const Key, T> *node, const Key &key);
+  void print2D();
 
   friend Iterator;
   friend ConstIterator;
@@ -216,7 +196,6 @@ class Tree {
                            RBT<const Key, T> *parent);
 
   //_____FIND_NODE_____
-  //  RBT<const Key, T> *FindNodeByKey(RBT<const Key, T> *node, T &key);
   RBT<const Key, T> *MinNode(RBT<const Key, T> *node) const;
 
   RBT<const Key, T> *MaxNode(RBT<const Key, T> *node) const;
@@ -287,13 +266,6 @@ Tree<Key, T, Compare, Alloc>::~Tree() {
 template <typename Key, typename T, typename Compare, typename Alloc>
 Tree<Key, T, Compare, Alloc> &Tree<Key, T, Compare, Alloc>::operator=(
     const Tree &other) {
-  //        if (this == &other) return *this;
-  //        this->clear();
-  //        for (auto i = other.begin(); i != other.end(); ++i) {
-  //            insert_node(*i);
-  //        }
-  //        return *this;
-
   if (this != &other) {
     this->clear();
     for (auto i = other.begin(); i != other.end(); ++i) {
@@ -306,10 +278,6 @@ Tree<Key, T, Compare, Alloc> &Tree<Key, T, Compare, Alloc>::operator=(
 template <typename Key, typename T, typename Compare, typename Alloc>
 Tree<Key, T, Compare, Alloc> &Tree<Key, T, Compare, Alloc>::operator=(
     Tree &&other) noexcept {
-  //  if (this == &other) return *this;
-  //  std::swap(this->size_, other.size_);
-  //  std::swap(fake_, other.fake_);
-  //  return *this;
   if (this != &other) {
     std::swap(this->size_, other.size_);
     std::swap(fake_, other.fake_);
@@ -324,20 +292,6 @@ void Tree<Key, T, Compare, Alloc>::clear() {
   root_ = nullptr;
   size_ = 0;
 }
-
-// template <typename Key, typename T, typename Compare , typename Alloc>
-// std::pair<iterator, bool> Tree<Key, T, Compare, Alloc>::insert_node(const Key
-// &key, T value) {
-//   bool is_node_create = false;
-//   auto node = AddNodeByCondition(this->root_, key, value, this->root_,
-//   is_node_create); if (is_node_create) {
-//	++this->size_;
-//	return s21::Tree<Key, T, Compare, Alloc>::iterator(node, fake_);
-//   } else {
-//	return s21::Tree<Key, T, Compare, Alloc>::iterator(FindNode(key),
-// fake_);
-//   }
-// }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
 void Tree<Key, T, Compare, Alloc>::erase(iterator pos) {  // iterator pos нужно
@@ -424,24 +378,29 @@ void Tree<Key, T, Compare, Alloc>::clearUtil(RBT<const Key, T> *node) {
 //_____SUPPORT_FOR_INSERT_____
 template <typename Key, typename T, typename Compare, typename Alloc>
 std::pair<typename Tree<Key, T, Compare, Alloc>::iterator, bool>
-Tree<Key, T, Compare, Alloc>::insert_node(const Key &key, T value, Duplicate duplicate) {
+Tree<Key, T, Compare, Alloc>::insert_node(const Key &key, T value,
+                                          Duplicate duplicate) {
   bool is_node_create = false;
   RBT<const Key, T> *node = nullptr;
   auto find_node = this->FindNodeByKey(this->root_, key);
   if (duplicate == WITHOUT_DUPLICATE) {
     if (!find_node) {
-      node = AddNodeByCondition(this->root_, key, value, this->root_, is_node_create);
+      node = AddNodeByCondition(this->root_, key, value, this->root_,
+                                is_node_create);
     }
   } else {
-      node = AddNodeByCondition(this->root_, key, value, this->root_, is_node_create);
+    node = AddNodeByCondition(this->root_, key, value, this->root_,
+                              is_node_create);
   }
   if (is_node_create) {
     ++this->size_;
     return std::make_pair(
-        s21::Tree<Key, T, Compare, Alloc>::iterator(node, fake_), is_node_create);
+        s21::Tree<Key, T, Compare, Alloc>::iterator(node, fake_),
+        is_node_create);
   } else {
     return std::make_pair(
-        s21::Tree<Key, T, Compare, Alloc>::iterator(find_node, fake_), is_node_create);
+        s21::Tree<Key, T, Compare, Alloc>::iterator(find_node, fake_),
+        is_node_create);
   }
 }
 
@@ -471,13 +430,13 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::AddNodeByCondition(
   } else if (this->compare_(key, node->data_->first)) {
     temp_node =
         AddNodeByCondition(node->left_, key, value, node, is_node_create);
-  } else { //  if (this->compare_(node->data_->first, key))
+  } else {  //  if (this->compare_(node->data_->first, key))
     temp_node =
         AddNodeByCondition(node->right_, key, value, node, is_node_create);
   }
-//  else {
-//    temp_node = node;
-//  }
+  //  else {
+  //    temp_node = node;
+  //  }
   return temp_node;
 }
 
@@ -970,10 +929,12 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::Iterator::PrefIter(
     }
     node = node->parent_;
     return node;
-  }
-
-  if (GetNodeChild(this->node_, mode) != this->it_fake_) {
-    node = MaxNode(GetNodeChild(this->node_, mode));
+  } else {
+    if (mode == MINUS_MINUS) {
+      node = MaxNode(GetNodeChild(this->node_, mode));
+    } else {
+      node = MinNode(GetNodeChild(this->node_, mode));
+    }
     return node;
   }
 }

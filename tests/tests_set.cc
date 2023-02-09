@@ -33,8 +33,29 @@ class S21Set_test : public ::testing::Test {
 
 TEST_F(S21Set_test, construct_il) {
 
+  S21Set<int> set{1, 0, 4, 7, -5};
     EXPECT_EQ(set.size(), std_set.size());
-//  for (const auto &pair : std_set) {
+//    cout << *std_set.begin() << " ";
+//    cout << (*set.begin()).first << " ";
+  for (const auto &std_data : std_set) {
+    cout << std_data << " ";
+  }
+    cout << endl;
+  for (auto i = set.begin(); i != set.end();++i) {
+    cout << (*i).first << " ";
+  }
+
+  for (auto i = std_set.begin(); i != std_set.end();++i) {
+    cout << *i << " ";
+  }
+  cout << endl;
+//  for (auto i = (--set.end()); ;--i) {
+//    cout << *i << " ";
+//    if (i == set.begin()) break;
+//  }
+//  cout << endl;
+//  for (const auto &data : set) {
+//    cout << data.first << " ";
 //  }
 }
 
