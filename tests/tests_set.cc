@@ -118,7 +118,12 @@ TEST_F(S21Set_test, size) {
   EXPECT_EQ(set.size(), std_set.size());
 }
 
-//TEST_F(S21Set_test, max_size) { EXPECT_EQ(set.max_size(), std_set.max_size()); }
+TEST_F(S21Set_test, max_size) {
+//  EXPECT_EQ(set.max_size(), std_set.max_size());
+
+  cout << "set.max_size() = " << set.max_size() << endl;
+  cout << "std_set.max_size() = " << std_set.max_size() << endl;
+}
 
 TEST_F(S21Set_test, clear) {
   EXPECT_EQ(set.size(), std_set.size());
@@ -241,6 +246,28 @@ TEST_F(S21Set_test, contains) {
   S21Set<char> example = {'a','b'};
   EXPECT_TRUE(example.contains('a'));
   EXPECT_FALSE(example.contains('t'));
+}
+
+TEST_F(S21Set_test, find) {
+  set_s = {"apple", "x", "banana"};
+  std_set_s = {"apple", "x", "banana"};
+  for (const auto & data : std_set_s) {
+  auto iter = set_s.find(data);
+  auto iter2 = std_set_s.find(data);
+  EXPECT_EQ(iter->first, *iter2);
+  }
+
+  for (const auto & data : std_set) {
+    auto iter = set.find(data);
+    auto iter2 = std_set.find(data);
+    EXPECT_EQ(iter->first, *iter2);
+  }
+
+  auto iter = set_s.find("data");
+  auto iter2 = std_set_s.find("data");
+  EXPECT_EQ(iter, set_s.end());
+  EXPECT_EQ(iter2, std_set_s.end());
+
 }
 
 int main(int argc, char *argv[]) {

@@ -23,11 +23,12 @@ class S21Set : public Tree<Key> {
   using const_reference = const value_type &;
   using iterator = typename Tree<Key>::iterator;
   using const_iterator = typename Tree<Key>::const_iterator;
-  using ValueTypeAlloc = typename Tree<Key>::ValueTypeAlloc;
-  using NodeAlloc = typename Tree<Key>::NodeAlloc;
+//  using AllocTraits = std::allocator_traits<Alloc>;
+//  using ValueTypeAlloc = typename Tree<Key>::ValueTypeAlloc;
+//  using NodeAlloc = typename Tree<Key>::NodeAlloc;
   using size_type = size_t;
 
-  S21Set() {}
+  S21Set() = default;
 
   S21Set(std::initializer_list<value_type> const &items);
 
@@ -43,9 +44,13 @@ class S21Set : public Tree<Key> {
 
   std::pair<iterator, bool> insert(const value_type &value);
 
+//  size_type max_size() {
+////return this->node_alloc_.max_size();
+//  }
+
   void merge(S21Set &other);
 
-  //  iterator find(const Key& key);
+    iterator find(const Key& key);
 
   bool contains(const Key &key);
 
@@ -130,6 +135,11 @@ S21Set<Key, Compare, Alloc>::emplace(Args &&...args) {
   S21Vector<std::pair<iterator, bool>> data;
   data.push_back(insert(std::forward<Args>(args)...));
   return data;
+}
+template <typename Key, typename Compare, typename Alloc>
+typename S21Set<Key, Compare, Alloc>::iterator S21Set<Key, Compare, Alloc>::find(const Key &key) {
+  auto ptr =Tree<Key>::FindNodeByKey(this->root_, key);
+  return ptr ? S21Set<Key, Compare, Alloc>::iterator(ptr, this->fake_) : this->end();
 }
 
 }  // namespace s21

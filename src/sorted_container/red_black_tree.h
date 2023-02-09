@@ -105,11 +105,11 @@ class Tree {
     std::pair<const Key, T> &operator*();
     Iterator &operator=(const Iterator &other);
 
-   private:
     explicit Iterator(RBT<const Key, T> *pt, RBT<const Key, T> *fake) {
       this->node_ = pt;
       this->it_fake_ = fake;
     }
+   private:
   };
 
   using iterator = Iterator;
