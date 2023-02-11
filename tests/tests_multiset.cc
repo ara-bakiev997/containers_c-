@@ -21,11 +21,11 @@ class S21Multiset_test : public ::testing::Test {
  protected:
   void SetUp() override {}
   S21Multiset<int> set_empty;
-  S21Multiset<int> set{1, 1, 1, 0, 4, 7, -5};
+  S21Multiset<int> set{1, 1, 1, 0,0, 4, 4, 7, -5};
   S21Multiset<int> set3{10, 8, 8, 6};
   S21Multiset<std::string> set_s;
   std::multiset<int> std_set_empty;
-  std::multiset<int> std_set{1, 1, 1, 0, 4, 7, -5};
+  std::multiset<int> std_set{1, 1, 1, 0,0, 4, 4,  7, -5};
   std::multiset<int> std_set3{10, 8, 8, 6};
   std::multiset<std::string> std_set_s;
 };
@@ -274,6 +274,25 @@ TEST_F(S21Multiset_test, find) {
   EXPECT_EQ(iter, set_s.end());
   EXPECT_EQ(iter2, std_set_s.end());
 
+}
+
+TEST_F(S21Multiset_test, lower_bound) {
+  EXPECT_EQ(set.lower_bound(1), set.lower_bound(1));
+  auto iter = set.lower_bound(1);
+  cout << (*iter).first << endl;
+  ++iter;
+  cout << (*iter).first << endl;
+  ++iter;
+  cout << (*iter).first << endl;
+
+//  auto iter = std_set.lower_bound(1);
+//  cout << (*iter) << endl;
+//  ++iter;
+//  cout << (*iter) << endl;
+//  ++iter;
+//  cout << (*iter) << endl;
+//  ++iter;
+//  cout << (*iter) << endl;
 }
 
 int main(int argc, char *argv[]) {
