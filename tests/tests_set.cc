@@ -214,7 +214,7 @@ TEST_F(S21Set_test, emplace) {
 
   auto pr4 = set_s.emplace("a");
   auto std_pr4 = std_set_s.emplace("a");
-  EXPECT_EQ(pr3[0].second, std_pr3.second);
+  EXPECT_EQ(pr4[0].second, std_pr4.second);
 
 }
 

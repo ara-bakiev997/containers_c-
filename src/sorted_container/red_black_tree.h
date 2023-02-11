@@ -822,7 +822,7 @@ void Tree<Key, T, Compare, Alloc>::SmallRotate(RBT<const Key, T> *node,
       grandfather->left_ = node;
     }
   }
-  if (temp) {
+  if (temp != this->fake_) {
     temp->parent_ = parent;
   }
   parent->parent_ = node;
