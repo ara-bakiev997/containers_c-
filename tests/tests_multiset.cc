@@ -277,8 +277,12 @@ TEST_F(S21Multiset_test, find) {
 }
 
 TEST_F(S21Multiset_test, lower_bound) {
-  EXPECT_EQ(set.lower_bound(1), set.lower_bound(1));
+  EXPECT_EQ(
+	  set.lower_bound(1),
+			set.lower_bound(1));
   auto iter = set.lower_bound(1);
+  cout << (*iter).first << endl;
+  ++iter;
   cout << (*iter).first << endl;
   ++iter;
   cout << (*iter).first << endl;
