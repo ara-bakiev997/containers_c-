@@ -277,26 +277,63 @@ TEST_F(S21Multiset_test, find) {
 }
 
 TEST_F(S21Multiset_test, lower_bound) {
-  EXPECT_EQ(
-	  set.lower_bound(1),
-			set.lower_bound(1));
   auto iter = set.lower_bound(1);
-  cout << (*iter).first << endl;
-  ++iter;
-  cout << (*iter).first << endl;
-  ++iter;
-  cout << (*iter).first << endl;
-  ++iter;
-  cout << (*iter).first << endl;
+  auto std_iter = std_set.lower_bound(1);
+  EXPECT_EQ((*iter).first, *std_iter);
 
-//  auto iter = std_set.lower_bound(1);
-//  cout << (*iter) << endl;
-//  ++iter;
-//  cout << (*iter) << endl;
-//  ++iter;
-//  cout << (*iter) << endl;
-//  ++iter;
-//  cout << (*iter) << endl;
+  auto iter2 = set_empty.lower_bound(1);
+  auto std_iter2 = std_set_empty.lower_bound(1);
+  EXPECT_EQ(iter2, set_empty.end());
+  EXPECT_EQ(std_iter2, std_set_empty.end());
+
+  auto iter3 = set_empty.lower_bound(111);
+  auto std_iter3 = std_set_empty.lower_bound(111);
+  EXPECT_EQ(iter3, set_empty.end());
+  EXPECT_EQ(std_iter3, std_set_empty.end());
+}
+
+TEST_F(S21Multiset_test, upper_bound) {
+  auto iter = set.upper_bound(1);
+  auto std_iter = std_set.upper_bound(1);
+  EXPECT_EQ((*iter).first, *std_iter);
+
+  auto iter2 = set_empty.upper_bound(1);
+  auto std_iter2 = std_set_empty.upper_bound(1);
+  EXPECT_EQ(iter2, set_empty.end());
+  EXPECT_EQ(std_iter2, std_set_empty.end());
+
+  auto iter3 = set_empty.upper_bound(111);
+  auto std_iter3 = std_set_empty.upper_bound(111);
+  EXPECT_EQ(iter3, set_empty.end());
+  EXPECT_EQ(std_iter3, std_set_empty.end());
+}
+
+TEST_F(S21Multiset_test, count) {
+  EXPECT_EQ(set.count(1), std_set.count(1));
+  EXPECT_EQ(set_empty.count(1), std_set_empty.count(1));
+  EXPECT_EQ(set.count(111), std_set.count(111));
+}
+
+TEST_F(S21Multiset_test, equal_range) {
+  auto pr = set.equal_range(1);
+  auto std_pr = std_set.equal_range(1);
+  EXPECT_EQ(pr.first->first, *std_pr.first );
+  EXPECT_EQ(pr.second->first, *std_pr.second);
+
+  auto pr2 = set_empty.equal_range(1);
+  auto std_pr2 = std_set_empty.equal_range(1);
+  EXPECT_EQ(pr2.first, set_empty.end());
+  EXPECT_EQ(pr2.second, set_empty.end());
+  EXPECT_EQ(std_pr2.first, std_set_empty.end());
+  EXPECT_EQ(std_pr2.second, std_set_empty.end());
+
+
+  auto pr3 = set_empty.equal_range(111);
+  auto std_pr3 = std_set_empty.equal_range(111);
+  EXPECT_EQ(pr3.first, set_empty.end());
+  EXPECT_EQ(pr3.second, set_empty.end());
+  EXPECT_EQ(std_pr3.first, std_set_empty.end());
+  EXPECT_EQ(std_pr3.second, std_set_empty.end());
 }
 
 int main(int argc, char *argv[]) {

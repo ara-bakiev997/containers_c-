@@ -126,7 +126,13 @@ void S21Multiset<Key, Compare, Alloc>::merge(S21Multiset &other) {
 
 template <typename Key, typename Compare, typename Alloc>
 typename S21Multiset<Key, Compare, Alloc>::size_type S21Multiset<Key, Compare, Alloc>::count(const Key &key) {
-  return 0;
+  auto it = lower_bound(key);
+  auto count = 0;
+  while ((*it).first == key) {
+    ++count;
+    ++it;
+  }
+  return count;
 }
 
 template <typename Key, typename Compare, typename Alloc>
@@ -153,14 +159,22 @@ S21Multiset<Key, Compare, Alloc>::lower_bound(const Key &key) {
 template <typename Key, typename Compare, typename Alloc>
 typename S21Multiset<Key, Compare, Alloc>::iterator
 S21Multiset<Key, Compare, Alloc>::upper_bound(const Key &key) {
-  //  return s21::S21Multiset::iterator();
+  auto it = this->find(key);
+  if (it != this->end()) {
+    auto count_eq_keys = count(key);
+    while (count_eq_keys) {
+      ++it;
+      --count_eq_keys;
+    }
+  }
+  return it;
 }
 
 template <typename Key, typename Compare, typename Alloc>
 std::pair<typename S21Multiset<Key, Compare, Alloc>::iterator,
           typename S21Multiset<Key, Compare, Alloc>::iterator>
 S21Multiset<Key, Compare, Alloc>::equal_range(const Key &key) {
-  return std::pair<iterator, iterator>();
+  return std::make_pair(lower_bound(key), upper_bound(key));
 }
 
 }  // namespace s21
