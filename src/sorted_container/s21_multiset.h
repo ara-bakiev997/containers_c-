@@ -124,10 +124,9 @@ template <typename Key, typename Compare, typename Alloc>
 typename S21Multiset<Key, Compare, Alloc>::size_type S21Multiset<Key, Compare, Alloc>::count(const Key &key) {
   auto it = lower_bound(key);
   auto count = 0;
-  while ((*it).first == key) {
+  while (it != this->end() && (*it).first == key) {
     ++count;
     ++it;
-    if (it == this->end()) break;
   }
   return count;
 }
