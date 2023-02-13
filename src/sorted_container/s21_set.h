@@ -1,15 +1,11 @@
-//
-// Created by Lok on 17.11.2022.
-//
-
 #ifndef S21_CONTAINERS_SRC_SORTED_CONTAINER_SET_CONTAINER_SET_H_
 #define S21_CONTAINERS_SRC_SORTED_CONTAINER_SET_CONTAINER_SET_H_
 
 #include <initializer_list>
 #include <iostream>
 
-#include "../../sequence/s21_vector.h"
-#include "../red_black_tree.h"
+#include "../sequence/s21_vector.h"
+#include "red_black_tree.h"
 
 namespace s21 {
 
@@ -23,9 +19,6 @@ class S21Set : public Tree<Key> {
   using const_reference = const value_type &;
   using iterator = typename Tree<Key>::iterator;
   using const_iterator = typename Tree<Key>::const_iterator;
-//  using AllocTraits = std::allocator_traits<Alloc>;
-//  using ValueTypeAlloc = typename Tree<Key>::ValueTypeAlloc;
-//  using NodeAlloc = typename Tree<Key>::NodeAlloc;
   using size_type = size_t;
 
   S21Set() = default;
@@ -65,7 +58,7 @@ S21Set<Key, Compare, Alloc>::S21Set(
 }
 
 template <typename Key, typename Compare, typename Alloc>
-S21Set<Key, Compare, Alloc>::S21Set(const S21Set &other) {
+S21Set<Key, Compare, Alloc>::S21Set(const S21Set &other) : Tree<Key> () {
   for (auto it = other.begin(); it != other.end(); ++it) {
     Tree<Key>::insert_node((*it).first);
   }
@@ -109,13 +102,17 @@ void S21Set<Key, Compare, Alloc>::merge(S21Set &other) {
   auto it = other.begin();
   auto size = other.size();
   auto end_elem = size - 1;
-  for (auto i = 0; i < size; ++i) {
+  for (size_t i = 0; i < size; ++i) {
     auto res = insert(it->first);
     if (res.second) {
       other.erase(it);
     }
     if (i < end_elem) {
-      ++it;
+      if (res.second) {
+        it = other.begin();
+      } else {
+        ++it;
+      }
     }
   }
 }

@@ -1,9 +1,9 @@
 GCC = g++  -std=c++17 -g -Wall -Wextra  -Werror
-TEST = ../../tests/tests_map.cc
+TEST = ../../tests/tests_multiset.cc
 GCOV =--coverage
-SOURCE = ../src/sorted_container/red_black_tree.h
-LIBA = tests_map.a
-LIBO = tests_map.o
+SOURCE = ../src/sorted_container/s21_multiset.h
+LIBA = tests_multiset.a
+LIBO = tests_multiset.o
 
 
 OS = $(shell uname)
@@ -20,7 +20,7 @@ all:
 	./test
 
 clean:
-	rm -rf *.o *.a  *.out test *.dSYM  report coverage.info tests_map.gcda tests_map.gcno *.txt
+	rm -rf *.o *.a  *.out test *.dSYM  report coverage.info *.gcda *.gcno *.txt
 
 red_black_tree.a: clean
 	$(GCC) -c $(TEST)

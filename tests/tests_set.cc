@@ -1,14 +1,10 @@
-//
-// Created by Qyburn Bongo on 2/7/23.
-//
-
 #include <gtest/gtest.h>
 
 #include <iostream>
 #include <iterator>
 #include <set>
 
-#include "../src/sorted_container/set_container/s21_set.h"
+#include "../src/sorted_container/s21_set.h"
 
 using namespace s21;
 using std::cout;

@@ -1,14 +1,10 @@
-//
-// Created by Lok on 17.11.2022.
-//
-
 #ifndef S21_CONTAINERS_SRC_SORTED_CONTAINER_SET_CONTAINER_MULTISET_H_
 #define S21_CONTAINERS_SRC_SORTED_CONTAINER_SET_CONTAINER_MULTISET_H_
 #include <initializer_list>
 #include <iostream>
 
-#include "../../sequence/s21_vector.h"
-#include "../red_black_tree.h"
+#include "../sequence/s21_vector.h"
+#include "red_black_tree.h"
 
 namespace s21 {
 
@@ -70,7 +66,7 @@ S21Multiset<Key, Compare, Alloc>::S21Multiset(
 }
 
 template <typename Key, typename Compare, typename Alloc>
-S21Multiset<Key, Compare, Alloc>::S21Multiset(const S21Multiset &other) {
+S21Multiset<Key, Compare, Alloc>::S21Multiset(const S21Multiset &other) : Tree<Key>() {
   for (auto it = other.begin(); it != other.end(); ++it) {
     Tree<Key>::insert_node((*it).first, {},WITH_DUPLICATE);
   }
@@ -115,13 +111,13 @@ void S21Multiset<Key, Compare, Alloc>::merge(S21Multiset &other) {
   auto it = other.begin();
   auto size = other.size();
   auto end_elem = size - 1;
-  for (auto i = 0; i < size; ++i) {
+  for (size_t i = 0; i < size; ++i) {
     Tree<Key>::insert_node(it->first, {}, WITH_DUPLICATE);
-    other.erase(it);
     if (i < end_elem) {
       ++it;
     }
   }
+  other.clear();
 }
 
 template <typename Key, typename Compare, typename Alloc>
@@ -131,6 +127,7 @@ typename S21Multiset<Key, Compare, Alloc>::size_type S21Multiset<Key, Compare, A
   while ((*it).first == key) {
     ++count;
     ++it;
+    if (it == this->end()) break;
   }
   return count;
 }

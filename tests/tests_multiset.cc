@@ -1,13 +1,11 @@
-//
-// Created by Qyburn Bongo on 1/24/23.
-//
+
 #include <gtest/gtest.h>
 
 #include <iostream>
 #include <iterator>
 #include <set>
 
-#include "../src/sorted_container/set_container/s21_multiset.h"
+#include "../src/sorted_container/s21_multiset.h"
 
 using namespace s21;
 using std::cout;
@@ -149,18 +147,18 @@ TEST_F(S21Multiset_test, empty) {
 }
 
 TEST_F(S21Multiset_test, insert) {
-  auto pr1 = set_s.insert("25");
-  auto pr2 = set_s.insert("55");
-  auto pr3 = set_s.insert("55");
-  auto pr4 = set_empty.insert(25);
-  auto pr5 = set_empty.insert(55);
-  auto pr6 = set_empty.insert(55);
-  auto std_pr1 = std_set_s.insert("25");
-  auto std_pr2 = std_set_s.insert("55");
-  auto std_pr3 = std_set_s.insert("55");
-  auto std_pr4 = std_set_empty.insert(25);
-  auto std_pr5 = std_set_empty.insert(55);
-  auto std_pr6 = std_set_empty.insert(55);
+  set_s.insert("25");
+  set_s.insert("55");
+  set_s.insert("55");
+  set_empty.insert(25);
+  set_empty.insert(55);
+  set_empty.insert(55);
+  std_set_s.insert("25");
+  std_set_s.insert("55");
+  std_set_s.insert("55");
+  std_set_empty.insert(25);
+  std_set_empty.insert(55);
+  std_set_empty.insert(55);
 
   auto it2 = set_s.begin();
   for (const auto &std_data : std_set_s) {
