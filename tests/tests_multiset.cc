@@ -157,7 +157,7 @@ TEST_F(S21Multiset_test, empty) {
 TEST_F(S21Multiset_test, insert) {
   auto pr1 = set_s.insert("25");
   auto pr2 = set_s.insert("55");
-  auto pr3 = set_s.insert("56");
+  auto pr3 = set_s.insert("55");
 //  auto pr1 = set_empty.insert(25);
 //  auto pr2 = set_empty.insert(55);
 //  auto pr3 = set_empty.insert(55);

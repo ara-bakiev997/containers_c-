@@ -169,6 +169,9 @@ class Tree {
   friend ConstIterator;
 
  private:
+
+  bool CommonCompareEqual(Key first, Key second);
+
   //_____WORKING_WITH_MEMORY_____
   RBT<const Key, T> *CreateNode(const Key &key, T value);
 
@@ -416,9 +419,10 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::AddNodeByCondition(
 	  node->color_ = BLACK;
 	}
 	if (node == root_) {
+
 	  this->fake_->parent_ = node;
-	} else if (this->compare_(this->fake_->parent_->data_->first,
-							  node->data_->first)) {
+
+	} else if (CommonCompareEqual(this->fake_->parent_->data_->first, node->data_->first)) {
 	  this->fake_->parent_ = node;
 	}
 	if (parent && parent->color_ == RED) {
@@ -527,10 +531,7 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::FindNodeByKeyMulti(
 	  ret = node;
 	}
 
-	if (this->compare_(key, node->data_->first) ||
-			!(this->compare_(key, node->data_->first) ||
-				this->compare_(node->data_->first, key))
-		) {
+	if (CommonCompareEqual(key, node->data_->first)) {
 
 	  ret = FindNodeByKeyMulti(node->left_, key, ret);
 
@@ -1072,6 +1073,10 @@ typename Tree<Key, T, Compare, Alloc>::iterator Tree<Key, T, Compare, Alloc>::fi
   RBT<const Key, T> *ret = nullptr;
   auto ptr = Tree<Key>::FindNodeByKeyMulti(this->root_, key, ret);
   return ptr ? iterator(ptr, this->fake_) : this->end();
+}
+template<typename Key, typename T, typename Compare, typename Alloc>
+bool Tree<Key, T, Compare, Alloc>::CommonCompareEqual(Key first, Key second) {
+  return this->compare_(first, second) || !(this->compare_(first, second) || this->compare_(second, first));
 }
 
 }  // namespace s21
