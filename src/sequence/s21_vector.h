@@ -13,7 +13,6 @@
 #include <type_traits>
 #include <iterator>
 
-//#include "sequence_container.h"
 
 namespace s21 {
 
@@ -29,7 +28,7 @@ namespace s21 {
 
         S21Vector() = default;
 
-        explicit S21Vector(size_type size, const T &value = T(), const Alloc &alloc = Alloc());
+        explicit S21Vector(size_type size, const T &value = T());
 
         S21Vector(std::initializer_list<value_type> const &items);
 
@@ -215,13 +214,12 @@ namespace s21 {
 //_____CONSTRUCTORS_____
 
     template<typename T, typename Alloc>
-    S21Vector<T, Alloc>::S21Vector(S21Vector::size_type size, const T &value, const Alloc &alloc): size_(size),
-                                                                                                   arr_(AllocTraits::allocate(
-                                                                                                           alloc_,
-                                                                                                           size)),
-                                                                                                   capacity_(size_) {
+    S21Vector<T, Alloc>::S21Vector(S21Vector::size_type size, const T &value) {
+        size_ = size;
+        arr_ = AllocTraits::allocate(alloc_, size);
+        capacity_ = size_;
 
-        for (auto i = 0; i < size_; ++i) {
+        for (size_t i = 0; i < size_; ++i) {
             AllocTraits::construct(alloc_, arr_ + i, value);
         }
     }
@@ -348,13 +346,13 @@ namespace s21 {
 
         if (size > capacity_) {
             value_type *new_arr = AllocTraits::allocate(alloc_, size);
-            auto i = 0;
+            size_t i = 0;
             try {
                 for (; i < size_; ++i) {
                     AllocTraits::construct(alloc_, new_arr + i, std::move(arr_[i]));
                 }
             } catch (...) {
-                for (auto j = 0; j < i; ++j) {
+                for (size_t j = 0; j < i; ++j) {
                     AllocTraits::destroy(alloc_, new_arr + j);
                 }
                 AllocTraits::deallocate(alloc_, new_arr, size);
@@ -468,7 +466,7 @@ namespace s21 {
     template<typename T, typename Alloc>
     void S21Vector<T, Alloc>::remove() {
         if ((size_ + 1) != 0) {
-            for (auto i = 0; i < size_; ++i) {
+            for (size_t i = 0; i < size_; ++i) {
                 AllocTraits::destroy(alloc_, arr_ + i);
             }
         }

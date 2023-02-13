@@ -2,7 +2,7 @@
 
 #include <list>
 
-#include "../src/sequence/list/s21_list.h"
+#include "../src/sequence/s21_list.h"
 
 using namespace s21;
 

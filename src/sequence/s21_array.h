@@ -12,8 +12,6 @@
 #include <utility>
 #include <iostream>
 
-
-#include "sequence_container.h"
 #include "s21_vector.h"
 
 namespace s21 {
@@ -122,7 +120,7 @@ namespace s21 {
     template<class T, size_t N>
     void S21Array<T, N>::fill(const_reference value) {
         if (this->size_) {
-            for (auto i = 0; i < this->size_; ++i) this->arr_[i] = value;
+            for (size_t i = 0; i < this->size_; ++i) this->arr_[i] = value;
         }
     }
 

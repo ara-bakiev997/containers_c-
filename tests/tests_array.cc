@@ -27,13 +27,13 @@ TEST_F(S21Array_test, test_constructor_def) {
 
 TEST_F(S21Array_test, test_constructor_il) {
     EXPECT_EQ(array.size(), test.size());
-    for (auto i = 0; i < array.size(); ++i)
+    for (size_t i = 0; i < array.size(); ++i)
         EXPECT_EQ(array.at(i), test.at(i));
 }
 
 TEST_F(S21Array_test, test_constructor_cpy) {
     EXPECT_EQ(array_3.size(), test3.size());
-    for (auto i = 0; i < array_3.size(); ++i)
+    for (size_t i = 0; i < array_3.size(); ++i)
         EXPECT_EQ(array_3.at(i), test3.at(i));
 }
 
@@ -41,7 +41,7 @@ TEST_F(S21Array_test, test_constructor_move) {
     S21Array<int, 5> array_4 = std::move(array);
     std::array<int, 5> test4 = std::move(test);
     EXPECT_EQ(array_4.size(), test4.size());
-    for (auto i = 0; i < array_4.size(); ++i)
+    for (size_t i = 0; i < array_4.size(); ++i)
         EXPECT_EQ(array_4.at(i), test4.at(i));
 }
 
@@ -51,7 +51,7 @@ TEST_F(S21Array_test, test_op_move) {
     array_2 = std::move(arr);
     test2 = std::move(test);
     EXPECT_EQ(array_2.size(), test2.size());
-    for (auto i = 0; i < array_2.size(); ++i)
+    for (size_t i = 0; i < array_2.size(); ++i)
         EXPECT_EQ(array_2.at(i), test2.at(i));
 }
 
@@ -75,14 +75,14 @@ TEST_F(S21Array_test, test_swap) {
     array.swap(array_2);
     test.swap(test2);
     EXPECT_EQ(array.size(), test.size());
-    for (auto i = 0; i < array.size(); ++i)
+    for (size_t i = 0; i < array.size(); ++i)
         EXPECT_EQ(array.at(i), test.at(i));
 }
 
 TEST_F(S21Array_test, test_fill) {
     array.fill(-1);
     test.fill(-1);
-    for (auto i = 0; i < array.size(); ++i)
+    for (size_t i = 0; i < array.size(); ++i)
         EXPECT_EQ(array.at(i), test.at(i));
     array_empty.fill(5);
     test_empty.fill(5);

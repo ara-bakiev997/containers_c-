@@ -2,11 +2,10 @@
 #define S21_CONTAINERS_SRC_CONTAINER_ADAPTOR_STACK_H_
 
 #include "../sequence/list/s21_list.h"
-#include "container_adaptor.h"
 
 namespace s21 {
 template <typename T, typename Container = S21List<T>>
-class S21Stack : public ContainerAdaptor<T> {
+class S21Stack {
  public:
   using container_type = Container;
   using value_type = typename Container::value_type;

@@ -1,9 +1,9 @@
 GCC = g++  -std=c++17 -g -Wall -Werror -Wextra
-TEST = ../../tests/tests_queue.cc
+TEST = ../../tests/tests_stack.cc
 GCOV =--coverage
-SOURCE = ../src/sequence/list/s21_queue.h
-LIBA = tests_list.a
-LIBO = tests_list.o
+SOURCE = ../src/sequence/list/s21_stack.h
+LIBA = tests_stack.a
+LIBO = tests_stack.o
 
 
 OS = $(shell uname)
@@ -20,14 +20,14 @@ all:
 	./test
 
 clean:
-	rm -rf *.o *.a  *.out test *.dSYM  report coverage.info tests_list.gcda tests_list.gcno *.txt
+	rm -rf *.o *.a  *.out test *.dSYM  report coverage.info tests_stack.gcda tests_stack.gcno *.txt
 
-s21_list.a: clean
+tests_stack.a: clean
 	$(GCC) -c $(TEST)
 	ar rcs $(LIBA) $(LIBO)
 	ranlib $(LIBA)
 
-gcov_report: s21_list.a
+gcov_report: tests_stack.a
 	$(GCC) $(GCOV) $(TEST) $(LIBA) -L. $(LIBA)  $(LIBFLAGS) -o test
 	./test
 	lcov -t "test" -c -d  ./ --no-external --output-file ./coverage.info

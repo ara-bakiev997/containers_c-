@@ -8,8 +8,8 @@
 #include <initializer_list>
 #include <iostream>
 
-#include "../../sequence/s21_vector.h"
-#include "../red_black_tree.h"
+#include "../sequence/s21_vector.h"
+#include "red_black_tree.h"
 
 namespace s21 {
 
@@ -71,7 +71,7 @@ S21Map<Key, Value, Compare, Alloc>::S21Map(
 }
 
 template <typename Key, typename Value, typename Compare, typename Alloc>
-S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &other) {
+S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &other) : Tree<Key, Value>() {
   for (auto it = other.begin(); it != other.end(); ++it) {
     Tree<Key, Value>::insert_node((*it).first, (*it).second);
   }
@@ -157,13 +157,17 @@ void S21Map<Key, Value, Compare, Alloc>::merge(S21Map &other) {
   auto it = other.begin();
   auto size = other.size();
   auto end_elem = size - 1;
-  for (auto i = 0; i < size; ++i) {
+  for (size_t i = 0; i < size; ++i) {
     auto res = insert(std::pair(it->first, it->second));
     if (res.second) {
       other.erase(it);
     }
     if (i < end_elem) {
-      ++it;
+      if (res.second) {
+        it = other.begin();
+      } else {
+        ++it;
+      }
     }
   }
 }

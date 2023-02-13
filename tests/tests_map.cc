@@ -8,7 +8,7 @@
 #include <iterator>
 #include <map>
 
-#include "../src/sorted_container/associative_container/s21_map.h"
+#include "../src/sorted_container/s21_map.h"
 
 using namespace s21;
 using std::cout;
@@ -226,6 +226,28 @@ TEST_F(S21Map_test, erase) {
 
   for (auto const &it : map_s) {
     EXPECT_EQ(map_s.at(it.first), std_map_s.at(it.first));
+  }
+}
+
+TEST_F(S21Map_test, erase2) {
+  for (auto i = 0; i < 100; ++i) {
+    map_empty.insert({i, i});
+    std_map_empty.insert({i, i});
+  }
+  for (auto i = 10000; i > 0; --i) {
+    map_empty.insert({i, i});
+    std_map_empty.insert({i, i});
+  }
+
+  for (auto i = -10000; i < 0; ++i) {
+    map_empty.insert({i, i});
+    std_map_empty.insert({i, i});
+  }
+
+  for (auto i = 0; ; ++i) {
+    if (std_map_empty.empty()) break;
+    map_empty.erase(map_empty.begin());
+    std_map_empty.erase(std_map_empty.begin());
   }
 }
 

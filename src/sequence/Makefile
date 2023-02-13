@@ -1,9 +1,9 @@
-GCC = g++  -std=c++17 -g #-Wall -Werror -Wextra
-TEST = ../../../tests/tests_map.cc
+GCC = g++  -std=c++17 -g -Wall -Werror -Wextra
+TEST = ../../tests/tests_vector.cc
 GCOV =--coverage
-SOURCE = ../src/sorted_container/associative_container/s21_map.h
-LIBA = tests_map.a
-LIBO = tests_map.o
+SOURCE = ../src/sequence/vector/s21_vector.h
+LIBA = tests_vector.a
+LIBO = tests_vector.o
 
 
 OS = $(shell uname)
@@ -20,14 +20,14 @@ all:
 	./test
 
 clean:
-	rm -rf *.o *.a  *.out test *.dSYM  report coverage.info test_RBT.gcda test_RBT.gcno
+	rm -rf *.o *.a  *.out test *.dSYM  report coverage.info tests_vector.gcda tests_vector.gcno *.txt
 
-s21_map.a: clean
+s21_vector.a: clean
 	$(GCC) -c $(TEST)
 	ar rcs $(LIBA) $(LIBO)
 	ranlib $(LIBA)
 
-gcov_report: s21_map.a
+gcov_report: s21_vector.a
 	$(GCC) $(GCOV) $(TEST) $(LIBA) -L. $(LIBA)  $(LIBFLAGS) -o test
 	./test
 	lcov -t "test" -c -d  ./ --no-external --output-file ./coverage.info
