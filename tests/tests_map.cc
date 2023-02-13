@@ -4,13 +4,9 @@
 
 #include <gtest/gtest.h>
 
-//#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <map>
-//#include <random>
-//#include <string>
-//#include <vector>
 
 #include "../src/sorted_container/associative_container/s21_map.h"
 
@@ -116,7 +112,7 @@ TEST_F(S21Map_test, clear) {
 TEST_F(S21Map_test, it_begin) {
   auto it = map.begin();
   auto std_it = std_map.begin();
-    EXPECT_EQ(it->first, std_it->first);
+  EXPECT_EQ(it->first, std_it->first);
 }
 
 TEST_F(S21Map_test, it_end) {
@@ -190,7 +186,6 @@ TEST_F(S21Map_test, insert_key_value) {
   EXPECT_EQ((*pr2.first).second, (*std_pr2.first).second);
 }
 
-
 TEST_F(S21Map_test, insert_or_assign) {
   auto pr1 = map.insert_or_assign(9, 35);
   auto pr2 = std_map.insert_or_assign(9, 35);
@@ -226,13 +221,12 @@ TEST_F(S21Map_test, erase) {
   std_map_s.erase((std_map_s.begin()));
 
   for (auto const &it : map3) {
-    EXPECT_EQ(map3.at(it.first),std_map3.at(it.first));
+    EXPECT_EQ(map3.at(it.first), std_map3.at(it.first));
   }
 
   for (auto const &it : map_s) {
-    EXPECT_EQ(map_s.at(it.first),std_map_s.at(it.first));
+    EXPECT_EQ(map_s.at(it.first), std_map_s.at(it.first));
   }
-
 }
 
 TEST_F(S21Map_test, emplace) {
@@ -259,8 +253,7 @@ TEST_F(S21Map_test, merge) {
   EXPECT_EQ(mb_.size(), mb.size());
   EXPECT_EQ(mb_.at(5), mb.at(5));
 
-  for (auto const &kv : u_)
-  EXPECT_EQ(u_.at(kv.first), std_u.at(kv.first));
+  for (auto const &kv : u_) EXPECT_EQ(u_.at(kv.first), std_u.at(kv.first));
 }
 
 TEST_F(S21Map_test, contains) {

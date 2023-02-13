@@ -3,13 +3,9 @@
 //
 #include <gtest/gtest.h>
 
-//#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <set>
-//#include <random>
-//#include <string>
-//#include <vector>
 
 #include "../src/sorted_container/set_container/s21_multiset.h"
 
@@ -21,11 +17,12 @@ class S21Multiset_test : public ::testing::Test {
  protected:
   void SetUp() override {}
   S21Multiset<int> set_empty;
-  S21Multiset<int> set{1, 1, 1, 0,0, 4, 4, 7, -5};
+  S21Multiset<int> set{1, 1, 1, 0, 0, 4, 4, 7, -5};
   S21Multiset<int> set3{10, 8, 8, 6};
+  S21Multiset<int> std_set_test{7, -5, 1, 0, 4};
   S21Multiset<std::string> set_s;
   std::multiset<int> std_set_empty;
-  std::multiset<int> std_set{1, 1, 1, 0,0, 4, 4,  7, -5};
+  std::multiset<int> std_set{1, 1, 1, 0, 0, 4, 4, 7, -5};
   std::multiset<int> std_set3{10, 8, 8, 6};
   std::multiset<std::string> std_set_s;
 };
@@ -117,13 +114,10 @@ TEST_F(S21Multiset_test, size) {
   EXPECT_EQ(set.size(), std_set.size());
 }
 
-//TEST_F(S21Multiset_test, max_size) {
-//  //  EXPECT_EQ(set.max_size(), std_set.max_size());
-//
-//  cout << "set.max_size() = " << set.max_size() << endl;
-//  cout << "std_set.max_size() = " << std_set.max_size() << endl;
-//}
-//
+TEST_F(S21Multiset_test, max_size) {
+  EXPECT_EQ(set.max_size(), std_set_test.max_size());
+}
+
 TEST_F(S21Multiset_test, clear) {
   EXPECT_EQ(set.size(), std_set.size());
   EXPECT_EQ(set_empty.size(), std_set_empty.size());
@@ -158,25 +152,28 @@ TEST_F(S21Multiset_test, insert) {
   auto pr1 = set_s.insert("25");
   auto pr2 = set_s.insert("55");
   auto pr3 = set_s.insert("55");
-//  auto pr1 = set_empty.insert(25);
-//  auto pr2 = set_empty.insert(55);
-//  auto pr3 = set_empty.insert(55);
+  auto pr4 = set_empty.insert(25);
+  auto pr5 = set_empty.insert(55);
+  auto pr6 = set_empty.insert(55);
   auto std_pr1 = std_set_s.insert("25");
   auto std_pr2 = std_set_s.insert("55");
   auto std_pr3 = std_set_s.insert("55");
+  auto std_pr4 = std_set_empty.insert(25);
+  auto std_pr5 = std_set_empty.insert(55);
+  auto std_pr6 = std_set_empty.insert(55);
 
   auto it2 = set_s.begin();
   for (const auto &std_data : std_set_s) {
-//    EXPECT_EQ(it2->first, std_data);
-cout << "std_data: " << std_data << endl;
-cout << "data: " << it2->first << endl;
+    EXPECT_EQ(it2->first, std_data);
     ++it2;
   }
 
-//  EXPECT_EQ(set_s.size(), std_set_s.size());
-//  EXPECT_EQ(pr1.second, std_pr1.second);
-//  EXPECT_EQ(pr2.second, std_pr2.second);
-//  EXPECT_EQ(pr3.second, std_pr3.second);
+  auto it3 = set_empty.begin();
+  for (const auto &std_data : std_set_empty) {
+    EXPECT_EQ(it3->first, std_data);
+    ++it3;
+  }
+  EXPECT_EQ(set_s.size(), std_set_s.size());
 }
 
 TEST_F(S21Multiset_test, erase) {
@@ -200,7 +197,6 @@ TEST_F(S21Multiset_test, erase) {
     EXPECT_EQ(it2->first, std_data);
     ++it2;
   }
-
 }
 
 TEST_F(S21Multiset_test, emplace) {
@@ -219,17 +215,14 @@ TEST_F(S21Multiset_test, emplace) {
   auto std_pr4 = std_set_s.emplace("a");
   EXPECT_EQ((*pr4[0].first).first, (*std_pr4));
   EXPECT_TRUE(pr4[0].second);
-
 }
 
 TEST_F(S21Multiset_test, merge) {
   S21Multiset<std::string> ma_{"apple", "x", "banana"};
-  S21Multiset<std::string> mb_{
-      "zorro", "batman", "x", "alpaca"};
+  S21Multiset<std::string> mb_{"zorro", "batman", "x", "alpaca"};
   S21Multiset<std::string> u_;
   std::multiset<std::string> ma{"apple", "x", "banana"};
-  std::multiset<std::string> mb{
-      "zorro", "batman", "x", "alpaca"};
+  std::multiset<std::string> mb{"zorro", "batman", "x", "alpaca"};
   std::multiset<std::string> std_u;
   u_.merge(ma_);
   std_u.merge(ma);
@@ -249,7 +242,7 @@ TEST_F(S21Multiset_test, merge) {
 }
 
 TEST_F(S21Multiset_test, contains) {
-  S21Multiset<char> example = {'a','b'};
+  S21Multiset<char> example = {'a', 'b'};
   EXPECT_TRUE(example.contains('a'));
   EXPECT_FALSE(example.contains('t'));
 }
@@ -257,13 +250,13 @@ TEST_F(S21Multiset_test, contains) {
 TEST_F(S21Multiset_test, find) {
   set_s = {"apple", "x", "banana"};
   std_set_s = {"apple", "x", "banana"};
-  for (const auto & data : std_set_s) {
+  for (const auto &data : std_set_s) {
     auto iter = set_s.find(data);
     auto iter2 = std_set_s.find(data);
     EXPECT_EQ(iter->first, *iter2);
   }
 
-  for (const auto & data : std_set) {
+  for (const auto &data : std_set) {
     auto iter = set.find(data);
     auto iter2 = std_set.find(data);
     EXPECT_EQ(iter->first, *iter2);
@@ -273,7 +266,6 @@ TEST_F(S21Multiset_test, find) {
   auto iter2 = std_set_s.find("data");
   EXPECT_EQ(iter, set_s.end());
   EXPECT_EQ(iter2, std_set_s.end());
-
 }
 
 TEST_F(S21Multiset_test, lower_bound) {
@@ -317,7 +309,7 @@ TEST_F(S21Multiset_test, count) {
 TEST_F(S21Multiset_test, equal_range) {
   auto pr = set.equal_range(1);
   auto std_pr = std_set.equal_range(1);
-  EXPECT_EQ(pr.first->first, *std_pr.first );
+  EXPECT_EQ(pr.first->first, *std_pr.first);
   EXPECT_EQ(pr.second->first, *std_pr.second);
 
   auto pr2 = set_empty.equal_range(1);
@@ -326,7 +318,6 @@ TEST_F(S21Multiset_test, equal_range) {
   EXPECT_EQ(pr2.second, set_empty.end());
   EXPECT_EQ(std_pr2.first, std_set_empty.end());
   EXPECT_EQ(std_pr2.second, std_set_empty.end());
-
 
   auto pr3 = set_empty.equal_range(111);
   auto std_pr3 = std_set_empty.equal_range(111);
@@ -340,4 +331,3 @@ int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-

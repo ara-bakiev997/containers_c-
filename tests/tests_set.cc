@@ -4,13 +4,9 @@
 
 #include <gtest/gtest.h>
 
-//#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <set>
-//#include <random>
-//#include <string>
-//#include <vector>
 
 #include "../src/sorted_container/set_container/s21_set.h"
 
@@ -24,6 +20,7 @@ class S21Set_test : public ::testing::Test {
   S21Set<int> set_empty;
   S21Set<int> set{1, 0, 4, 7, -5};
   S21Set<int> set3{10, 8, 6};
+  S21Set<int> std_set_test{7, -5, 1, 0, 4};
   S21Set<std::string> set_s;
   std::set<int> std_set_empty;
   std::set<int> std_set{1, 0, 4, 7, -5};
@@ -119,10 +116,7 @@ TEST_F(S21Set_test, size) {
 }
 
 TEST_F(S21Set_test, max_size) {
-//  EXPECT_EQ(set.max_size(), std_set.max_size());
-
-  cout << "set.max_size() = " << set.max_size() << endl;
-  cout << "std_set.max_size() = " << std_set.max_size() << endl;
+  EXPECT_EQ(set.max_size(), std_set_test.max_size());
 }
 
 TEST_F(S21Set_test, clear) {
@@ -196,7 +190,6 @@ TEST_F(S21Set_test, erase) {
     EXPECT_EQ(it2->first, std_data);
     ++it2;
   }
-
 }
 
 TEST_F(S21Set_test, emplace) {
@@ -208,24 +201,20 @@ TEST_F(S21Set_test, emplace) {
   EXPECT_EQ((*pr2[0].first).first, (*std_pr2.first));
   EXPECT_EQ(pr2[0].second, std_pr2.second);
 
-
   EXPECT_EQ((*pr3[0].first).first, (*std_pr3.first));
   EXPECT_EQ(pr3[0].second, std_pr3.second);
 
   auto pr4 = set_s.emplace("a");
   auto std_pr4 = std_set_s.emplace("a");
   EXPECT_EQ(pr4[0].second, std_pr4.second);
-
 }
 
 TEST_F(S21Set_test, merge) {
   S21Set<std::string> ma_{"apple", "x", "banana"};
-  S21Set<std::string> mb_{
-      "zorro", "batman", "x", "alpaca"};
+  S21Set<std::string> mb_{"zorro", "batman", "x", "alpaca"};
   S21Set<std::string> u_;
   std::set<std::string> ma{"apple", "x", "banana"};
-  std::set<std::string> mb{
-      "zorro", "batman", "x", "alpaca"};
+  std::set<std::string> mb{"zorro", "batman", "x", "alpaca"};
   std::set<std::string> std_u;
   u_.merge(ma_);
   std_u.merge(ma);
@@ -243,7 +232,7 @@ TEST_F(S21Set_test, merge) {
 }
 
 TEST_F(S21Set_test, contains) {
-  S21Set<char> example = {'a','b'};
+  S21Set<char> example = {'a', 'b'};
   EXPECT_TRUE(example.contains('a'));
   EXPECT_FALSE(example.contains('t'));
 }
@@ -251,13 +240,13 @@ TEST_F(S21Set_test, contains) {
 TEST_F(S21Set_test, find) {
   set_s = {"apple", "x", "banana"};
   std_set_s = {"apple", "x", "banana"};
-  for (const auto & data : std_set_s) {
-  auto iter = set_s.find(data);
-  auto iter2 = std_set_s.find(data);
-  EXPECT_EQ(iter->first, *iter2);
+  for (const auto &data : std_set_s) {
+    auto iter = set_s.find(data);
+    auto iter2 = std_set_s.find(data);
+    EXPECT_EQ(iter->first, *iter2);
   }
 
-  for (const auto & data : std_set) {
+  for (const auto &data : std_set) {
     auto iter = set.find(data);
     auto iter2 = std_set.find(data);
     EXPECT_EQ(iter->first, *iter2);
@@ -267,11 +256,9 @@ TEST_F(S21Set_test, find) {
   auto iter2 = std_set_s.find("data");
   EXPECT_EQ(iter, set_s.end());
   EXPECT_EQ(iter2, std_set_s.end());
-
 }
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-
