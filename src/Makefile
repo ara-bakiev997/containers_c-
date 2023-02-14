@@ -36,6 +36,7 @@ gcov_report: s21_containers.a
 
 check:
 	cppcheck --enable=all --suppress=missingIncludeSystem --inconclusive --check-config sequence/*.h
+	clang-format  -i container_adaptor/*.h sequence/*.h associative_container/*.h tests/*.cc *.h
 	clang-format -n container_adaptor/*.h sequence/*.h associative_container/*.h tests/*.cc *.h
 
 ifeq ($(OS), Darwin)
