@@ -4,7 +4,7 @@
 #include <iterator>
 #include <set>
 
-#include "../sorted_container/s21_multiset.h"
+#include "../associative_container/s21_multiset.h"
 
 using namespace s21;
 using std::cout;

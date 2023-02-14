@@ -1,65 +1,25 @@
+# 'Google_test' is the subproject name
 cmake_minimum_required(VERSION 3.21.1)
-project(s21_containers)
+project(Google_tests)
 
-set(CMAKE_CXX_STANDARD 17)
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        # Specify the commit you depend on and update it regularly.
+        URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
-#set(HEADER_FILES
-#        for_testing.h
-#        )
-#
-#set(SOURCE_FILES
-#        for_testing.cc
-#        )
-
-
-
-
-
-#add_library(pair STATIC pair.cc pair.h)
-
-#cmake_minimum_required(VERSION 3.22)
-#project(CPP2_s21_containers_0)
-#
-#set(CMAKE_CXX_STANDARD 17)
-#
-#include_directories(src)
-#
-#include(FetchContent)
-#FetchContent_Declare(
-#        googletest
-#        GIT_REPOSITORY https://github.com/google/googletest.git
-#        GIT_TAG release-1.12.1
-#)
-#
-#set(gtest_force_shared_crt ON CACHE BOOL " ")
-#FetchContent_MakeAvailable(googletest)
-#
-#enable_testing()
-#
-#add_executable(test_all
-#        src/array.h
-#        src/array_test.cpp
-#        src/btree.h
-#        src/list.h
-#        src/test_list.cpp
-#        src/map.h
-#        src/map_test.cpp
-#        src/multiset.h
-#        src/multiset_test.cpp
-#        src/queue.h
-#        src/queue_test.cpp
-#        src/set.h
-#        src/set_test.cpp
-#        src/stack.h
-#        src/stack_test.cpp
-#        src/vector.h
-#        src/vector_test.cpp
-#        )
-#
-#target_link_libraries(
-#        test_all
-#        GTest::gtest_main
-#)
-#
-#include(GoogleTest)
-#gtest_discover_tests(test_all)
+add_executable(Google_Tests_run
+        tests/tests_array.cc
+        tests/tests_list.cc
+        tests/tests_map.cc
+        tests/tests_multiset.cc
+        tests/tests_queue.cc
+        tests/tests_set.cc
+        tests/tests_stack.cc
+        tests/tests_vector.cc
+        )
+target_link_libraries(Google_Tests_run gtest gtest_main)

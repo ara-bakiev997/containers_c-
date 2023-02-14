@@ -4,7 +4,7 @@
 #include <iterator>
 #include <map>
 
-#include "../sorted_container/s21_map.h"
+#include "../associative_container/s21_map.h"
 
 using namespace s21;
 using std::cout;

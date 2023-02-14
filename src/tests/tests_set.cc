@@ -3,7 +3,7 @@
 #include <iostream>
 #include <set>
 
-#include "../sorted_container/s21_set.h"
+#include "../associative_container/s21_set.h"
 
 using namespace s21;
 using std::cout;
