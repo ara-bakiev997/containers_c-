@@ -3,7 +3,7 @@
 #include <cstring>
 #include <queue>
 
-#include "../src/container_adaptor/s21_queue.h"
+#include "../container_adaptor/s21_queue.h"
 using namespace s21;
 
 class S21Queue_test : public ::testing::Test {
@@ -134,9 +134,4 @@ TEST_F(S21Queue_test, bonus_emplace_back) {
     EXPECT_EQ(queue_string.front(), orig_string.front());
     EXPECT_EQ(queue_string.back(), orig_string.back());
   }
-}
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }

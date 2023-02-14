@@ -1,17 +1,17 @@
-GCC = g++  -std=c++17 -g -Wall -Werror -Wextra
-TEST = ../../tests/tests_vector.cc
+GCC = g++ -std=c++17 -g -Wall -Werror -Wextra
+TEST = tests/*.cc
 GCOV =--coverage
-SOURCE = ../src/sequence/vector/s21_vector.h
-LIBA = tests_vector.a
-LIBO = tests_vector.o
+SOURCE = /sequence/vector/s21_list.h
+LIBA = tests.a
+LIBO = tests.o
 
 
 OS = $(shell uname)
 
 ifeq ($(OS), Darwin)
-	LIBFLAGS = -lm -lgtest -lstdc++
+	LIBFLAGS = -lm -lgtest -lstdc++ -lgtest_main
 else
-	LIBFLAGS=-lstdc++ `pkg-config --cflags --libs gtest`
+	LIBFLAGS=-lstdc++ `pkg-config --cflags --libs gtest -lgtest_main`
 endif
 
 all:
@@ -20,7 +20,7 @@ all:
 	./test
 
 clean:
-	rm -rf *.o *.a  *.out test *.dSYM  report coverage.info tests_vector.gcda tests_vector.gcno *.txt
+	rm -rf *.o *.a  *.out test *.dSYM  report coverage.info *.gcda *.gcno *.txt
 
 s21_vector.a: clean
 	$(GCC) -c $(TEST)
@@ -35,7 +35,8 @@ gcov_report: s21_vector.a
 	open ./report/index.html
 
 check:
-	cppcheck --enable=all --suppress=missingIncludeSystem --inconclusive --check-config *.h *.tpp
+	cppcheck --enable=all --suppress=missingIncludeSystem --inconclusive --check-config sequence/*.h
+	clang-format -n container_adaptor/*.h sequence/*.h sorted_container/*.h tests/*.cc *.h
 
 ifeq ($(OS), Darwin)
 	leaks --atExit -- test

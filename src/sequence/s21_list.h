@@ -1,7 +1,3 @@
-//
-// Created by Lok on 12.11.2022.
-//
-
 #ifndef S21_CONTAINERS_SRC_SEQUENCE_S21_LIST_H_
 #define S21_CONTAINERS_SRC_SEQUENCE_S21_LIST_H_
 
@@ -11,8 +7,6 @@
 #include <memory>
 #include <utility>
 #include <valarray>
-
-//#include "../sequence_container.h"
 
 namespace s21 {
 template <typename T>

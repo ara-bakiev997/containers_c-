@@ -2,7 +2,7 @@
 
 #include <list>
 
-#include "../src/sequence/s21_list.h"
+#include "../sequence/s21_list.h"
 
 using namespace s21;
 
@@ -481,9 +481,4 @@ TEST_F(S21List_test, BonusEmplaceFront) {
     ++it_obj, ++it_obj_or;
   }
   EXPECT_EQ(reElections.size(), reElections_or.size());
-}
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }

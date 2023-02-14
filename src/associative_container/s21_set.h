@@ -37,10 +37,6 @@ class S21Set : public Tree<Key> {
 
   std::pair<iterator, bool> insert(const value_type &value);
 
-//  size_type max_size() {
-////return this->node_alloc_.max_size();
-//  }
-
   void merge(S21Set &other);
 
   bool contains(const Key &key);
@@ -58,7 +54,7 @@ S21Set<Key, Compare, Alloc>::S21Set(
 }
 
 template <typename Key, typename Compare, typename Alloc>
-S21Set<Key, Compare, Alloc>::S21Set(const S21Set &other) : Tree<Key> () {
+S21Set<Key, Compare, Alloc>::S21Set(const S21Set &other) : Tree<Key>() {
   for (auto it = other.begin(); it != other.end(); ++it) {
     Tree<Key>::insert_node((*it).first);
   }

@@ -1,10 +1,9 @@
 #include <gtest/gtest.h>
 
 #include <iostream>
-#include <iterator>
 #include <set>
 
-#include "../src/sorted_container/s21_set.h"
+#include "../sorted_container/s21_set.h"
 
 using namespace s21;
 using std::cout;
@@ -252,9 +251,4 @@ TEST_F(S21Set_test, find) {
   auto iter2 = std_set_s.find("data");
   EXPECT_EQ(iter, set_s.end());
   EXPECT_EQ(iter2, std_set_s.end());
-}
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }

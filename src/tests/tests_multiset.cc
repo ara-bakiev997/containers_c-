@@ -1,11 +1,10 @@
-
 #include <gtest/gtest.h>
 
 #include <iostream>
 #include <iterator>
 #include <set>
 
-#include "../src/sorted_container/s21_multiset.h"
+#include "../sorted_container/s21_multiset.h"
 
 using namespace s21;
 using std::cout;
@@ -323,9 +322,4 @@ TEST_F(S21Multiset_test, equal_range) {
   EXPECT_EQ(pr3.second, set_empty.end());
   EXPECT_EQ(std_pr3.first, std_set_empty.end());
   EXPECT_EQ(std_pr3.second, std_set_empty.end());
-}
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }

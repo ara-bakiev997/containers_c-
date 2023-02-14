@@ -1,9 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <cstring>
 #include <stack>
 
-#include "../src/container_adaptor/s21_stack.h"
+#include "../container_adaptor/s21_stack.h"
 using namespace s21;
 
 class S21Stack_test : public ::testing::Test {
@@ -124,9 +123,4 @@ TEST_F(S21Stack_test, bonus_emplace_back) {
     if (stack_string.empty() || orig_string.empty()) break;
     EXPECT_EQ(stack_string.top(), orig_string.top());
   }
-}
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }

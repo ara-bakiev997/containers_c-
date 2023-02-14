@@ -1,14 +1,10 @@
-//
-// Created by Qyburn Bongo on 1/24/23.
-//
-
 #include <gtest/gtest.h>
 
 #include <iostream>
 #include <iterator>
 #include <map>
 
-#include "../src/sorted_container/s21_map.h"
+#include "../sorted_container/s21_map.h"
 
 using namespace s21;
 using std::cout;
@@ -244,7 +240,7 @@ TEST_F(S21Map_test, erase2) {
     std_map_empty.insert({i, i});
   }
 
-  for (auto i = 0; ; ++i) {
+  for (auto i = 0;; ++i) {
     if (std_map_empty.empty()) break;
     map_empty.erase(map_empty.begin());
     std_map_empty.erase(std_map_empty.begin());
@@ -283,9 +279,4 @@ TEST_F(S21Map_test, contains) {
   std::map<int, char> std_example = {{1, 'a'}, {2, 'b'}};
   EXPECT_TRUE(example.contains(2));
   EXPECT_FALSE(example.contains(5));
-}
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }

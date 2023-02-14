@@ -1,7 +1,7 @@
 #ifndef S21_CONTAINERS_SRC_CONTAINER_ADAPTOR_STACK_H_
 #define S21_CONTAINERS_SRC_CONTAINER_ADAPTOR_STACK_H_
 
-#include "../sequence/list/s21_list.h"
+#include "../sequence/s21_list.h"
 
 namespace s21 {
 template <typename T, typename Container = S21List<T>>

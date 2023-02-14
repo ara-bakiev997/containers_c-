@@ -1,7 +1,3 @@
-//
-// Created by Lok on 17.11.2022.
-//
-
 #ifndef S21_CONTAINERS_SRC_SORTED_CONTAINER_ASSOCIATIVE_CONTAINER_MAP_H_
 #define S21_CONTAINERS_SRC_SORTED_CONTAINER_ASSOCIATIVE_CONTAINER_MAP_H_
 
@@ -71,7 +67,8 @@ S21Map<Key, Value, Compare, Alloc>::S21Map(
 }
 
 template <typename Key, typename Value, typename Compare, typename Alloc>
-S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &other) : Tree<Key, Value>() {
+S21Map<Key, Value, Compare, Alloc>::S21Map(const S21Map &other)
+    : Tree<Key, Value>() {
   for (auto it = other.begin(); it != other.end(); ++it) {
     Tree<Key, Value>::insert_node((*it).first, (*it).second);
   }
