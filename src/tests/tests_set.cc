@@ -10,7 +10,7 @@ using std::cout;
 using std::endl;
 
 class S21Set_test : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {}
   S21Set<int> set_empty;
   S21Set<int> set{1, 0, 4, 7, -5};

@@ -7,7 +7,7 @@
 using namespace s21;
 
 class S21Array_test : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {}
 
   S21Array<int, 0> array_empty;
@@ -27,7 +27,8 @@ TEST_F(S21Array_test, test_constructor_def) {
 
 TEST_F(S21Array_test, test_constructor_il) {
   EXPECT_EQ(array.size(), test.size());
-  for (size_t i = 0; i < array.size(); ++i) EXPECT_EQ(array.at(i), test.at(i));
+  for (size_t i = 0; i < array.size(); ++i)
+    EXPECT_EQ(array.at(i), test.at(i));
 }
 
 TEST_F(S21Array_test, test_constructor_cpy) {
@@ -73,13 +74,15 @@ TEST_F(S21Array_test, test_swap) {
   array.swap(array_2);
   test.swap(test2);
   EXPECT_EQ(array.size(), test.size());
-  for (size_t i = 0; i < array.size(); ++i) EXPECT_EQ(array.at(i), test.at(i));
+  for (size_t i = 0; i < array.size(); ++i)
+    EXPECT_EQ(array.at(i), test.at(i));
 }
 
 TEST_F(S21Array_test, test_fill) {
   array.fill(-1);
   test.fill(-1);
-  for (size_t i = 0; i < array.size(); ++i) EXPECT_EQ(array.at(i), test.at(i));
+  for (size_t i = 0; i < array.size(); ++i)
+    EXPECT_EQ(array.at(i), test.at(i));
   array_empty.fill(5);
   test_empty.fill(5);
   EXPECT_NO_THROW(array_empty.fill(5));

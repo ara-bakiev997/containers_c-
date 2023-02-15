@@ -7,12 +7,12 @@
 using namespace s21;
 
 class S21Point {
- public:
+public:
   int get_x() const { return x_; }
 
   void set_x(int x) { x_ = x; }
 
- private:
+private:
   std::string vector{"hello"};
   int x_{};
 };
@@ -26,15 +26,14 @@ struct President {
       : name(std::move(p_name)), country(std::move(p_country)), year(p_year) {}
 
   President(President &&other)
-      : name(std::move(other.name)),
-        country(std::move(other.country)),
+      : name(std::move(other.name)), country(std::move(other.country)),
         year(other.year) {}
 
   President &operator=(const President &other) = default;
 };
 
 class S21Vector_test : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {}
 
   S21Vector<int> vector_empty;

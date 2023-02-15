@@ -9,8 +9,7 @@
 #include <valarray>
 
 namespace s21 {
-template <typename T>
-struct Node {
+template <typename T> struct Node {
   T *value_{};
   Node *next_{};
   Node *prev_{};
@@ -21,9 +20,8 @@ struct Node {
       : value_(std::move(value)), next_(nullptr), prev_(nullptr) {}
 };
 
-template <typename T, typename Alloc = std::allocator<T>>
-class S21List {
- public:
+template <typename T, typename Alloc = std::allocator<T>> class S21List {
+public:
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
@@ -34,8 +32,8 @@ class S21List {
 
   // Iterators for list
   class ConstIterator {
-   public:
-    friend S21List;  // need for access node in list
+  public:
+    friend S21List; // need for access node in list
     ConstIterator() : node_(nullptr) {}
     explicit ConstIterator(Node<value_type> *pt) : node_(pt) {}
     ConstIterator(const ConstIterator &other) : node_(other.node_) {}
@@ -51,12 +49,12 @@ class S21List {
       return node_ == other.node_;
     }
 
-   protected:
+  protected:
     Node<value_type> *node_{};
   };
 
   class Iterator : public ConstIterator {
-   public:
+  public:
     Iterator() { this->node_ = nullptr; }
     explicit Iterator(Node<value_type> *pt) { this->node_ = pt; }
     Iterator(const Iterator &other) : ConstIterator(other) {}
@@ -111,19 +109,16 @@ class S21List {
   // Bonus
   template <typename... Args>
   iterator emplace(const_iterator pos, Args &&...args);
-  template <typename... Args>
-  void emplace_back(Args &&...args);
-  template <typename... Args>
-  void emplace_front(Args &&...args);
+  template <typename... Args> void emplace_back(Args &&...args);
+  template <typename... Args> void emplace_front(Args &&...args);
 
- private:
+private:
   Node<T> *fake_{};
   size_type size_{};
   NodeAlloc node_alloc_{};
   ValueTypeAlloc value_type_alloc_{};
   // Support func
-  template <typename... Args>
-  Node<T> *CreateNode(Args &&...args);
+  template <typename... Args> Node<T> *CreateNode(Args &&...args);
   void RemNode(Node<T> *node);
   void InitFakeNode();
   iterator GetMiddleList();
@@ -133,8 +128,7 @@ class S21List {
 
 //_____LIST_____
 //_____CONSTRUCTORS_AND_DESTRUCTOR_____
-template <typename T, typename Alloc>
-S21List<T, Alloc>::S21List(size_type n) {
+template <typename T, typename Alloc> S21List<T, Alloc>::S21List(size_type n) {
   InitFakeNode();
   for (auto i = n; i > 0; --i) {
     push_back(0);
@@ -158,21 +152,22 @@ S21List<T, Alloc>::S21List(const S21List<T, Alloc> &l) {
   }
 }
 
-template <typename T, typename Alloc>
-S21List<T, Alloc>::~S21List() {
+template <typename T, typename Alloc> S21List<T, Alloc>::~S21List() {
   for (;;) {
     auto it = this->begin();
-    if (it == this->end()) break;
+    if (it == this->end())
+      break;
     pop_back();
   }
   value_type_alloc_.deallocate(fake_->value_, 1);
-  node_alloc_.deallocate(fake_, 1);  // отдельно удаляем память под fake ноду
+  node_alloc_.deallocate(fake_, 1); // отдельно удаляем память под fake ноду
 }
 
 template <typename T, typename Alloc>
-S21List<T, Alloc> &S21List<T, Alloc>::operator=(
-    const S21List<T, Alloc> &l) noexcept {
-  if (this == &l) return *this;
+S21List<T, Alloc> &
+S21List<T, Alloc>::operator=(const S21List<T, Alloc> &l) noexcept {
+  if (this == &l)
+    return *this;
   this->clear();
   for (auto i = l.begin(); i != l.end(); ++i) {
     push_back(*i);
@@ -181,8 +176,8 @@ S21List<T, Alloc> &S21List<T, Alloc>::operator=(
 }
 
 template <typename T, typename Alloc>
-S21List<T, Alloc> &S21List<T, Alloc>::operator=(
-    S21List<T, Alloc> &&l) noexcept {
+S21List<T, Alloc> &
+S21List<T, Alloc>::operator=(S21List<T, Alloc> &&l) noexcept {
   std::swap(this->size_, l.size_);
   std::swap(fake_, l.fake_);
   return *this;
@@ -200,16 +195,16 @@ typename S21List<T, Alloc>::iterator S21List<T, Alloc>::end() const {
 }
 
 //_____LIST_MODIFIERS_____
-template <typename T, typename Alloc>
-void S21List<T, Alloc>::clear() {
+template <typename T, typename Alloc> void S21List<T, Alloc>::clear() {
   for (auto i = this->size_; i > 0; --i) {
     pop_back();
   }
 }
 
 template <typename T, typename Alloc>
-typename S21List<T, Alloc>::iterator S21List<T, Alloc>::insert(
-    S21List<T, Alloc>::iterator pos, S21List<T, Alloc>::const_reference value) {
+typename S21List<T, Alloc>::iterator
+S21List<T, Alloc>::insert(S21List<T, Alloc>::iterator pos,
+                          S21List<T, Alloc>::const_reference value) {
   Node<value_type> *shift_node = pos.node_;
   Node<value_type> *prev_node = shift_node->prev_;
   Node<value_type> *new_node = CreateNode(value);
@@ -217,8 +212,8 @@ typename S21List<T, Alloc>::iterator S21List<T, Alloc>::insert(
   new_node->prev_ = prev_node;
   prev_node->next_ = new_node;
   shift_node->prev_ = new_node;
-  ++this->size_;  // оригинал также работает, если пришел итератор от другого
-                  // объекта он не добавляет его в лист, но size увеличивает
+  ++this->size_; // оригинал также работает, если пришел итератор от другого
+                 // объекта он не добавляет его в лист, но size увеличивает
   return iterator(new_node);
 }
 
@@ -246,8 +241,7 @@ void S21List<T, Alloc>::push_back(T &&value) {
   ++this->size_;
 }
 
-template <typename T, typename Alloc>
-void S21List<T, Alloc>::pop_back() {
+template <typename T, typename Alloc> void S21List<T, Alloc>::pop_back() {
   Node<T> *temp = fake_->prev_;
   fake_->prev_ = fake_->prev_->prev_;
   fake_->prev_->next_ = fake_;
@@ -269,8 +263,7 @@ void S21List<T, Alloc>::push_front(T &&value) {
   ++this->size_;
 }
 
-template <typename T, typename Alloc>
-void S21List<T, Alloc>::pop_front() {
+template <typename T, typename Alloc> void S21List<T, Alloc>::pop_front() {
   Node<T> *temp = fake_->next_;
   fake_->next_ = fake_->next_->next_;
   fake_->next_->prev_ = fake_;
@@ -290,7 +283,7 @@ void S21List<T, Alloc>::merge(S21List<T, Alloc> &other) {
     auto it = this->begin();
     auto it_other = other.begin();
     while (!other.empty()) {
-      if (it == this->end()) {  // если дошли до конца первого списка
+      if (it == this->end()) { // если дошли до конца первого списка
         this->insert(it, *it_other);
         auto temp = it_other;
         ++it_other;
@@ -310,10 +303,10 @@ void S21List<T, Alloc>::merge(S21List<T, Alloc> &other) {
 template <typename T, typename Alloc>
 void S21List<T, Alloc>::splice(const_iterator pos, S21List<T, Alloc> &other) {
   Node<T> *prev = pos.node_->prev_;
-  prev->next_ = other.fake_->next_;       // prev pos <-> first elem other
-  other.fake_->next_->prev_ = prev;       // first elem other <-> prev pos
-  pos.node_->prev_ = other.fake_->prev_;  // pos <-> last elem other
-  other.fake_->prev_->next_ = pos.node_;  // last elem other <-> pos
+  prev->next_ = other.fake_->next_;      // prev pos <-> first elem other
+  other.fake_->next_->prev_ = prev;      // first elem other <-> prev pos
+  pos.node_->prev_ = other.fake_->prev_; // pos <-> last elem other
+  other.fake_->prev_->next_ = pos.node_; // last elem other <-> pos
   this->size_ += other.size_;
   // create empty other list
   other.size_ = 0;
@@ -321,23 +314,22 @@ void S21List<T, Alloc>::splice(const_iterator pos, S21List<T, Alloc> &other) {
   other.fake_->prev_ = other.fake_;
 }
 
-template <typename T, typename Alloc>
-void S21List<T, Alloc>::reverse() {
+template <typename T, typename Alloc> void S21List<T, Alloc>::reverse() {
   for (auto it = this->begin(); it != this->end(); --it) {
-    if (it == this->end()) break;
+    if (it == this->end())
+      break;
     std::swap(it.node_->next_, it.node_->prev_);
   }
   std::swap(fake_->next_, fake_->prev_);
 }
 
-template <typename T, typename Alloc>
-void S21List<T, Alloc>::unique() {
+template <typename T, typename Alloc> void S21List<T, Alloc>::unique() {
   auto first = this->begin();
   while (first != this->end()) {
     auto rm_node = first;
     auto next = ++first;
     if (next == this->end()) {
-      break;  // нужно чтобы не было обращение к неинит. переменной
+      break; // нужно чтобы не было обращение к неинит. переменной
     }
     if (*rm_node == *(next)) {
       this->erase(rm_node);
@@ -345,8 +337,7 @@ void S21List<T, Alloc>::unique() {
   }
 }
 
-template <typename T, typename Alloc>
-void S21List<T, Alloc>::sort() {
+template <typename T, typename Alloc> void S21List<T, Alloc>::sort() {
   iterator middle = this->GetMiddleList();
   S21List<T> temp;
   for (auto it = temp.begin(); middle != this->end();) {
@@ -368,13 +359,13 @@ void S21List<T, Alloc>::sort() {
 //_____BONUS_____
 template <typename T, typename Alloc>
 template <typename... Args>
-typename S21List<T, Alloc>::iterator S21List<T, Alloc>::emplace(
-    const_iterator pos, Args &&...args) {
+typename S21List<T, Alloc>::iterator
+S21List<T, Alloc>::emplace(const_iterator pos, Args &&...args) {
   iterator it(pos.node_);
   return insert(it,
                 value_type(std::forward<Args>(
-                    args)...));  // к сожалению, вызывается конструктор
-                                 // копирования.. Или делать без insert
+                    args)...)); // к сожалению, вызывается конструктор
+                                // копирования.. Или делать без insert
 }
 
 template <typename T, typename Alloc>
@@ -422,8 +413,7 @@ void S21List<T, Alloc>::RemNode(Node<T> *node) {
   node_alloc_.deallocate(node, 1);
 }
 
-template <typename T, typename Alloc>
-void S21List<T, Alloc>::InitFakeNode() {
+template <typename T, typename Alloc> void S21List<T, Alloc>::InitFakeNode() {
   fake_ = node_alloc_.allocate(1);
   fake_->value_ = value_type_alloc_.allocate(1);
   fake_->prev_ = fake_;
@@ -506,6 +496,6 @@ S21List<value_type, Alloc>::Iterator::operator=(const Iterator &other) {
   return *this;
 }
 
-}  // namespace s21
+} // namespace s21
 
-#endif  // S21_CONTAINERS_SRC_SEQUENCE_S21_LIST_H_
+#endif // S21_CONTAINERS_SRC_SEQUENCE_S21_LIST_H_

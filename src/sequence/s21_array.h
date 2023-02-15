@@ -12,9 +12,8 @@
 
 namespace s21 {
 
-template <class T, size_t N>
-class S21Array : protected S21Vector<T> {
- public:
+template <class T, size_t N> class S21Array : protected S21Vector<T> {
+public:
   using value_type = typename S21Vector<T>::value_type;
   using reference = typename S21Vector<T>::reference;
   using const_reference = typename S21Vector<T>::const_reference;
@@ -60,17 +59,17 @@ class S21Array : protected S21Vector<T> {
 
   using S21Vector<T>::operator[];
 
- private:
+private:
   value_type arr_stat[N]{};
 };
 
 /**
  * Constructors
  */
-template <class T, size_t N>
-S21Array<T, N>::S21Array() {
+template <class T, size_t N> S21Array<T, N>::S21Array() {
   this->size_ = N;
-  if (this->size_) this->arr_ = arr_stat;
+  if (this->size_)
+    this->arr_ = arr_stat;
 }
 
 template <class value_type, size_t N>
@@ -112,13 +111,13 @@ S21Array<T, N> &S21Array<T, N>::operator=(S21Array &&other) noexcept {
   return *this;
 }
 
-template <class T, size_t N>
-void S21Array<T, N>::fill(const_reference value) {
+template <class T, size_t N> void S21Array<T, N>::fill(const_reference value) {
   if (this->size_) {
-    for (size_t i = 0; i < this->size_; ++i) this->arr_[i] = value;
+    for (size_t i = 0; i < this->size_; ++i)
+      this->arr_[i] = value;
   }
 }
 
-}  // namespace s21
+} // namespace s21
 
-#endif  // S21_CONTAINERS_SRC_SEQUENCE_S21_ARRAY_H_
+#endif // S21_CONTAINERS_SRC_SEQUENCE_S21_ARRAY_H_

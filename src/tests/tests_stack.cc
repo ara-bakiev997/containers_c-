@@ -6,7 +6,7 @@
 using namespace s21;
 
 class S21Stack_test : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {}
   S21Stack<int> stack;
   std::stack<int> orig;
@@ -35,7 +35,7 @@ TEST_F(S21Stack_test, constuctors_tests) {
   std::stack<int> orig_move(std::move(orig));
   EXPECT_EQ(stack_move.size(), orig_move.size());
   EXPECT_EQ(stack_move.top(), orig_move.top());
-  EXPECT_EQ(stack.size(), orig.size());  // empty after move
+  EXPECT_EQ(stack.size(), orig.size()); // empty after move
 }
 
 TEST_F(S21Stack_test, assignment_tests) {
@@ -98,7 +98,8 @@ TEST_F(S21Stack_test, modifiers_tests) {
   while (1) {
     stack_swap.pop();
     orig_swap.pop();
-    if (stack_swap.empty() || orig_swap.empty()) break;
+    if (stack_swap.empty() || orig_swap.empty())
+      break;
     EXPECT_EQ(stack_swap.top(), orig_swap.top());
   }
 }
@@ -120,7 +121,8 @@ TEST_F(S21Stack_test, bonus_emplace_back) {
   while (1) {
     stack_string.pop();
     orig_string.pop();
-    if (stack_string.empty() || orig_string.empty()) break;
+    if (stack_string.empty() || orig_string.empty())
+      break;
     EXPECT_EQ(stack_string.top(), orig_string.top());
   }
 }

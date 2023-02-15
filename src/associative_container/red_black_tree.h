@@ -19,10 +19,8 @@ enum OperatorType { PLUS_PLUS, MINUS_MINUS };
 
 enum Duplicate { WITH_DUPLICATE, WITHOUT_DUPLICATE };
 
-template <typename Key, typename T>
-struct RBT {
+template <typename Key, typename T> struct RBT {
   RBT() = default;
-
   ~RBT() = default;
 
   RBT<const Key, T> *parent_{};
@@ -35,21 +33,21 @@ struct RBT {
 template <typename Key, typename T = int, typename Compare = std::less<Key>,
           typename Alloc = std::allocator<std::pair<const Key, T>>>
 class Tree {
- public:
+public:
   using key_type = Key;
   using value_type = std::pair<const Key, T>;
   using reference = value_type &;
   using key_compare = Compare;
   using const_reference = const value_type &;
   using size_type = size_t;
-  using ValueTypeAlloc = Alloc;                      // под пару
-  using NodeAlloc = typename std::allocator_traits<  // под ноду
+  using ValueTypeAlloc = Alloc;                     // под пару
+  using NodeAlloc = typename std::allocator_traits< // под ноду
       Alloc>::template rebind_alloc<RBT<const Key, T>>;
 
   //____ITERATORS____
   class ConstIterator {
-   public:
-    friend Tree;  // need for access node in tree
+  public:
+    friend Tree; // need for access node in tree
     ConstIterator() : node_(nullptr) {}
     ConstIterator(const ConstIterator &other)
         : node_(other.node_), it_fake_(other.it_fake_) {}
@@ -67,11 +65,11 @@ class Tree {
       return node_ == other.node_;
     }
 
-   protected:
+  protected:
     RBT<const Key, T> *node_{};
     RBT<const Key, T> *it_fake_{};
 
-   private:
+  private:
     explicit ConstIterator(RBT<const Key, T> *pt, RBT<const Key, T> *fake)
         : node_(pt), it_fake_(fake) {}
 
@@ -85,15 +83,15 @@ class Tree {
   };
 
   class Iterator : public ConstIterator {
-   public:
-    friend Tree;  // need for access node in tree
+  public:
+    friend Tree; // need for access node in tree
     Iterator() { this->node_ = nullptr; }
     Iterator(const Iterator &other) : ConstIterator(other) {}
 
     std::pair<const Key, T> &operator*();
     Iterator &operator=(const Iterator &other);
 
-   private:
+  private:
     explicit Iterator(RBT<const Key, T> *pt, RBT<const Key, T> *fake) {
       this->node_ = pt;
       this->it_fake_ = fake;
@@ -128,7 +126,7 @@ class Tree {
 
   iterator end() const;
 
- protected:
+protected:
   RBT<const Key, T> *root_{};
   RBT<const Key, T> *fake_{};
   size_type size_{};
@@ -136,8 +134,8 @@ class Tree {
   NodeAlloc node_alloc_{};
   ValueTypeAlloc value_type_alloc_{};
 
-  std::pair<iterator, bool> insert_node(
-      const Key &key, T value = 0, Duplicate duplicate = WITHOUT_DUPLICATE);
+  std::pair<iterator, bool> InsertNode(const Key &key, T value = 0,
+                                       Duplicate duplicate = WITHOUT_DUPLICATE);
   RBT<const Key, T> *FindNodeByKey(RBT<const Key, T> *node, const Key &key);
   RBT<const Key, T> *FindNodeByKeyMulti(RBT<const Key, T> *node, const Key &key,
                                         RBT<const Key, T> *&ret);
@@ -145,7 +143,7 @@ class Tree {
   friend Iterator;
   friend ConstIterator;
 
- private:
+private:
   bool CommonCompareEqual(Key first, Key second);
 
   //_____WORKING_WITH_MEMORY_____
@@ -154,7 +152,7 @@ class Tree {
   void RemNode(RBT<const Key, T> *node);
   void InitFakeNode();
 
-  void clearUtil(RBT<const Key, T> *node);
+  void ClearUtil(RBT<const Key, T> *node);
 
   //_____SUPPORT_FOR_INSERT_____
   RBT<const Key, T> *AddNodeByCondition(RBT<const Key, T> *&node,
@@ -168,6 +166,11 @@ class Tree {
                            RBT<const Key, T> *child, RBT<const Key, T> *parent);
   void DelNodeWithoutChild(RBT<const Key, T> *del_node,
                            RBT<const Key, T> *parent);
+  void Case1(RBT<const Key, T> *parent, RBT<const Key, T> *child,
+             RBT<const Key, T> *grandsonRed);
+  void Case2(RBT<const Key, T> *parent, RBT<const Key, T> *child);
+  void Case3(RBT<const Key, T> *parent, RBT<const Key, T> *child,
+             RBT<const Key, T> *grandsonRed);
 
   //_____FIND_NODE_____
   RBT<const Key, T> *MinNode(RBT<const Key, T> *node) const;
@@ -200,7 +203,7 @@ Tree<Key, T, Compare, Alloc>::Tree(
     std::initializer_list<value_type> const &items) {
   InitFakeNode();
   for (auto it = items.begin(); it != items.end(); ++it) {
-    this->insert_node(*it);
+    this->InsertNode(*it);
   }
 }
 
@@ -208,7 +211,7 @@ template <typename Key, typename T, typename Compare, typename Alloc>
 Tree<Key, T, Compare, Alloc>::Tree(const Tree &other) {
   InitFakeNode();
   for (auto it = other.begin(); it != other.end(); ++it) {
-    this->insert_node(*it);
+    this->InsertNode(*it);
   }
 }
 
@@ -226,20 +229,20 @@ Tree<Key, T, Compare, Alloc>::~Tree() {
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-Tree<Key, T, Compare, Alloc> &Tree<Key, T, Compare, Alloc>::operator=(
-    const Tree &other) {
+Tree<Key, T, Compare, Alloc> &
+Tree<Key, T, Compare, Alloc>::operator=(const Tree &other) {
   if (this != &other) {
     this->clear();
     for (auto i = other.begin(); i != other.end(); ++i) {
-      insert_node(*i);
+      InsertNode(*i);
     }
   }
   return *this;
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-Tree<Key, T, Compare, Alloc> &Tree<Key, T, Compare, Alloc>::operator=(
-    Tree &&other) noexcept {
+Tree<Key, T, Compare, Alloc> &
+Tree<Key, T, Compare, Alloc>::operator=(Tree &&other) noexcept {
   if (this != &other) {
     std::swap(this->size_, other.size_);
     std::swap(fake_, other.fake_);
@@ -250,7 +253,7 @@ Tree<Key, T, Compare, Alloc> &Tree<Key, T, Compare, Alloc>::operator=(
 //_____MODIFIERS____
 template <typename Key, typename T, typename Compare, typename Alloc>
 void Tree<Key, T, Compare, Alloc>::clear() {
-  clearUtil(root_);
+  ClearUtil(root_);
   root_ = nullptr;
   size_ = 0;
 }
@@ -335,19 +338,20 @@ void Tree<Key, T, Compare, Alloc>::InitFakeNode() {
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-void Tree<Key, T, Compare, Alloc>::clearUtil(RBT<const Key, T> *node) {
-  if (node == nullptr || node == fake_) return;
-  clearUtil(node->left_);
+void Tree<Key, T, Compare, Alloc>::ClearUtil(RBT<const Key, T> *node) {
+  if (node == nullptr || node == fake_)
+    return;
+  ClearUtil(node->left_);
   auto tmp = node->right_;
   RemNode(node);
-  clearUtil(tmp);
+  ClearUtil(tmp);
 }
 
 //_____SUPPORT_FOR_INSERT_____
 template <typename Key, typename T, typename Compare, typename Alloc>
 std::pair<typename Tree<Key, T, Compare, Alloc>::iterator, bool>
-Tree<Key, T, Compare, Alloc>::insert_node(const Key &key, T value,
-                                          Duplicate duplicate) {
+Tree<Key, T, Compare, Alloc>::InsertNode(const Key &key, T value,
+                                         Duplicate duplicate) {
   bool is_node_create = false;
   RBT<const Key, T> *node = nullptr;
   auto find_node = this->FindNodeByKey(this->root_, key);
@@ -413,11 +417,11 @@ void Tree<Key, T, Compare, Alloc>::DelNodeByCondition(RBT<const Key, T> *node) {
     RBT<const Key, T> *change = MaxNode(node->left_);
     std::swap(change->data_, node->data_);
     DelNodeByCondition(change);
-  } else if (node->left_ != fake_) {  // есть один левый ребено
+  } else if (node->left_ != fake_) { // есть один левый ребено
     DelNodeWithOneChild(node, node->left_, node->parent_);
-  } else if (node->right_ != fake_) {  // есть один правый ребенок
+  } else if (node->right_ != fake_) { // есть один правый ребенок
     DelNodeWithOneChild(node, node->right_, node->parent_);
-  } else {  // лист
+  } else { // лист
     if (node->color_ == RED) {
       DelNodeWithoutChild(node, node->parent_);
     } else {
@@ -464,6 +468,100 @@ void Tree<Key, T, Compare, Alloc>::DelNodeWithoutChild(
   RemNode(del_node);
 }
 
+// 2.1.1  Отец удаленной ноды красный // Брат удаленной ноды красный
+template <typename Key, typename T, typename Compare, typename Alloc>
+void Tree<Key, T, Compare, Alloc>::Case1(RBT<const Key, T> *parent,
+                                         RBT<const Key, T> *child,
+                                         RBT<const Key, T> *grandsonRed) {
+  if (parent->left_ == child) {         // мы слева от деда
+    if (child->right_ == grandsonRed) { // мы справа от отца
+      SmallRotate(grandsonRed, LEFT);
+      BigRotate(child, RIGHT);
+      parent->color_ = BLACK;
+      child->color_ = BLACK;
+    } else {
+      BigRotate(grandsonRed, RIGHT);
+      parent->color_ = BLACK;
+      child->color_ = RED;
+      grandsonRed->color_ = BLACK;
+    }
+  } else {                             // мы справа от деда
+    if (child->left_ == grandsonRed) { // мы слева от отца
+      SmallRotate(grandsonRed, RIGHT);
+      BigRotate(child, LEFT);
+      parent->color_ = BLACK;
+      child->color_ = BLACK;
+    } else {
+      BigRotate(grandsonRed, LEFT);
+      parent->color_ = BLACK;
+      child->color_ = RED;
+      grandsonRed->color_ = BLACK;
+    }
+  }
+}
+
+// 2.2.1. Отец удаленной ноды черный // Брат удаленной ноды красный
+template <typename Key, typename T, typename Compare, typename Alloc>
+void Tree<Key, T, Compare, Alloc>::Case2(RBT<const Key, T> *parent,
+                                         RBT<const Key, T> *child) {
+  RBT<const Key, T> *grandsonLeft = GetChildLeft(child); // внуки
+  if (grandsonLeft && grandsonLeft->color_ == BLACK) {
+    RBT<const Key, T> *great_grandsonRed =
+        GetRedChild(grandsonLeft); // правнуки
+    if (great_grandsonRed) { // 2.2.1.1. есть красный правнук
+      if (parent->right_ == child) { // мы справа от отца
+        BigRotate(grandsonLeft, LEFT);
+        child->color_ = BLACK;
+        parent->color_ = RED;
+        BalanceErase(parent, parent->right_);
+      } else {
+        BigRotate(grandsonLeft, RIGHT);
+        child->color_ = BLACK;
+        parent->color_ = RED;
+        BalanceErase(parent, parent->left_);
+      }
+    } else { // 2.2.1.2 когда нет красного правнука
+      if (parent->left_ == child) {
+        BigRotate(grandsonLeft, RIGHT); // внимание
+        child->color_ = BLACK;
+        parent->color_ = RED;
+        BalanceErase(parent, parent->left_);
+      } else {
+        BigRotate(grandsonLeft, LEFT);
+        child->color_ = BLACK;
+        parent->color_ = RED;
+        BalanceErase(parent, parent->right_);
+      }
+    }
+  }
+}
+
+// 2.2.2.1 у брата удаленной ноды есть красные дети
+template <typename Key, typename T, typename Compare, typename Alloc>
+void Tree<Key, T, Compare, Alloc>::Case3(RBT<const Key, T> *parent,
+                                         RBT<const Key, T> *child,
+                                         RBT<const Key, T> *grandsonRed) {
+  if (parent->left_ == child) {         // мы слева от деда
+    if (child->right_ == grandsonRed) { // мы справа от отца
+      SmallRotate(grandsonRed, LEFT);
+      BigRotate(child, RIGHT);
+      grandsonRed->color_ = BLACK;
+    } else {
+      BigRotate(grandsonRed, RIGHT);
+      grandsonRed->color_ = BLACK;
+    }
+  } else {                             // мы справа от деда
+    if (child->left_ == grandsonRed) { // мы слева от отца
+      SmallRotate(grandsonRed, RIGHT);
+      BigRotate(child, LEFT);
+      grandsonRed->color_ = BLACK;
+    } else {
+      BigRotate(grandsonRed, LEFT);
+      grandsonRed->color_ = BLACK;
+    }
+  }
+}
+
 //_____FIND_NODE_____
 template <typename Key, typename T, typename Compare, typename Alloc>
 typename Tree<Key, T, Compare, Alloc>::iterator
@@ -474,8 +572,9 @@ Tree<Key, T, Compare, Alloc>::find(const Key &key) {
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::FindNodeByKey(
-    RBT<const Key, T> *node, const Key &key) {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::FindNodeByKey(RBT<const Key, T> *node,
+                                            const Key &key) {
   RBT<const Key, T> *ret = nullptr;
 
   if (node != fake_ && node != nullptr) {
@@ -511,8 +610,8 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::FindNodeByKeyMulti(
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::MinNode(
-    RBT<const Key, T> *node) const {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::MinNode(RBT<const Key, T> *node) const {
   RBT<const Key, T> *ret = nullptr;
   if (node != fake_) {
     ret = node;
@@ -524,8 +623,8 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::MinNode(
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::MaxNode(
-    RBT<const Key, T> *node) const {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::MaxNode(RBT<const Key, T> *node) const {
   RBT<const Key, T> *ret = nullptr;
   if (node != fake_) {
     ret = node;
@@ -541,29 +640,29 @@ template <typename Key, typename T, typename Compare, typename Alloc>
 void Tree<Key, T, Compare, Alloc>::BalanceInsert(RBT<const Key, T> *node,
                                                  RBT<const Key, T> *parent) {
   RBT<const Key, T> *bro_parent = GetBro(parent);
-  if (parent->color_ == RED) {  // в рекурсии нужна проверка
+  if (parent->color_ == RED) { // в рекурсии нужна проверка
     if (bro_parent != fake_ && bro_parent->color_ == RED) {
       ChangeColorIfUncleRed(parent, bro_parent, GetFather(parent));
       if (GetFather(parent) != root_) {
         BalanceInsert(GetFather(parent),
-                      GetFather(parent)->parent_);  // рекурсивно для деда
+                      GetFather(parent)->parent_); // рекурсивно для деда
       }
     } else {
       if (parent != root_) {
         if (GetFather(parent) &&
-            GetFather(parent)->left_ == parent) {  // мы слева от деда
-          if (parent->right_ == node) {  // мы справа от отца
+            GetFather(parent)->left_ == parent) { // мы слева от деда
+          if (parent->right_ == node) { // мы справа от отца
             SmallRotate(node, LEFT);
-            BigRotate(parent, RIGHT);  // т.к они поменялись местами
+            BigRotate(parent, RIGHT); // т.к они поменялись местами
             ChangeColorAfterBigRotate(node, node->right_);
           } else {
             BigRotate(node, RIGHT);
             ChangeColorAfterBigRotate(parent, parent->right_);
           }
-        } else {                        // мы справа от деда
-          if (parent->left_ == node) {  // мы слева от отца
+        } else {                       // мы справа от деда
+          if (parent->left_ == node) { // мы слева от отца
             SmallRotate(node, RIGHT);
-            BigRotate(parent, LEFT);  // т.к они поменялись местами
+            BigRotate(parent, LEFT); // т.к они поменялись местами
             ChangeColorAfterBigRotate(node, node->left_);
           } else {
             BigRotate(node, LEFT);
@@ -580,96 +679,23 @@ void Tree<Key, T, Compare, Alloc>::BalanceInsert(RBT<const Key, T> *node,
 template <typename Key, typename T, typename Compare, typename Alloc>
 void Tree<Key, T, Compare, Alloc>::BalanceErase(RBT<const Key, T> *parent,
                                                 RBT<const Key, T> *child) {
-  if (parent->color_ == RED) {  // 2.1. Отец удаленной ноды красный
+  if (parent->color_ == RED) { // 2.1. Отец удаленной ноды красный
     RBT<const Key, T> *grandsonRed = GetRedChild(child);
-    if (grandsonRed) {  // 2.1.1  // Брат удаленной ноды красный
-      if (parent->left_ == child) {          // мы слева от деда
-        if (child->right_ == grandsonRed) {  // мы справа от отца
-          SmallRotate(grandsonRed, LEFT);
-          BigRotate(child, RIGHT);
-          parent->color_ = BLACK;
-          child->color_ = BLACK;
-        } else {
-          BigRotate(grandsonRed, RIGHT);
-          parent->color_ = BLACK;
-          child->color_ = RED;
-          grandsonRed->color_ = BLACK;
-        }
-      } else {                              // мы справа от деда
-        if (child->left_ == grandsonRed) {  // мы слева от отца
-          SmallRotate(grandsonRed, RIGHT);
-          BigRotate(child, LEFT);
-          parent->color_ = BLACK;
-          child->color_ = BLACK;
-        } else {
-          BigRotate(grandsonRed, LEFT);
-          parent->color_ = BLACK;
-          child->color_ = RED;
-          grandsonRed->color_ = BLACK;
-        }
-      }
-    } else {  // 2.1.2  // Брат удаленной ноды не красный
+    if (grandsonRed) { // Брат удаленной ноды красный
+      Case1(parent, child, grandsonRed);
+    } else { // 2.1.2  // Брат удаленной ноды не красный
       std::swap(parent->color_, child->color_);
     }
-  } else {  // 2.2. Отец удаленной ноды черный
-    if (child->color_ == RED) {  // 2.2.1. Брат удаленной ноды красный
-      RBT<const Key, T> *grandsonLeft = GetChildLeft(child);  // внуки
-
-      if (grandsonLeft && grandsonLeft->color_ == BLACK) {
-        RBT<const Key, T> *great_grandsonRed =
-            GetRedChild(grandsonLeft);  // правнуки
-        if (great_grandsonRed) {  // 2.2.1.1. есть красный правнук
-          if (parent->right_ == child) {  // мы справа от отца
-            BigRotate(grandsonLeft, LEFT);
-            child->color_ = BLACK;
-            parent->color_ = RED;
-            BalanceErase(parent, parent->right_);
-          } else {
-            BigRotate(grandsonLeft, RIGHT);
-            child->color_ = BLACK;
-            parent->color_ = RED;
-            BalanceErase(parent, parent->left_);
-          }
-        } else {  // 2.2.1.2 когда нет красного правнука
-          if (parent->left_ == child) {
-            BigRotate(grandsonLeft, RIGHT);  // внимание
-            child->color_ = BLACK;
-            parent->color_ = RED;
-            BalanceErase(parent, parent->left_);
-          } else {
-            BigRotate(grandsonLeft, LEFT);
-            child->color_ = BLACK;
-            parent->color_ = RED;
-            BalanceErase(parent, parent->right_);
-          }
-        }
-      }
-    } else {  // 2.2.2. Брат удаленной ноды черный
+  } else { // 2.2. Отец удаленной ноды черный
+    if (child->color_ == RED) { // 2.2.1. Брат удаленной ноды красный
+      Case2(parent, child);
+    } else { // 2.2.2. Брат удаленной ноды черный
       RBT<const Key, T> *grandsonRed = GetRedChild(child);
-      if (grandsonRed) {  // 2.2.2.1 у брата удаленной ноды есть красные дети
-        if (parent->left_ == child) {          // мы слева от деда
-          if (child->right_ == grandsonRed) {  // мы справа от отца
-            SmallRotate(grandsonRed, LEFT);
-            BigRotate(child, RIGHT);
-            grandsonRed->color_ = BLACK;
-          } else {
-            BigRotate(grandsonRed, RIGHT);
-            grandsonRed->color_ = BLACK;
-          }
-        } else {                              // мы справа от деда
-          if (child->left_ == grandsonRed) {  // мы слева от отца
-            SmallRotate(grandsonRed, RIGHT);
-            BigRotate(child, LEFT);
-            grandsonRed->color_ = BLACK;
-          } else {
-            BigRotate(grandsonRed, LEFT);
-            grandsonRed->color_ = BLACK;
-          }
-        }
-      } else {  // 2.2.2.2 у брата удаленной ноды нет красныех детей
+      if (grandsonRed) { // 2.2.2.1 у брата удаленной ноды есть красные дети
+        Case3(parent, child, grandsonRed);
+      } else { // 2.2.2.2 у брата удаленной ноды нет красныех детей
         child->color_ = RED;
-        // рекурсивно вверх
-        if (parent != root_) {  // рекурсивно к деду
+        if (parent != root_) { // рекурсивно к деду
           RBT<const Key, T> *grandfather = GetFather(parent);
           RBT<const Key, T> *brother_of_parent = GetBro(parent);
           if (grandfather && brother_of_parent) {
@@ -683,8 +709,8 @@ void Tree<Key, T, Compare, Alloc>::BalanceErase(RBT<const Key, T> *parent,
 
 //_____ACCESS_FUNC____
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::GetBro(
-    RBT<const Key, T> *node) {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::GetBro(RBT<const Key, T> *node) {
   RBT<const Key, T> *parent = node->parent_;
   RBT<const Key, T> *ret = nullptr;
   if (parent != nullptr) {
@@ -698,51 +724,51 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::GetBro(
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::GetFather(
-    RBT<const Key, T> *node) {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::GetFather(RBT<const Key, T> *node) {
   return node->parent_;
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::GetChildLeft(
-    RBT<const Key, T> *node) {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::GetChildLeft(RBT<const Key, T> *node) {
   return node->left_;
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::GetChildRight(
-    RBT<const Key, T> *node) {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::GetChildRight(RBT<const Key, T> *node) {
   return node->right_;
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::GetRedChild(
-    RBT<const Key, T> *node) {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::GetRedChild(RBT<const Key, T> *node) {
   RBT<const Key, T> *patent = node->parent_;
   RBT<const Key, T> *grandFather = node->parent_->parent_;
   RBT<const Key, T> *ret = nullptr;
-  if (grandFather && grandFather->left_ == patent) {  // мы слева от дедушки
-    if (patent->left_ == node) {  // мы слева от отца
+  if (grandFather && grandFather->left_ == patent) { // мы слева от дедушки
+    if (patent->left_ == node) { // мы слева от отца
       if (node->left_ != fake_ && node->left_->color_ == RED) {
         ret = node->left_;
       } else if (node->right_ != fake_ && node->right_->color_ == RED) {
         ret = node->right_;
       }
-    } else {  // мы справа от отца
+    } else { // мы справа от отца
       if (node->right_ != fake_ && node->right_->color_ == RED) {
         ret = node->right_;
       } else if (node->left_ != fake_ && node->left_->color_ == RED) {
         ret = node->left_;
       }
     }
-  } else {                         // мы справа от дедушки
-    if (patent->right_ == node) {  // мы справа от отца
+  } else {                        // мы справа от дедушки
+    if (patent->right_ == node) { // мы справа от отца
       if (node->right_ != fake_ && node->right_->color_ == RED) {
         ret = node->right_;
       } else if (node->left_ != fake_ && node->left_->color_ == RED) {
         ret = node->left_;
       }
-    } else {  // мы слева от отца
+    } else { // мы слева от отца
       if (node->left_ != fake_ && node->left_->color_ == RED) {
         ret = node->left_;
       } else if (node->right_ != fake_ && node->right_->color_ == RED) {
@@ -767,8 +793,10 @@ void Tree<Key, T, Compare, Alloc>::ChangeColorIfUncleRed(
 template <typename Key, typename T, typename Compare, typename Alloc>
 void Tree<Key, T, Compare, Alloc>::ChangeColorAfterBigRotate(
     RBT<const Key, T> *parent, RBT<const Key, T> *grandfather) {
-  if (parent) parent->color_ = BLACK;
-  if (grandfather) grandfather->color_ = RED;
+  if (parent)
+    parent->color_ = BLACK;
+  if (grandfather)
+    grandfather->color_ = RED;
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
@@ -816,7 +844,7 @@ void Tree<Key, T, Compare, Alloc>::BigRotate(RBT<const Key, T> *node,
     temp->parent_ = grandfather;
   }
   RBT<const Key, T> *great_grandfather = GetFather(grandfather);
-  if (great_grandfather) {  // связка с прадедом
+  if (great_grandfather) { // связка с прадедом
     if (great_grandfather->left_ == grandfather) {
       great_grandfather->left_ = parent;
     } else {
@@ -825,7 +853,7 @@ void Tree<Key, T, Compare, Alloc>::BigRotate(RBT<const Key, T> *node,
   }
   parent->parent_ = great_grandfather;
   grandfather->parent_ = parent;
-  if (grandfather == root_) {  // если нужно поменять рута
+  if (grandfather == root_) { // если нужно поменять рута
     root_ = parent;
   }
 }
@@ -877,8 +905,9 @@ Tree<Key, T, Compare, Alloc>::Iterator::operator=(const Tree::Iterator &other) {
 
 //____SUPPORT_ITERATORS_FUNC____
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::ConstIterator::PrefIter(
-    RBT<const Key, T> *node, OperatorType mode) {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::ConstIterator::PrefIter(RBT<const Key, T> *node,
+                                                      OperatorType mode) {
   if (mode == MINUS_MINUS) {
     if (node == this->it_fake_) {
       node = this->node_->parent_;
@@ -923,9 +952,9 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::ConstIterator::GetNodeChild(
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T>
-    *Tree<Key, T, Compare, Alloc>::ConstIterator::GetNodeParentChild(
-        RBT<const Key, T> *node, OperatorType mode) {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::ConstIterator::GetNodeParentChild(
+    RBT<const Key, T> *node, OperatorType mode) {
   if (mode == MINUS_MINUS) {
     return node->parent_->left_;
   } else {
@@ -934,8 +963,8 @@ RBT<const Key, T>
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::ConstIterator::MaxNode(
-    RBT<const Key, T> *node) {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::ConstIterator::MaxNode(RBT<const Key, T> *node) {
   RBT<const Key, T> *ret = nullptr;
   if (node != this->it_fake_) {
     ret = node;
@@ -947,8 +976,8 @@ RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::ConstIterator::MaxNode(
 }
 
 template <typename Key, typename T, typename Compare, typename Alloc>
-RBT<const Key, T> *Tree<Key, T, Compare, Alloc>::ConstIterator::MinNode(
-    RBT<const Key, T> *node) {
+RBT<const Key, T> *
+Tree<Key, T, Compare, Alloc>::ConstIterator::MinNode(RBT<const Key, T> *node) {
   RBT<const Key, T> *ret = nullptr;
   if (node != this->it_fake_) {
     ret = node;
@@ -965,6 +994,6 @@ bool Tree<Key, T, Compare, Alloc>::CommonCompareEqual(Key first, Key second) {
          !(this->compare_(first, second) || this->compare_(second, first));
 }
 
-}  // namespace s21
+} // namespace s21
 
-#endif  // S21_CONTAINERS_SRC_SORTED_CONTAINER_RED_BLACK_TREE_H_
+#endif // S21_CONTAINERS_SRC_SORTED_CONTAINER_RED_BLACK_TREE_H_

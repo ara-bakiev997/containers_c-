@@ -7,7 +7,7 @@
 using namespace s21;
 
 class S21Queue_test : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {}
   S21Queue<int> queue;
   std::queue<int> orig;
@@ -40,7 +40,7 @@ TEST_F(S21Queue_test, constuctors_tests) {
   EXPECT_EQ(queue_copy.size(), orig_copy.size());
   EXPECT_EQ(queue_copy.front(), orig_copy.front());
   EXPECT_EQ(queue_copy.back(), orig_copy.back());
-  EXPECT_EQ(queue.size(), orig.size());  // empty after move
+  EXPECT_EQ(queue.size(), orig.size()); // empty after move
 }
 
 TEST_F(S21Queue_test, assignment_tests) {
@@ -107,7 +107,8 @@ TEST_F(S21Queue_test, modifiers_tests) {
   while (1) {
     queue_swap.pop();
     orig_swap.pop();
-    if (queue_swap.empty() || orig_swap.empty()) break;
+    if (queue_swap.empty() || orig_swap.empty())
+      break;
     EXPECT_EQ(queue_swap.front(), orig_swap.front());
     EXPECT_EQ(queue_swap.back(), orig_swap.back());
   }
@@ -130,7 +131,8 @@ TEST_F(S21Queue_test, bonus_emplace_back) {
   while (1) {
     queue_string.pop();
     orig_string.pop();
-    if (queue_string.empty() || orig_string.empty()) break;
+    if (queue_string.empty() || orig_string.empty())
+      break;
     EXPECT_EQ(queue_string.front(), orig_string.front());
     EXPECT_EQ(queue_string.back(), orig_string.back());
   }

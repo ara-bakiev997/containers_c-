@@ -11,7 +11,7 @@ using std::cout;
 using std::endl;
 
 class S21Map_test : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {}
   S21Map<int, int> map_empty;
   S21Map<int, int> map{{1, 25}, {0, 43}, {4, 4}, {7, 11}, {-5, 28}};
@@ -241,7 +241,8 @@ TEST_F(S21Map_test, erase2) {
   }
 
   for (auto i = 0;; ++i) {
-    if (std_map_empty.empty()) break;
+    if (std_map_empty.empty())
+      break;
     map_empty.erase(map_empty.begin());
     std_map_empty.erase(std_map_empty.begin());
   }
@@ -271,7 +272,8 @@ TEST_F(S21Map_test, merge) {
   EXPECT_EQ(mb_.size(), mb.size());
   EXPECT_EQ(mb_.at(5), mb.at(5));
 
-  for (auto const &kv : u_) EXPECT_EQ(u_.at(kv.first), std_u.at(kv.first));
+  for (auto const &kv : u_)
+    EXPECT_EQ(u_.at(kv.first), std_u.at(kv.first));
 }
 
 TEST_F(S21Map_test, contains) {

@@ -29,14 +29,13 @@ struct President {
   President(std::string p_name, std::string p_country, int p_year)
       : name(std::move(p_name)), country(std::move(p_country)), year(p_year) {}
   President(President &&other)
-      : name(std::move(other.name)),
-        country(std::move(other.country)),
+      : name(std::move(other.name)), country(std::move(other.country)),
         year(other.year) {}
   President &operator=(const President &other) = default;
 };
 
 class S21List_test : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {}
   S21List<int> list_empty;
   S21List<int> list_1_ = S21List<int>(5);
@@ -223,7 +222,7 @@ TEST_F(S21List_test, ModifiersInsert) {
   EXPECT_EQ(list_2_.size(), test2.size());
   ret_em = list_2_.insert(an, 11);
   ret_em_or = test2.insert(an_or, 11);
-  EXPECT_EQ(list_2_.size(), test2.size());  // ha-ha, orig ++size
+  EXPECT_EQ(list_2_.size(), test2.size()); // ha-ha, orig ++size
   EXPECT_EQ(*ret_em, *ret_em_or);
 }
 

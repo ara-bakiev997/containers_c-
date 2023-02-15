@@ -12,7 +12,7 @@ namespace s21 {
 template <typename Key, typename Compare = std::less<Key>,
           typename Alloc = std::allocator<const Key>>
 class S21Set : public Tree<Key> {
- public:
+public:
   using key_type = Key;
   using value_type = Key;
   using reference = value_type &;
@@ -49,14 +49,14 @@ template <typename Key, typename Compare, typename Alloc>
 S21Set<Key, Compare, Alloc>::S21Set(
     const std::initializer_list<value_type> &items) {
   for (const auto &it : items) {
-    Tree<Key>::insert_node(it);
+    Tree<Key>::InsertNode(it);
   }
 }
 
 template <typename Key, typename Compare, typename Alloc>
 S21Set<Key, Compare, Alloc>::S21Set(const S21Set &other) : Tree<Key>() {
   for (auto it = other.begin(); it != other.end(); ++it) {
-    Tree<Key>::insert_node((*it).first);
+    Tree<Key>::InsertNode((*it).first);
   }
 }
 
@@ -66,20 +66,20 @@ S21Set<Key, Compare, Alloc>::S21Set(S21Set &&other) noexcept {
 }
 
 template <typename Key, typename Compare, typename Alloc>
-S21Set<Key, Compare, Alloc> &S21Set<Key, Compare, Alloc>::operator=(
-    const S21Set &other) {
+S21Set<Key, Compare, Alloc> &
+S21Set<Key, Compare, Alloc>::operator=(const S21Set &other) {
   if (this != &other) {
     this->clear();
     for (auto it = other.begin(); it != other.end(); ++it) {
-      Tree<Key>::insert_node((*it).first);
+      Tree<Key>::InsertNode((*it).first);
     }
   }
   return *this;
 }
 
 template <typename Key, typename Compare, typename Alloc>
-S21Set<Key, Compare, Alloc> &S21Set<Key, Compare, Alloc>::operator=(
-    S21Set &&other) noexcept {
+S21Set<Key, Compare, Alloc> &
+S21Set<Key, Compare, Alloc>::operator=(S21Set &&other) noexcept {
   if (this != &other) {
     this->clear();
     this->swap(other);
@@ -90,7 +90,7 @@ S21Set<Key, Compare, Alloc> &S21Set<Key, Compare, Alloc>::operator=(
 template <typename Key, typename Compare, typename Alloc>
 std::pair<typename S21Set<Key, Compare, Alloc>::iterator, bool>
 S21Set<Key, Compare, Alloc>::insert(const S21Set::value_type &value) {
-  return Tree<Key>::insert_node(value);
+  return Tree<Key>::InsertNode(value);
 }
 
 template <typename Key, typename Compare, typename Alloc>
@@ -128,6 +128,6 @@ S21Set<Key, Compare, Alloc>::emplace(Args &&...args) {
   return data;
 }
 
-}  // namespace s21
+} // namespace s21
 
-#endif  // S21_CONTAINERS_SRC_SORTED_CONTAINER_SET_CONTAINER_SET_H_
+#endif // S21_CONTAINERS_SRC_SORTED_CONTAINER_SET_CONTAINER_SET_H_

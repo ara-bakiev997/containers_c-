@@ -11,7 +11,7 @@ using std::cout;
 using std::endl;
 
 class S21Multiset_test : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {}
   S21Multiset<int> set_empty;
   S21Multiset<int> set{1, 1, 1, 0, 0, 4, 4, 7, -5};

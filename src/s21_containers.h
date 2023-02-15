@@ -8,4 +8,4 @@
 #include "sequence/s21_list.h"
 #include "sequence/s21_vector.h"
 
-#endif  // S21_CONTAINERS_S21_CONTAINERS_H
+#endif // S21_CONTAINERS_S21_CONTAINERS_H

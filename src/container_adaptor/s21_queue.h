@@ -4,9 +4,8 @@
 #include "../sequence/s21_list.h"
 
 namespace s21 {
-template <typename T, typename Container = S21List<T>>
-class S21Queue {
- public:
+template <typename T, typename Container = S21List<T>> class S21Queue {
+public:
   using container_type = Container;
   using value_type = typename Container::value_type;
   using size_type = typename Container::size_type;
@@ -36,15 +35,14 @@ class S21Queue {
   void swap(S21Queue<T> &other) { this->container_.swap(other.container_); }
 
   // Bonus
-  template <typename... Args>
-  void emplace_back(Args &&...args) {
+  template <typename... Args> void emplace_back(Args &&...args) {
     container_.emplace_back(args...);
   }
 
- private:
+private:
   container_type container_{};
 };
 
-}  // namespace s21
+} // namespace s21
 
-#endif  // S21_CONTAINERS_SRC_CONTAINER_ADAPTOR_QUEUE_H_
+#endif // S21_CONTAINERS_SRC_CONTAINER_ADAPTOR_QUEUE_H_

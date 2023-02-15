@@ -11,7 +11,7 @@ namespace s21 {
 template <typename Key, typename Compare = std::less<Key>,
           typename Alloc = std::allocator<const Key>>
 class S21Multiset : public Tree<Key> {
- public:
+public:
   using key_type = Key;
   using value_type = Key;
   using reference = value_type &;
@@ -56,7 +56,7 @@ template <typename Key, typename Compare, typename Alloc>
 S21Multiset<Key, Compare, Alloc>::S21Multiset(
     const std::initializer_list<value_type> &items) {
   for (const auto &it : items) {
-    Tree<Key>::insert_node(it, {}, WITH_DUPLICATE);
+    Tree<Key>::InsertNode(it, {}, WITH_DUPLICATE);
   }
 }
 
@@ -64,7 +64,7 @@ template <typename Key, typename Compare, typename Alloc>
 S21Multiset<Key, Compare, Alloc>::S21Multiset(const S21Multiset &other)
     : Tree<Key>() {
   for (auto it = other.begin(); it != other.end(); ++it) {
-    Tree<Key>::insert_node((*it).first, {}, WITH_DUPLICATE);
+    Tree<Key>::InsertNode((*it).first, {}, WITH_DUPLICATE);
   }
 }
 
@@ -74,20 +74,20 @@ S21Multiset<Key, Compare, Alloc>::S21Multiset(S21Multiset &&other) noexcept {
 }
 
 template <typename Key, typename Compare, typename Alloc>
-S21Multiset<Key, Compare, Alloc> &S21Multiset<Key, Compare, Alloc>::operator=(
-    const S21Multiset &other) {
+S21Multiset<Key, Compare, Alloc> &
+S21Multiset<Key, Compare, Alloc>::operator=(const S21Multiset &other) {
   if (this != &other) {
     this->clear();
     for (auto it = other.begin(); it != other.end(); ++it) {
-      Tree<Key>::insert_node((*it).first, {}, WITH_DUPLICATE);
+      Tree<Key>::InsertNode((*it).first, {}, WITH_DUPLICATE);
     }
   }
   return *this;
 }
 
 template <typename Key, typename Compare, typename Alloc>
-S21Multiset<Key, Compare, Alloc> &S21Multiset<Key, Compare, Alloc>::operator=(
-    S21Multiset &&other) noexcept {
+S21Multiset<Key, Compare, Alloc> &
+S21Multiset<Key, Compare, Alloc>::operator=(S21Multiset &&other) noexcept {
   if (this != &other) {
     this->clear();
     this->swap(other);
@@ -98,7 +98,7 @@ S21Multiset<Key, Compare, Alloc> &S21Multiset<Key, Compare, Alloc>::operator=(
 template <typename Key, typename Compare, typename Alloc>
 typename S21Multiset<Key, Compare, Alloc>::iterator
 S21Multiset<Key, Compare, Alloc>::insert(const value_type &value) {
-  auto pair = Tree<Key>::insert_node(value, {}, WITH_DUPLICATE);
+  auto pair = Tree<Key>::InsertNode(value, {}, WITH_DUPLICATE);
   return pair.first;
 }
 
@@ -108,7 +108,7 @@ void S21Multiset<Key, Compare, Alloc>::merge(S21Multiset &other) {
   auto size = other.size();
   auto end_elem = size - 1;
   for (size_t i = 0; i < size; ++i) {
-    Tree<Key>::insert_node(it->first, {}, WITH_DUPLICATE);
+    Tree<Key>::InsertNode(it->first, {}, WITH_DUPLICATE);
     if (i < end_elem) {
       ++it;
     }
@@ -140,7 +140,7 @@ S21Vector<std::pair<typename Tree<Key>::iterator, bool>>
 S21Multiset<Key, Compare, Alloc>::emplace(Args &&...args) {
   S21Vector<std::pair<iterator, bool>> data;
   data.push_back(
-      Tree<Key>::insert_node(std::forward<Args>(args)..., {}, WITH_DUPLICATE));
+      Tree<Key>::InsertNode(std::forward<Args>(args)..., {}, WITH_DUPLICATE));
   return data;
 }
 
@@ -171,6 +171,6 @@ S21Multiset<Key, Compare, Alloc>::equal_range(const Key &key) {
   return std::make_pair(lower_bound(key), upper_bound(key));
 }
 
-}  // namespace s21
+} // namespace s21
 
-#endif  // S21_CONTAINERS_SRC_SORTED_CONTAINER_SET_CONTAINER_MULTISET_H_
+#endif // S21_CONTAINERS_SRC_SORTED_CONTAINER_SET_CONTAINER_MULTISET_H_

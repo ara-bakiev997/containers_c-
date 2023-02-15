@@ -11,9 +11,8 @@
 
 namespace s21 {
 
-template <typename T, typename Alloc = std::allocator<T>>
-class S21Vector {
- public:
+template <typename T, typename Alloc = std::allocator<T>> class S21Vector {
+public:
   using value_type = T;
   using reference = T &;
   using const_reference = const T &;
@@ -31,13 +30,13 @@ class S21Vector {
   S21Vector(S21Vector &&other) noexcept { this->swap(other); }
 
   ~S21Vector() {
-    if (capacity_) remove();
+    if (capacity_)
+      Remove();
   }
 
   // iterators
-  template <bool IsConst>
-  class CommonIterator {
-   public:
+  template <bool IsConst> class CommonIterator {
+  public:
     CommonIterator() = default;
 
     explicit CommonIterator(value_type *ptr) : ptr_(ptr) {}
@@ -64,8 +63,8 @@ class S21Vector {
       return ptr_;
     }
 
-    std::conditional_t<IsConst, const value_type *, value_type *> operator->()
-        const {
+    std::conditional_t<IsConst, const value_type *, value_type *>
+    operator->() const {
       return ptr_;
     }
 
@@ -113,7 +112,7 @@ class S21Vector {
 
     bool operator!=(const CommonIterator &other) { return ptr_ != other.ptr_; }
 
-   private:
+  private:
     std::conditional_t<IsConst, const value_type *, value_type *> ptr_{};
   };
 
@@ -176,18 +175,17 @@ class S21Vector {
 
   void pop_back();
 
-  template <typename... Args>
-  void emplace_back(Args &&...args);
+  template <typename... Args> void emplace_back(Args &&...args);
 
   template <typename... Args>
   iterator emplace(const_iterator pos, Args &&...args);
 
- protected:
+protected:
   size_type size_{};
   T *arr_{};
 
- private:
-  void remove();
+private:
+  void Remove();
 
   size_type capacity_{};
   Alloc alloc_{};
@@ -221,8 +219,8 @@ S21Vector<T, Alloc>::S21Vector(const S21Vector &other)
 
 //_____ASSIGNMENT_OPERATORS(copy_and_swap)_____
 template <class value_type, typename Alloc>
-S21Vector<value_type, Alloc> &S21Vector<value_type, Alloc>::operator=(
-    const S21Vector &other) {
+S21Vector<value_type, Alloc> &
+S21Vector<value_type, Alloc>::operator=(const S21Vector &other) {
   if (this != &other) {
     S21Vector tmp = other;
     tmp.swap(tmp);
@@ -231,8 +229,8 @@ S21Vector<value_type, Alloc> &S21Vector<value_type, Alloc>::operator=(
 }
 
 template <class value_type, typename Alloc>
-S21Vector<value_type, Alloc> &S21Vector<value_type, Alloc>::operator=(
-    S21Vector &&other) noexcept {
+S21Vector<value_type, Alloc> &
+S21Vector<value_type, Alloc>::operator=(S21Vector &&other) noexcept {
   if (this != &other) {
     S21Vector tmp = std::move(other);
     this->swap(tmp);
@@ -297,8 +295,7 @@ S21Vector<value_type, Alloc>::back() const noexcept {
   return arr_[size_ - 1];
 }
 
-template <class T, typename Alloc>
-T *S21Vector<T, Alloc>::data() noexcept {
+template <class T, typename Alloc> T *S21Vector<T, Alloc>::data() noexcept {
   return arr_;
 }
 
@@ -326,7 +323,8 @@ S21Vector<value_type, Alloc>::max_size() const noexcept {
 
 template <class value_type, typename Alloc>
 void S21Vector<value_type, Alloc>::reserve(S21Vector::size_type size) {
-  if (size > this->max_size()) throw std::length_error("size > max_size");
+  if (size > this->max_size())
+    throw std::length_error("size > max_size");
 
   if (size > capacity_) {
     value_type *new_arr = AllocTraits::allocate(alloc_, size);
@@ -342,7 +340,7 @@ void S21Vector<value_type, Alloc>::reserve(S21Vector::size_type size) {
       AllocTraits::deallocate(alloc_, new_arr, size);
       throw;
     }
-    remove();
+    Remove();
     arr_ = new_arr;
     capacity_ = size;
   }
@@ -390,7 +388,8 @@ void S21Vector<T, Alloc>::push_back(value_type &&value) {
 
 template <class value_type, typename Alloc>
 void S21Vector<value_type, Alloc>::clear() noexcept {
-  for (; size_ != 0;) pop_back();
+  for (; size_ != 0;)
+    pop_back();
 }
 
 template <class value_type, typename Alloc>
@@ -406,7 +405,7 @@ S21Vector<value_type, Alloc>::insert(iterator pos, const_reference value) {
   AllocTraits::construct(alloc_, buff + pos_index, value);
   std::copy(&(*(this->begin() + pos_index)), &(*(this->begin() + size_)),
             buff + pos_index + 1);
-  remove();
+  Remove();
   arr_ = buff;
 
   ++size_, capacity_ = new_capacity;
@@ -423,7 +422,7 @@ void S21Vector<value_type, Alloc>::erase(S21Vector::iterator pos) {
     std::copy(&(*this->begin()), &(*(this->begin() + pos_index)), buff);
     std::copy(&(*(this->begin() + pos_index + 1)), &(*this->end()),
               buff + pos_index);
-    remove();
+    Remove();
     arr_ = buff;
     --size_;
   }
@@ -446,8 +445,7 @@ void S21Vector<value_type, Alloc>::swap(S21Vector &other) {
   std::swap(alloc_, other.alloc_);
 }
 
-template <typename T, typename Alloc>
-void S21Vector<T, Alloc>::remove() {
+template <typename T, typename Alloc> void S21Vector<T, Alloc>::Remove() {
   if ((size_ + 1) != 0) {
     for (size_t i = 0; i < size_; ++i) {
       AllocTraits::destroy(alloc_, arr_ + i);
@@ -478,8 +476,8 @@ void S21Vector<T, Alloc>::emplace_back(Args &&...args) {
 
 template <typename T, typename Alloc>
 template <typename... Args>
-typename S21Vector<T, Alloc>::iterator S21Vector<T, Alloc>::emplace(
-    const_iterator pos, Args &&...args) {
+typename S21Vector<T, Alloc>::iterator
+S21Vector<T, Alloc>::emplace(const_iterator pos, Args &&...args) {
   auto it = pos;
   size_type new_capacity = !capacity_ ? 1 : capacity_;
   size_type pos_index = it - this->begin();
@@ -492,7 +490,7 @@ typename S21Vector<T, Alloc>::iterator S21Vector<T, Alloc>::emplace(
   std::copy(&(*(this->begin() + pos_index)), &(*(this->begin() + size_)),
             buff + pos_index + 1);
   if (size_) {
-    remove();
+    Remove();
   }
   arr_ = buff;
   ++size_;
@@ -508,6 +506,6 @@ typename S21Vector<T, Alloc>::iterator S21Vector<T, Alloc>::emplace(
 //       return  insert(it, std::forward<Args>(args)...);
 //    }
 
-}  // namespace s21
+} // namespace s21
 
-#endif  // S21_CONTAINERS_SRC_S21_VECTOR_H_
+#endif // S21_CONTAINERS_SRC_S21_VECTOR_H_

@@ -12,7 +12,7 @@ else
 	LIBFLAGS=-lstdc++ `pkg-config --cflags --libs gtest  --libs gtest_main`
 endif
 
-all: test
+all: clean test
 
 test:
 	clear
